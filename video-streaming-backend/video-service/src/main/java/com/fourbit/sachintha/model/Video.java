@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "video")
+@Table(name = "videos")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Video {
@@ -38,7 +38,7 @@ public class Video {
   @ManyToMany(mappedBy = "videoHistory")
   private List<User> views;
   private String thumbnailUrl;
-  
+
   @OneToMany(mappedBy = "video")
   private List<Comment> comments;
 }
