@@ -1,5 +1,5 @@
 package com.fourbit.sachintha.model;
 
-public class VideoStatus {
-
+public enum VideoStatus {
+  PUBLIC, PRIVATE, UNLISTED
 }
