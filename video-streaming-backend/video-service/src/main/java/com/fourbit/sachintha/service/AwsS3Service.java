@@ -1,7 +1,5 @@
 package com.fourbit.sachintha.service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -33,19 +31,16 @@ public class AwsS3Service implements FileService {
     // create unique name for file
     var fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
     var key = UUID.randomUUID().toString() +'.'+ fileExtension;
-
-    // create meta data for file
-    Map<String, String> metadata = new HashMap<>();
-    metadata.put("x-amz-meta-myVal", "test");
-
+     
     try {
       // upload to AWS S3 bucket
       PutObjectRequest putOb = PutObjectRequest.builder()
           .bucket(awsBucketName)
           .key(key)
-          .metadata(metadata)
+          .contentType(file.getContentType())
+          .contentLength(file.getSize())
           .build();
-      // awsS3Client.putObject(putOb, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+      awsS3Client.putObject(putOb, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
       // set the public access to the file
       PutObjectAclRequest aclRequest = PutObjectAclRequest.builder()
@@ -53,7 +48,7 @@ public class AwsS3Service implements FileService {
           .key(key)
           .acl(ObjectCannedACL.PUBLIC_READ)
           .build();
-      // awsS3Client.putObjectAcl(aclRequest);
+      awsS3Client.putObjectAcl(aclRequest);
     } catch (Exception e) {
       System.out.println("Error : " + e.getMessage());
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
