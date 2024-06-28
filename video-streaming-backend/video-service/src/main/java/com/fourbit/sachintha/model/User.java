@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,8 +28,8 @@ public class User {
   private String lastName;
   private String pictureUrl;
   private String about;
-  // @OneToMany(mappedBy = "user")
-  // private List<Comment> comments;
+  @OneToMany(mappedBy = "user")
+  private List<Comment> comments;
   @ManyToMany
   @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "subscriptionId"))
   private List<User> subscriptions;
