@@ -27,11 +27,11 @@ public class AwsS3Service implements FileService {
   private final S3Client awsS3Client;
 
   @Override
-  public String uploadFile(MultipartFile file) {
+  public String uploadFile(MultipartFile file, String category) {
     // create unique name for file
     var fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-    var key = UUID.randomUUID().toString() +'.'+ fileExtension;
-     
+    var key = category + "/" + UUID.randomUUID().toString() + '.' + fileExtension;
+
     try {
       // upload to AWS S3 bucket
       PutObjectRequest putOb = PutObjectRequest.builder()
@@ -57,7 +57,7 @@ public class AwsS3Service implements FileService {
     // get url of the uploaded file
     return getUrl(awsBucketRegion, awsBucketName, key);
   }
-  
+
   private String getUrl(String region, String bucketName, String key) {
     return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
   }
