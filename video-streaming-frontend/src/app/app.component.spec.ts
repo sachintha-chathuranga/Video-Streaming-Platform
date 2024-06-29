@@ -14,16 +14,18 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'flight-booking-app' title`, () => {
+  it(`should have the 'video-streaming-frontend' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('flight-booking-app');
+    expect(app.title).toEqual('video-streaming-frontend');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, flight-booking-app');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Hello, video-streaming-frontend'
+    );
   });
 });
