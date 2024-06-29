@@ -15,4 +15,8 @@ export const routes: Routes = [
     path: 'update-video-details/:videoId',
     component: VideoFormComponent,
   },
+  {
+    path: '?state',
+    component: VideoFormComponent,
+  },
 ];
