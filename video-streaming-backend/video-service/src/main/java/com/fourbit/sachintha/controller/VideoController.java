@@ -2,15 +2,16 @@ package com.fourbit.sachintha.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.fourbit.sachintha.dto.UploadVideoResponse;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.service.VideoService;
-
 import lombok.RequiredArgsConstructor;
-
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
-@RequestMapping("/api/video")
+@RequestMapping("/api/videos")
 @RequiredArgsConstructor
 public class VideoController {
   private final VideoService videoService;
@@ -43,5 +44,21 @@ public class VideoController {
   public ResponseEntity<VideoDto> updateVideoDetails(@RequestBody VideoDto videoDto) {
     VideoDto savedVideo = videoService.updateVideoMetaData(videoDto);
     return ResponseEntity.ok(savedVideo);
+  }
+
+  @GetMapping("/get-all")
+  @ResponseStatus(HttpStatus.FOUND)
+  public ResponseEntity<List<VideoDto>> getVideos() {
+    List<VideoDto> videos = videoService.getVideos();
+    return ResponseEntity.ok(videos);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<VideoDto> getVideoById(@PathVariable Long id) {
+      return ResponseEntity.ok(videoService.getVideoById(id));
+  }
+  @DeleteMapping("/{id}/delete")
+  public ResponseEntity<String> deleteVideo(@PathVariable Long id) {
+    return ResponseEntity.ok(videoService.deleteVideo(id));
   }
 }
