@@ -1,7 +1,9 @@
 package com.fourbit.sachintha.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,24 +30,46 @@ public class User {
   private String lastName;
   private String pictureUrl;
   private String about;
-  @OneToMany(mappedBy = "user")
-  private List<Comment> comments;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private List<Video> videos = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private List<Comment> comments = new ArrayList<>();
+
   @ManyToMany
   @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "subscriptionId"))
-  private List<User> subscriptions;
+  private List<User> subscriptions = new ArrayList<>();
 
   @ManyToMany(mappedBy = "subscriptions")
-  private List<User> subscribers;
+  private List<User> subscribers = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "user_views_history", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
-  private List<Video> videoHistory;
+  private List<Video> videoHistory = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "user_likes_video", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
-  private List<Video> likedVideos;
+  private List<Video> likedVideos = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "user_dislikes_video", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
-  private List<Video> dislikedVideos;
+  private List<Video> dislikedVideos = new ArrayList<>();
+
+  public User(
+   Long id,
+   String firstName,
+   String lastName,
+   String pictureUrl,
+      String about) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.pictureUrl = pictureUrl;
+    this.about = about;
+  }
+
+  public String getFullName() {
+    return this.firstName+" " + this.lastName;
+   }
 }
