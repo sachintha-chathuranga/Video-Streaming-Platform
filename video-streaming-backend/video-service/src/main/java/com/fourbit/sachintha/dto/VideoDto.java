@@ -1,5 +1,6 @@
 package com.fourbit.sachintha.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fourbit.sachintha.model.VideoStatus;
@@ -15,13 +16,14 @@ public class VideoDto {
   private Long id;
   private String description;
   private String title;
-  private Long userId;
-  private List<UserDto> likes;
-  private List<UserDto> dislikes;
-  private List<String> tags;
+  private UserDto user;
   private String videoUrl;
   private VideoStatus videoStatus;
-  private List<UserDto> views;
   private String thumbnailUrl;
-  private List<CommentDto> comments;
+  private List<String> tags= new ArrayList<>();
+  // private List<UserDto> likes= new ArrayList<>();
+  // private List<UserDto> dislikes= new ArrayList<>();
+  // private List<UserDto> views= new ArrayList<>();
+  // private List<CommentDto> comments = new ArrayList<>();
+  
 }
