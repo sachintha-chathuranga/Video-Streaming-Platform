@@ -1,4 +1,4 @@
-package com.fourbit.sachintha.service;
+package com.fourbit.sachintha.service.impl;
 
 import java.util.UUID;
 
@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -60,5 +61,19 @@ public class AwsS3Service implements FileService {
 
   private String getUrl(String region, String bucketName, String key) {
     return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
+  }
+
+  @Override
+  public void deleteFile(String key) {
+    try {
+      DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+           .bucket(awsBucketName)
+           .key(key)
+           .build();
+      awsS3Client.deleteObject(deleteRequest);
+    } catch (Exception e) {
+      System.out.println("Error : " + e.getMessage());
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
   }
 }

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class CommentDto {
   private Long id;
   private String text;
-  private VideoDto video;
   private UserDto user;
   private Integer likeCount;
   private Integer dislikeCount;

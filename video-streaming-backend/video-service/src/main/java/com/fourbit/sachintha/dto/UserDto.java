@@ -1,5 +1,6 @@
 package com.fourbit.sachintha.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -15,10 +16,10 @@ public class UserDto {
   private String lastName;
   private String pictureUrl;
   private String about;
-  private List<CommentDto> comments;
-  private List<UserDto> subscriptions;
-  private List<UserDto> subscribers;
-  private List<VideoDto> videoHistory;
-  private List<VideoDto> likedVideos;
-  private List<VideoDto> dislikedVideos;
+  // private List<CommentDto> comments = new ArrayList<>();
+  // private List<UserDto> subscriptions = new ArrayList<>();
+  // private List<UserDto> subscribers = new ArrayList<>();
+  // private List<VideoDto> videoHistory = new ArrayList<>();
+  // private List<VideoDto> likedVideos = new ArrayList<>();
+  // private List<VideoDto> dislikedVideos = new ArrayList<>();
 }

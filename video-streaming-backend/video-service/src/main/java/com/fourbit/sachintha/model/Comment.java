@@ -1,6 +1,9 @@
 package com.fourbit.sachintha.model;
 
+import com.fourbit.sachintha.dto.UserDto;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,12 +24,27 @@ public class Comment {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   private String text;
-  @ManyToOne
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "videoId")
   private Video video;
-  @ManyToOne
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "userId")
   private User user;
   private Integer likeCount;
   private Integer dislikeCount;
+
+  public Comment(
+      Long id,
+      String text,
+      User user,
+      Integer likeCount,
+      Integer dislikeCount) {
+    this.id = id;
+    this.text = text;
+    this.user = user;
+    this.likeCount = likeCount;
+    this.dislikeCount = dislikeCount;
+  }
 }
