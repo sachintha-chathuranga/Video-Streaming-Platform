@@ -3,6 +3,7 @@ package com.fourbit.sachintha.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fourbit.sachintha.dto.UploadVideoResponse;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.service.VideoService;
 
@@ -25,8 +26,15 @@ public class VideoController {
 
   @PostMapping("/upload-video")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> uploadVideo(@RequestParam("file") MultipartFile file) {
-    String url = videoService.uploadVideo(file);
+  public ResponseEntity<UploadVideoResponse> uploadVideo(@RequestParam("file") MultipartFile file) {
+    UploadVideoResponse response = videoService.uploadVideo(file);
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/upload-thumbnail")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<String> uploadThumbnail(@RequestParam("file") MultipartFile file, @RequestParam("videoId") Long videoId) {
+    String url = videoService.uploadThumbnail(file, videoId);
     return ResponseEntity.ok(url);
   }
 
