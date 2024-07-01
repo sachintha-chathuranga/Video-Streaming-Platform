@@ -38,6 +38,9 @@ public class CommonService {
 
   public String getObjectKeyFromUrl(String s3Url) {
     try {
+      if (s3Url == null) {
+        return null;
+      }
       URI uri = new URI(s3Url);
       String path = uri.getPath();
       if (path.startsWith("/")) {
@@ -45,7 +48,7 @@ public class CommonService {
       }
       return path;
     } catch (URISyntaxException e) {
-      throw new IllegalArgumentException("Invalid S3 URL", e);
+      return null;
     }
   }
 }

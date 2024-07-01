@@ -66,6 +66,9 @@ public class AwsS3Service implements FileService {
   @Override
   public void deleteFile(String key) {
     try {
+      if (key == null) {
+        return;
+      }
       DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
            .bucket(awsBucketName)
            .key(key)

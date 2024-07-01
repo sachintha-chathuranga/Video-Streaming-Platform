@@ -20,7 +20,9 @@ public class VideoDto {
   private String videoUrl;
   private VideoStatus videoStatus;
   private String thumbnailUrl;
-  private List<String> tags= new ArrayList<>();
+  private List<String> tags = new ArrayList<>();
+  private Integer likesCount;
+  private Integer dislikesCount;
   // private List<UserDto> likes= new ArrayList<>();
   // private List<UserDto> dislikes= new ArrayList<>();
   // private List<UserDto> views= new ArrayList<>();

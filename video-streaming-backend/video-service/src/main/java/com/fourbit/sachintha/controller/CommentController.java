@@ -23,9 +23,9 @@ import lombok.RequiredArgsConstructor;
 public class CommentController {
   private final CommentService commentService;
 
-  @PostMapping
-  public ResponseEntity<CommentDto> addComment(@PathVariable Long videoId, @RequestBody CommentDto commentDto) {
-    return ResponseEntity.ok(commentService.addCommentToVideo(videoId, commentDto));
+  @PostMapping("/{userId}")
+  public ResponseEntity<CommentDto> addComment(@PathVariable Long videoId,@PathVariable Long userId, @RequestBody CommentDto commentDto) {
+    return ResponseEntity.ok(commentService.addCommentToVideo(videoId, userId, commentDto));
   }
 
   @PutMapping("/{commentId}")

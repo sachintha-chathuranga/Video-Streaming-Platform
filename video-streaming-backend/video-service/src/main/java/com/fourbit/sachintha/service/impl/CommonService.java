@@ -25,7 +25,6 @@ public class CommonService {
     return videoRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("Video does not exists!"));
   }
-  
   public User findUserById(Long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("User does not exists!"));
