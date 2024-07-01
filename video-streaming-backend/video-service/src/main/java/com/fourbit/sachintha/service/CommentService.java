@@ -9,5 +9,15 @@ public interface CommentService {
 
   List<CommentDto> getCommentsByVideoId(Long videoId);
 
-  CommentDto removeComment(Long commentId);
+  void removeComment(Long commentId);
+
+  CommentDto updateComment(Long commentId, CommentDto commentDto);
+
+  void addLikeToComment(Long commentId);
+
+  void removeLikeFromComment(Long commentId);
+
+  void addDisLikeToComment(Long commentId);
+
+  void removeDisLikeFromComment(Long commentId);
 }

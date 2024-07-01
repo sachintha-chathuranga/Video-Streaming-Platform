@@ -3,6 +3,8 @@ package com.fourbit.sachintha.service.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.springframework.stereotype.Service;
+
 import com.fourbit.sachintha.model.Comment;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.repository.CommentRepository;
@@ -10,6 +12,7 @@ import com.fourbit.sachintha.repository.VideoRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
 @RequiredArgsConstructor
 public class CommonService {
   private final VideoRepository videoRepository;

@@ -16,11 +16,12 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
   private final VideoRepository videoRepository;
   private final CommentRepository commentRepository;
   private final CommonService commonService;
-    @Override
+
+  @Override
   public CommentDto addCommentToVideo(Long videoId, CommentDto commentDto) {
     Video video = commonService.findVideoById(videoId);
     Comment comment = CommentMapper.mapToComment(commentDto);
@@ -31,17 +32,52 @@ public class CommentServiceImpl implements CommentService{
   }
 
   @Override
-  public List<CommentDto> getCommentsByVideoId(Long videoId) {
-    Video video = commonService.findVideoById(videoId);
+  public CommentDto updateComment(Long commentId, CommentDto commentDto) {
+    Comment comment = commonService.findCommentById(commentId);
 
-    return video.getComments().stream().map(comment -> CommentMapper.mapToCommentDto(comment)).toList();
-
+    if (commentDto.getText() != null) {
+      comment.setText(commentDto.getText());
+    }
+    Comment savedComment = commentRepository.save(comment);
+    return CommentMapper.mapToCommentDto(savedComment);
   }
 
   @Override
-  public CommentDto removeComment(Long commentId) {
-    Comment comment = commonService.findCommentById(commentId);
+  public List<CommentDto> getCommentsByVideoId(Long videoId) {
+    Video video = commonService.findVideoById(videoId);
+    return video.getComments().stream().map(comment -> CommentMapper.mapToCommentDto(comment)).toList();
+  }
+
+  @Override
+  public void removeComment(Long commentId) {
     commentRepository.deleteById(commentId);
-    return CommentMapper.mapToCommentDto(comment);
+  }
+
+  @Override
+  public void addLikeToComment(Long commentId) {
+    Comment comment = commonService.findCommentById(commentId);
+    comment.incrementLikeCount();
+    commentRepository.save(comment);
+  }
+
+  @Override
+  public void removeLikeFromComment(Long commentId) {
+    Comment comment = commonService.findCommentById(commentId);
+    comment.decrementLikeCount();
+    commentRepository.save(comment);
+  }
+
+  @Override
+  public void addDisLikeToComment(Long commentId) {
+    Comment comment = commonService.findCommentById(commentId);
+    comment.incrementDislikeCount();
+    commentRepository.save(comment);
+  }
+
+  @Override
+  public void removeDisLikeFromComment(Long commentId) {
+    Comment comment = commonService.findCommentById(commentId);
+    comment.decrementDislikeCount();
+    commentRepository.save(comment);
   }
 }

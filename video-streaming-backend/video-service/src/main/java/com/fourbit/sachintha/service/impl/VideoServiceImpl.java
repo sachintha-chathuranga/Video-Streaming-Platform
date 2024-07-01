@@ -19,9 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class VideoServiceImpl implements VideoService {
   private final AwsS3Service awsS3Service;
   private final VideoRepository videoRepository;
-  private CommonService commonService;
-
-
+  private final CommonService commonService;
 
   @Override
   public UploadVideoResponse uploadVideo(MultipartFile file) {
