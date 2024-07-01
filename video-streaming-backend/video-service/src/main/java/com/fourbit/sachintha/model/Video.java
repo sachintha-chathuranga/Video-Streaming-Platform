@@ -2,6 +2,7 @@ package com.fourbit.sachintha.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -46,8 +47,10 @@ public class Video {
   @ManyToMany(mappedBy = "dislikedVideos")
   private List<User> dislikes = new ArrayList<>();
 
-  @ManyToMany(mappedBy = "videoHistory")
-  private List<User> views = new ArrayList<>();
+  // @ManyToMany(mappedBy = "videoHistory")
+  // private List<User> views = new ArrayList<>();
+  @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
+  private Set<VideoHistory> videoHistories;
 
   @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
   private List<Comment> comments = new ArrayList<>();

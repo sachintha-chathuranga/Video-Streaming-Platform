@@ -1,15 +1,8 @@
 package com.fourbit.sachintha.mapper;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import com.fourbit.sachintha.dto.CommentDto;
 import com.fourbit.sachintha.dto.UserDto;
-import com.fourbit.sachintha.dto.VideoDto;
-import com.fourbit.sachintha.model.Comment;
+
 import com.fourbit.sachintha.model.User;
-import com.fourbit.sachintha.model.Video;
 
 public class UserMapper {
 
