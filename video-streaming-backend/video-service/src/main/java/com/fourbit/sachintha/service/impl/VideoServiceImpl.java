@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fourbit.sachintha.dto.UploadVideoResponse;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.mapper.VideoMapper;
+import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.repository.VideoRepository;
 import com.fourbit.sachintha.service.VideoService;
@@ -78,6 +79,15 @@ public class VideoServiceImpl implements VideoService {
     awsS3Service.deleteFile(key);
     videoRepository.deleteById(id);
     return "Video Delete Successfully!";
+  }
+
+  @Override
+  public String addLikeToVideo(Long videoId, Long userId) {
+    Video video = commonService.findVideoById(videoId);
+    User user = commonService.findUserById(userId);
+    video.getLikes().add(user);
+    videoRepository.save(video);
+    return "Like Added Successfully";
   }
 
 

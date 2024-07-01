@@ -19,4 +19,6 @@ public interface VideoService {
 
   String deleteVideo(Long id);
 
+  String addLikeToVideo(Long videoId, Long userId);
+
 }
