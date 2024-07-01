@@ -1,7 +1,6 @@
 package com.fourbit.sachintha.mapper;
 
 import com.fourbit.sachintha.dto.UserDto;
-
 import com.fourbit.sachintha.model.User;
 
 public class UserMapper {
@@ -23,7 +22,8 @@ public class UserMapper {
                 if (user == null) {
                         return null;
                 }
-                UserDto userDto = new UserDto(user.getId(),
+                UserDto userDto = new UserDto(
+                                user.getId(),
                                 user.getFirstName(),
                                 user.getLastName(),
                                 user.getPictureUrl(),

@@ -8,8 +8,8 @@ public class CommentMapper {
     if (commentDto == null) {
       return null;
     }
-    int likeCount = commentDto.getLikeCount()==null ? 0 : commentDto.getLikeCount();
-    int dislikeCount = commentDto.getDislikeCount()==null ? 0 : commentDto.getDislikeCount();
+    int likeCount = commentDto.getLikeCount() == null ? 0 : commentDto.getLikeCount();
+    int dislikeCount = commentDto.getDislikeCount() == null ? 0 : commentDto.getDislikeCount();
     Comment comment = new Comment(
         commentDto.getId(),
         commentDto.getText(),
