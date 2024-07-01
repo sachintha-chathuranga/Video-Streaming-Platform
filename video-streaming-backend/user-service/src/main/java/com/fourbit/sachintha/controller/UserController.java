@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoHistoryDto;
+import com.fourbit.sachintha.model.VideoHistory;
 import com.fourbit.sachintha.service.UserService;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
@@ -65,8 +67,8 @@ public class UserController {
   }
   
   @PutMapping("/{userId}/history")
-  public ResponseEntity<String> addVideoToHistory(@PathVariable Long userId, @RequestBody VideoDto videoDto) {
-    String message = userService.updateVideoHistory(userId, videoDto);
+  public ResponseEntity<String> updateVideoHistory(@PathVariable Long userId, @RequestBody VideoHistoryDto videoHistory) {
+    String message = userService.updateVideoHistory(userId, videoHistory);
     return ResponseEntity.ok(message);
   }
 }

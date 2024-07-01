@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoHistoryDto;
 
 public interface UserService {
   UserDto createUser(UserDto user);
@@ -19,5 +20,5 @@ public interface UserService {
 
   String deleteUser(Long id);
   
-  String updateVideoHistory(Long userId, VideoDto videoDto);
+  String updateVideoHistory(Long userId, VideoHistoryDto videoHistoryDto);
 }
