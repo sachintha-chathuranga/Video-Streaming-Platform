@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.UserDto;
+import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.mapper.UserMapper;
 import com.fourbit.sachintha.model.User;
+import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.repository.UserRepository;
 import com.fourbit.sachintha.service.UserService;
 
@@ -72,6 +74,19 @@ public class UserServiceImpl implements UserService {
     awsS3Service.deleteFile(key);
     userRepository.deleteById(id);
     return "User Delete Successfully!";
+  }
+
+  @Override
+  public String updateVideoHistory(Long userId, VideoDto videoDto) {
+    User user = commonService.findUserById(userId);
+    Video video = commonService.findVideoById(videoDto.getId());
+    List<Video> userHistory = user.getVideoHistory();
+    List<User> videoViews = video.getViews();
+    if (!userHistory.contains(video)) {
+      userHistory.add(video);
+      videoViews.add(user);
+    }
+    return "History Update successfully";
   }
 
 }
