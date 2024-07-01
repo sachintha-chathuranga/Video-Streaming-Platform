@@ -63,20 +63,14 @@ public class VideoController {
     return ResponseEntity.ok(videoService.deleteVideo(id));
   }
 
-  @PutMapping("/{videoId}/add-like")
-  public ResponseEntity<String> addLike(@PathVariable Long videoId, @RequestBody Long userId) {
+  @PutMapping("/{videoId}/toggle-like")
+  public ResponseEntity<String> toggleLike(@PathVariable Long videoId, @RequestBody Long userId) {
       return ResponseEntity.ok(videoService.addLikeToVideo(videoId, userId));
   }
-  @PutMapping("/{videoId}/remove-like")
-  public ResponseEntity<String> removeLike(@PathVariable Long videoId, @RequestBody Long userId) {
-      return ResponseEntity.ok(videoService.removeLikeFromVideo(videoId, userId));
-  }
-  @PutMapping("/{videoId}/add-dislike")
-  public ResponseEntity<String> addDislike(@PathVariable Long videoId, @RequestBody Long userId) {
+
+  @PutMapping("/{videoId}/toggle-dislike")
+  public ResponseEntity<String> toggleDilike(@PathVariable Long videoId, @RequestBody Long userId) {
       return ResponseEntity.ok(videoService.addDislikeToVideo(videoId, userId));
   }
-  @PutMapping("/{videoId}/remove-dislike")
-  public ResponseEntity<String> removeDislike(@PathVariable Long videoId, @RequestBody Long userId) {
-      return ResponseEntity.ok(videoService.removeDislikeFromVideo(videoId, userId));
-  }
+
 }

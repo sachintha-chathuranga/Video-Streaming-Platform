@@ -85,37 +85,36 @@ public class VideoServiceImpl implements VideoService {
   public String addLikeToVideo(Long videoId, Long userId) {
     Video video = commonService.findVideoById(videoId);
     User user = commonService.findUserById(userId);
-    video.getLikes().add(user);
-    videoRepository.save(video);
-    return "Like Added Successfully";
-  }
+    List<User> likes = video.getLikes();
+    String msgState = "Added";
 
-  @Override
-  public String removeLikeFromVideo(Long videoId, Long userId) {
-    Video video = commonService.findVideoById(videoId);
-    User user = commonService.findUserById(userId);
-    video.getLikes().remove(user);
+    if (!likes.contains(user)) {
+      likes.add(user);
+    } else {
+      msgState = "Remove";
+      likes.remove(user);
+    }
+    String message = String.format("Like %s Successfully!", msgState);
     videoRepository.save(video);
-    return "Like Remove Successfully";
+    return message;
   }
 
   @Override
   public String addDislikeToVideo(Long videoId, Long userId) {
     Video video = commonService.findVideoById(videoId);
     User user = commonService.findUserById(userId);
-    video.getDislikes().add(user);
-    videoRepository.save(video);
-    return "Dislike Added Successfully";
-  }
+    List<User> dislikes = video.getDislikes();
+    String msgState = "Added";
 
-  @Override
-  public String removeDislikeFromVideo(Long videoId, Long userId) {
-    Video video = commonService.findVideoById(videoId);
-    User user = commonService.findUserById(userId);
-    video.getDislikes().remove(user);
+    if (!dislikes.contains(user)) {
+      dislikes.add(user);
+    } else {
+      msgState = "Remove";
+      dislikes.remove(user);
+    }
+    String message = String.format("Dislike %s Successfully!", msgState);
     videoRepository.save(video);
-    return "Dislike Remove Successfully";
+    return message;
   }
-
 
 }
