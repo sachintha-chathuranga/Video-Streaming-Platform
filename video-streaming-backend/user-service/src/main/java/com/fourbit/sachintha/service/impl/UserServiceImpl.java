@@ -1,16 +1,20 @@
 package com.fourbit.sachintha.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.mapper.UserMapper;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
+import com.fourbit.sachintha.model.VideoHistory;
 import com.fourbit.sachintha.repository.UserRepository;
+import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ public class UserServiceImpl implements UserService {
   private final AwsS3Service awsS3Service;
   private final UserRepository userRepository;
   private final CommonService commonService;
+  private final VideoHistoryRepository videoHistoryRepository;
 
   @Override
   public UserDto createUser(UserDto userDto) {
@@ -77,15 +82,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public String updateVideoHistory(Long userId, VideoDto videoDto) {
+  public String updateVideoHistory(Long userId, VideoHistoryDto videoHistoryDto) {
     User user = commonService.findUserById(userId);
-    Video video = commonService.findVideoById(videoDto.getId());
-    List<Video> userHistory = user.getVideoHistory();
-    List<User> videoViews = video.getViews();
-    if (!userHistory.contains(video)) {
-      userHistory.add(video);
-      videoViews.add(user);
+    Video video = commonService.findVideoById(videoHistoryDto.getVideoId());
+    VideoHistory videoHistory = videoHistoryRepository.findByUserAndVideo(user, video);
+    if (videoHistory == null) {
+      videoHistory = new VideoHistory();
+      videoHistory.setUser(user);
+      videoHistory.setVideo(video);
+      videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
+    } else {
+      videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
     }
+    videoHistoryRepository.save(videoHistory);
     return "History Update successfully";
   }
 
