@@ -3,6 +3,7 @@ package com.fourbit.sachintha.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.fourbit.sachintha.dto.UserDto;
+import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.service.UserService;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
@@ -62,5 +63,10 @@ public class UserController {
   public ResponseEntity<String> deleteUser(@PathVariable Long id) {
     return ResponseEntity.ok(userService.deleteUser(id));
   }
-
+  
+  @PutMapping("/{userId}/history")
+  public ResponseEntity<String> addVideoToHistory(@PathVariable Long userId, @RequestBody VideoDto videoDto) {
+    String message = userService.updateVideoHistory(userId, videoDto);
+    return ResponseEntity.ok(message);
+  }
 }
