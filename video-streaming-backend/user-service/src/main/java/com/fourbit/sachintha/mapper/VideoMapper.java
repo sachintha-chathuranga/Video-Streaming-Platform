@@ -25,7 +25,8 @@ public class VideoMapper {
         if (video == null) {
             return null;
         }
-
+        Integer likesCount = video.getLikes().size();
+        Integer dislikesCount = video.getDislikes().size();
         VideoDto videoDto = new VideoDto(video.getId(),
                 video.getDescription(),
                 video.getTitle(),
@@ -33,7 +34,9 @@ public class VideoMapper {
                 video.getVideoUrl(),
                 video.getVideoStatus(),
                 video.getThumbnailUrl(),
-                video.getTags());
+                video.getTags(),
+                likesCount,
+                dislikesCount);
 
         return videoDto;
 

@@ -8,12 +8,14 @@ public class CommentMapper {
     if (commentDto == null) {
       return null;
     }
+    int likeCount = commentDto.getLikeCount() == null ? 0 : commentDto.getLikeCount();
+    int dislikeCount = commentDto.getDislikeCount() == null ? 0 : commentDto.getDislikeCount();
     Comment comment = new Comment(
         commentDto.getId(),
         commentDto.getText(),
         UserMapper.mapToUser(commentDto.getUser()),
-        commentDto.getLikeCount(),
-        commentDto.getDislikeCount());
+        likeCount,
+        dislikeCount);
     return comment;
   }
 
@@ -21,11 +23,13 @@ public class CommentMapper {
     if (comment == null) {
       return null;
     }
+    int likeCount = comment.getLikeCount() == null ? 0 : comment.getLikeCount();
+    int dislikeCount = comment.getDislikeCount() == null ? 0 : comment.getDislikeCount();
     CommentDto commentDto = new CommentDto(comment.getId(),
         comment.getText(),
         UserMapper.mapToUserDto(comment.getUser()),
-        comment.getLikeCount(),
-        comment.getDislikeCount());
+        likeCount,
+        dislikeCount);
     return commentDto;
   }
 }

@@ -2,7 +2,8 @@ package com.fourbit.sachintha.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.fourbit.sachintha.dto.UploadVideoResponse;
+
+import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.service.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class VideoController {
   private final VideoService videoService;
 
-  @PostMapping("/upload-video")
+  @PostMapping("/upload-video/{userId}")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<UploadVideoResponse> uploadVideo(@RequestParam("file") MultipartFile file) {
-    UploadVideoResponse response = videoService.uploadVideo(file);
+  public ResponseEntity<VideoDto> uploadVideo(@PathVariable Long userId, @RequestParam("file") MultipartFile file) {
+    VideoDto response = videoService.uploadVideo(userId, file);
     return ResponseEntity.ok(response);
   }
 
@@ -64,13 +65,13 @@ public class VideoController {
   }
 
   @PutMapping("/{videoId}/toggle-like")
-  public ResponseEntity<String> toggleLike(@PathVariable Long videoId, @RequestBody Long userId) {
-      return ResponseEntity.ok(videoService.addLikeToVideo(videoId, userId));
+  public ResponseEntity<String> toggleLike(@PathVariable Long videoId, @RequestBody UserDto user) {
+      return ResponseEntity.ok(videoService.addLikeToVideo(videoId, user));
   }
 
   @PutMapping("/{videoId}/toggle-dislike")
-  public ResponseEntity<String> toggleDilike(@PathVariable Long videoId, @RequestBody Long userId) {
-      return ResponseEntity.ok(videoService.addDislikeToVideo(videoId, userId));
+  public ResponseEntity<String> toggleDilike(@PathVariable Long videoId, @RequestBody UserDto user) {
+      return ResponseEntity.ok(videoService.addDislikeToVideo(videoId, user));
   }
 
 }

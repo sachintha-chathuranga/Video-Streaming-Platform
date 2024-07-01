@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fourbit.sachintha.dto.UploadVideoResponse;
+import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.mapper.VideoMapper;
 import com.fourbit.sachintha.model.User;
@@ -23,12 +23,15 @@ public class VideoServiceImpl implements VideoService {
   private final CommonService commonService;
 
   @Override
-  public UploadVideoResponse uploadVideo(MultipartFile file) {
-    String videoUrl = awsS3Service.uploadFile(file, "Video");
+  public VideoDto uploadVideo(Long userId, MultipartFile file) {
+    // String videoUrl = awsS3Service.uploadFile(file, "Video");
+    User user = commonService.findUserById(userId);
+    String videoUrl = null;
     var video = new Video();
     video.setVideoUrl(videoUrl);
+    video.setUser(user);
     videoRepository.save(video);
-    return new UploadVideoResponse(video.getId(), videoUrl);
+    return VideoMapper.mapToVideoDto(video);
   }
 
   @Override
@@ -82,17 +85,28 @@ public class VideoServiceImpl implements VideoService {
   }
 
   @Override
-  public String addLikeToVideo(Long videoId, Long userId) {
+  public String addLikeToVideo(Long videoId, UserDto userDto) {
     Video video = commonService.findVideoById(videoId);
-    User user = commonService.findUserById(userId);
-    List<User> likes = video.getLikes();
-    String msgState = "Added";
+    User user = commonService.findUserById(userDto.getId());
+    List<User> videoLikes = video.getLikes();
+    List<User> videoDisikes = video.getDislikes();
+    List<Video> userLikes = user.getLikedVideos();
+    List<Video> userDislikes = user.getDislikedVideos();
 
-    if (!likes.contains(user)) {
-      likes.add(user);
+    String msgState = "";
+
+    if (!videoLikes.contains(user)) {
+      msgState = "Added";
+      userLikes.add(video);
+      videoLikes.add(user);
+      if (videoDisikes.contains(user)) {
+        videoDisikes.remove(user);
+        userDislikes.remove(video);
+      }
     } else {
       msgState = "Remove";
-      likes.remove(user);
+      userLikes.remove(video);
+      videoLikes.remove(user);
     }
     String message = String.format("Like %s Successfully!", msgState);
     videoRepository.save(video);
@@ -100,17 +114,28 @@ public class VideoServiceImpl implements VideoService {
   }
 
   @Override
-  public String addDislikeToVideo(Long videoId, Long userId) {
+  public String addDislikeToVideo(Long videoId, UserDto userDto) {
     Video video = commonService.findVideoById(videoId);
-    User user = commonService.findUserById(userId);
-    List<User> dislikes = video.getDislikes();
-    String msgState = "Added";
+    User user = commonService.findUserById(userDto.getId());
+    List<User> videoDislikes = video.getDislikes();
+    List<User> videoLikes = video.getDislikes();
+    List<Video> userDislikes = user.getDislikedVideos();
+    List<Video> userLikes = user.getLikedVideos();
 
-    if (!dislikes.contains(user)) {
-      dislikes.add(user);
+    String msgState = "";
+
+    if (!videoDislikes.contains(user)) {
+      msgState = "Added";
+      userDislikes.add(video);
+      videoDislikes.add(user);
+      if (videoLikes.contains(user)) {
+        videoLikes.remove(user);
+        userLikes.remove(video);
+      }
     } else {
       msgState = "Remove";
-      dislikes.remove(user);
+      userDislikes.remove(video);
+      videoDislikes.remove(user);
     }
     String message = String.format("Dislike %s Successfully!", msgState);
     videoRepository.save(video);

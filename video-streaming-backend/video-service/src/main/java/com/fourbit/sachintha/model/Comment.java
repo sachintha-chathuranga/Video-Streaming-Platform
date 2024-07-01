@@ -1,7 +1,5 @@
 package com.fourbit.sachintha.model;
 
-import com.fourbit.sachintha.dto.UserDto;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
