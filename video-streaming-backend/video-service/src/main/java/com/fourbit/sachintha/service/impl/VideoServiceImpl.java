@@ -90,5 +90,32 @@ public class VideoServiceImpl implements VideoService {
     return "Like Added Successfully";
   }
 
+  @Override
+  public String removeLikeFromVideo(Long videoId, Long userId) {
+    Video video = commonService.findVideoById(videoId);
+    User user = commonService.findUserById(userId);
+    video.getLikes().remove(user);
+    videoRepository.save(video);
+    return "Like Remove Successfully";
+  }
+
+  @Override
+  public String addDislikeToVideo(Long videoId, Long userId) {
+    Video video = commonService.findVideoById(videoId);
+    User user = commonService.findUserById(userId);
+    video.getDislikes().add(user);
+    videoRepository.save(video);
+    return "Dislike Added Successfully";
+  }
+
+  @Override
+  public String removeDislikeFromVideo(Long videoId, Long userId) {
+    Video video = commonService.findVideoById(videoId);
+    User user = commonService.findUserById(userId);
+    video.getDislikes().remove(user);
+    videoRepository.save(video);
+    return "Dislike Remove Successfully";
+  }
+
 
 }

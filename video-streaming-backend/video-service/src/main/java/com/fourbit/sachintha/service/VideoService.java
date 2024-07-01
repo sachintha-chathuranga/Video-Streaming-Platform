@@ -21,4 +21,10 @@ public interface VideoService {
 
   String addLikeToVideo(Long videoId, Long userId);
 
+  String removeLikeFromVideo(Long videoId, Long userId);
+
+  String addDislikeToVideo(Long videoId, Long userId);
+  
+  String removeDislikeFromVideo(Long videoId, Long userId);
+
 }
