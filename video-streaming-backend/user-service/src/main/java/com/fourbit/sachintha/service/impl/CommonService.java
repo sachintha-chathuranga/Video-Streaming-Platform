@@ -3,8 +3,10 @@ package com.fourbit.sachintha.service.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Comment;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
@@ -23,17 +25,17 @@ public class CommonService {
 
   public Video findVideoById(Long id) {
     return videoRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Video does not exists!"));
+        .orElseThrow(() -> new CustomException("Video does not exists!", HttpStatus.NOT_FOUND));
   }
   
   public User findUserById(Long id) {
     return userRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("User does not exists!"));
+        .orElseThrow(() -> new CustomException("User does not exists!", HttpStatus.NOT_FOUND));
   }
 
   public Comment findCommentById(Long id) {
     return commentRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Comment does not exists!"));
+        .orElseThrow(() -> new CustomException("Comment does not exists!", HttpStatus.NOT_FOUND));
   }
 
   public String getObjectKeyFromUrl(String s3Url) {

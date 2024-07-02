@@ -1,16 +1,12 @@
 package com.fourbit.sachintha.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.UserDto;
-import com.fourbit.sachintha.dto.VideoDto;
+
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.mapper.UserMapper;
 import com.fourbit.sachintha.mapper.VideoHistoryMapper;
