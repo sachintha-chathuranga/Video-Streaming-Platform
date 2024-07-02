@@ -14,7 +14,8 @@ public class VideoMapper {
                     videoDto.getVideoUrl(),
                     videoDto.getVideoStatus(),
                     videoDto.getThumbnailUrl(),
-                    videoDto.getTags());
+                    videoDto.getTags(),
+                    videoDto.getViewsCount());
 
             return video;
         }
@@ -36,7 +37,8 @@ public class VideoMapper {
                 video.getThumbnailUrl(),
                 video.getTags(),
                 likesCount,
-                dislikesCount);
+                dislikesCount,
+                video.getViewsCount());
 
         return videoDto;
 

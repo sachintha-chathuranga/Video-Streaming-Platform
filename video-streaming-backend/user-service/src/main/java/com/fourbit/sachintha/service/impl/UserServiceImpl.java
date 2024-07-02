@@ -1,5 +1,8 @@
 package com.fourbit.sachintha.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +13,7 @@ import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.mapper.UserMapper;
+import com.fourbit.sachintha.mapper.VideoHistoryMapper;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoHistory;
@@ -83,19 +87,50 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public String updateVideoHistory(Long userId, VideoHistoryDto videoHistoryDto) {
-    User user = commonService.findUserById(userId);
-    Video video = commonService.findVideoById(videoHistoryDto.getVideoId());
-    VideoHistory videoHistory = videoHistoryRepository.findByUserAndVideo(user, video);
+    VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(userId, videoHistoryDto.getVideoId());
     if (videoHistory == null) {
+      User user = commonService.findUserById(userId);
+      Video video = commonService.findVideoById(videoHistoryDto.getVideoId());
+
+      // Save to user video history database
       videoHistory = new VideoHistory();
       videoHistory.setUser(user);
       videoHistory.setVideo(video);
       videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
+      // increament video views count by one
+      video.setViewsCount(video.getViewsCount()+1);
     } else {
+      // update watch time
       videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
     }
-    videoHistoryRepository.save(videoHistory);
+    videoHistoryRepository.saveAndFlush(videoHistory);
     return "History Update successfully";
+  }
+
+  @Override
+  public String removeHistoryVideo(Long userId, Long videoId) {
+    videoHistoryRepository.deleteByUserAndVideo(userId, videoId);
+    return "Video remove from history";
+  }
+
+  @Override
+  public List<VideoHistoryDto> getVideoHistory(Long userId) {
+    List<VideoHistory> videoHistories = videoHistoryRepository.findByUserIdOrderByWatchTimeDesc(userId);
+    // User user = commonService.findUserById(userId);
+    // List<VideoHistory> videoHistories = user.getVideoHistories();
+    // Collections.sort(videoHistories, new Comparator<VideoHistory>() {
+    //   @Override
+    //   public int compare(VideoHistory v1, VideoHistory v2) {
+    //     return v2.getWatchTime().compareTo(v1.getWatchTime()); // Descending order
+    //   }
+    // });
+    return videoHistories.stream().map(vh -> VideoHistoryMapper.maptoVideoHistoryDto(vh)).toList();
+  }
+
+  @Override
+  public String clearVideoHistory(Long userId) {
+    videoHistoryRepository.deleteByUserId(userId);
+    return "Video remove from history";
   }
 
 }

@@ -21,4 +21,10 @@ public interface UserService {
   String deleteUser(Long id);
   
   String updateVideoHistory(Long userId, VideoHistoryDto videoHistoryDto);
+
+  String removeHistoryVideo(Long userId, Long videoId);
+  
+  List<VideoHistoryDto> getVideoHistory(Long userId);
+
+  String clearVideoHistory(Long userId);
 }

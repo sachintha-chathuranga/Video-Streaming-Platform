@@ -2,7 +2,6 @@ package com.fourbit.sachintha.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -45,11 +44,8 @@ public class User {
   @ManyToMany(mappedBy = "subscriptions")
   private List<User> subscribers = new ArrayList<>();
 
-  // @ManyToMany
-  // @JoinTable(name = "user_views_history", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
-  // private List<Video> videoHistory = new ArrayList<>();
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private Set<VideoHistory> videoHistories;
+  private List<VideoHistory> videoHistories;
 
   @ManyToMany
   @JoinTable(name = "user_likes_video", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))

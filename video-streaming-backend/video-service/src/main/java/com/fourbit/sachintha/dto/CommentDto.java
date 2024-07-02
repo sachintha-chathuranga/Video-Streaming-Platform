@@ -11,6 +11,6 @@ public class CommentDto {
   private Long id;
   private String text;
   private UserDto user;
-  private Integer likeCount;
-  private Integer dislikeCount;
+  private Integer likeCount = 0;
+  private Integer dislikeCount = 0;
 }

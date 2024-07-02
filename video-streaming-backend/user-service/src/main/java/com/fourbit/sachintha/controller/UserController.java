@@ -2,11 +2,11 @@ package com.fourbit.sachintha.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.fourbit.sachintha.dto.UserDto;
-import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
-import com.fourbit.sachintha.model.VideoHistory;
 import com.fourbit.sachintha.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -67,8 +67,26 @@ public class UserController {
   }
   
   @PutMapping("/{userId}/history")
-  public ResponseEntity<String> updateVideoHistory(@PathVariable Long userId, @RequestBody VideoHistoryDto videoHistory) {
+  public ResponseEntity<String> updateVideoHistory(@PathVariable Long userId,
+      @RequestBody VideoHistoryDto videoHistory) {
     String message = userService.updateVideoHistory(userId, videoHistory);
+    return ResponseEntity.ok(message);
+  }
+  
+  @DeleteMapping("/{userId}/history/{videoId}")
+  public ResponseEntity<String> removeVideoFromHistory(@PathVariable Long userId, @PathVariable Long videoId) {
+    String message = userService.removeHistoryVideo(userId, videoId);
+    return ResponseEntity.ok(message);
+  }
+
+  @GetMapping("/{userId}/history")
+  public ResponseEntity<List<VideoHistoryDto>> getVideoHistory(@PathVariable Long userId) {
+    return ResponseEntity.ok(userService.getVideoHistory(userId));
+  }
+
+  @DeleteMapping("/{userId}/history")
+  public ResponseEntity<String> clearVideoHistory(@PathVariable Long userId) {
+    String message = userService.clearVideoHistory(userId);
     return ResponseEntity.ok(message);
   }
 }

@@ -1,7 +1,5 @@
 package com.fourbit.sachintha.model;
 
-import com.fourbit.sachintha.dto.UserDto;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,10 +34,10 @@ public class Comment {
   private User user;
 
   @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-  private Integer likeCount;
+  private Integer likeCount = 0;
 
   @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-  private Integer dislikeCount;
+  private Integer dislikeCount = 0;
 
   public Comment(
       Long id,
@@ -55,33 +53,21 @@ public class Comment {
   }
 
   public void incrementLikeCount() {
-    if (this.likeCount == null) {
-      this.likeCount = 0;
-    }
     this.likeCount += 1;
   }
 
   public void decrementLikeCount() {
-    if (this.likeCount == null) {
-      this.likeCount = 0;
-    }
-    if (this.likeCount<=0) {
+    if (this.likeCount <= 0) {
       return;
     }
     this.likeCount -= 1;
   }
 
   public void incrementDislikeCount() {
-    if (this.dislikeCount == null) {
-      this.dislikeCount = 0;
-    }
     this.dislikeCount += 1;
   }
 
   public void decrementDislikeCount() {
-    if (this.dislikeCount == null) {
-      this.dislikeCount = 0;
-    }
     if (this.dislikeCount <= 0) {
       return;
     }
