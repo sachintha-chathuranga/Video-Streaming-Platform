@@ -21,11 +21,9 @@ public class VideoDto {
   private VideoStatus videoStatus;
   private String thumbnailUrl;
   private List<String> tags = new ArrayList<>();
-  private Integer likesCount;
-  private Integer dislikesCount;
-  // private List<UserDto> likes= new ArrayList<>();
-  // private List<UserDto> dislikes= new ArrayList<>();
-  // private List<UserDto> views= new ArrayList<>();
+  private Integer likesCount = 0;
+  private Integer dislikesCount = 0;
+  private Long viewsCount = Long.valueOf(0);
   // private List<CommentDto> comments = new ArrayList<>();
   
 }

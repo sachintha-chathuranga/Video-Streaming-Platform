@@ -2,9 +2,9 @@ package com.fourbit.sachintha.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -47,13 +47,11 @@ public class Video {
   @ManyToMany(mappedBy = "dislikedVideos")
   private List<User> dislikes = new ArrayList<>();
 
-  // @ManyToMany(mappedBy = "videoHistory")
-  // private List<User> views = new ArrayList<>();
-  @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
-  private Set<VideoHistory> videoHistories;
-
   @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
   private List<Comment> comments = new ArrayList<>();
+
+  @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+  private Long viewsCount = Long.valueOf(0);
 
   public Video(
       Long id,
@@ -63,7 +61,8 @@ public class Video {
       String videoUrl,
       VideoStatus videoStatus,
       String thumbnailUrl,
-      List<String> tags) {
+      List<String> tags,
+      Long viewsCount) {
     this.id = id;
     this.description = description;
     this.title = title;
@@ -72,6 +71,7 @@ public class Video {
     this.videoStatus = videoStatus;
     this.thumbnailUrl = thumbnailUrl;
     this.tags = tags;
+    this.viewsCount = viewsCount;
   }
 
 }
