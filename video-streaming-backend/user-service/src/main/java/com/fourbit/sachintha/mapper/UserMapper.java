@@ -22,12 +22,14 @@ public class UserMapper {
                 if (user == null) {
                         return null;
                 }
+                Long subsCount = Long.valueOf(user.getSubscribers().size()); 
                 UserDto userDto = new UserDto(
                                 user.getId(),
                                 user.getFirstName(),
                                 user.getLastName(),
                                 user.getPictureUrl(),
-                                user.getAbout());
+                                user.getAbout(),
+                                                subsCount);
                 return userDto;
         }
 }
