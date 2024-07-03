@@ -53,9 +53,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public String uploadProfilePicture(MultipartFile file, Long userId) {
     User user = this.commonService.findUserById(userId);
-    String photoUrl = awsS3Service.uploadFile(file, "profile_photoes");
-    user.setPictureUrl(photoUrl);
-    userRepository.save(user);
+    // String photoUrl = awsS3Service.uploadFile(file, "profile_photoes");
+    String photoUrl = "djfskf";
+    // user.setPictureUrl(photoUrl);
+    // userRepository.save(user);
     return photoUrl;
   }
 
@@ -94,7 +95,7 @@ public class UserServiceImpl implements UserService {
       videoHistory.setVideo(video);
       videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
       // increament video views count by one
-      video.setViewsCount(video.getViewsCount()+1);
+      video.setViewsCount(video.getViewsCount() + 1);
     } else {
       // update watch time
       videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
@@ -115,10 +116,10 @@ public class UserServiceImpl implements UserService {
     // User user = commonService.findUserById(userId);
     // List<VideoHistory> videoHistories = user.getVideoHistories();
     // Collections.sort(videoHistories, new Comparator<VideoHistory>() {
-    //   @Override
-    //   public int compare(VideoHistory v1, VideoHistory v2) {
-    //     return v2.getWatchTime().compareTo(v1.getWatchTime()); // Descending order
-    //   }
+    // @Override
+    // public int compare(VideoHistory v1, VideoHistory v2) {
+    // return v2.getWatchTime().compareTo(v1.getWatchTime()); // Descending order
+    // }
     // });
     return videoHistories.stream().map(vh -> VideoHistoryMapper.maptoVideoHistoryDto(vh)).toList();
   }
@@ -127,6 +128,36 @@ public class UserServiceImpl implements UserService {
   public String clearVideoHistory(Long userId) {
     videoHistoryRepository.deleteByUserId(userId);
     return "Video remove from history";
+  }
+
+  @Override
+  public String subscribe(Long userId, Long channelId) {
+    User subscriber = commonService.findUserById(userId);
+    User channel = commonService.findUserById(channelId);
+    List<User> channels = subscriber.getSubscriptions();
+    if (!channels.contains(channel)) {
+      channels.add(channel);
+      userRepository.save(subscriber);
+    }
+    return "Channel Subscribe Successfully!";
+  }
+
+  @Override
+  public List<UserDto> getSubscribeChannels(Long userId) {
+    User user = commonService.findUserById(userId);
+    List<User> channels = user.getSubscriptions();
+    List<UserDto> channelDtos = channels.stream().map(channel -> UserMapper.mapToUserDto(channel)).toList();
+    return channelDtos;
+  }
+
+  @Override
+  public String unsubscribe(Long userId, Long channelId) {
+    User subscriber = commonService.findUserById(userId);
+    User channel = commonService.findUserById(channelId);
+    List<User> channels = subscriber.getSubscriptions();
+    channels.remove(channel);
+    userRepository.save(subscriber);
+    return "Channel Unsubscribe Successfully!";
   }
 
 }
