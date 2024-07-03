@@ -8,6 +8,7 @@ import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,6 @@ public class UserController {
     return ResponseEntity.ok(userDto);
   }
 
-  
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<UserDto> updateUserDetails(@PathVariable Long id, @RequestBody UserDto userDto) {
@@ -43,14 +43,13 @@ public class UserController {
   }
 
   @PostMapping("/upload")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId) {
+  public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file,
+      @RequestParam("userId") Long userId) {
     String url = userService.uploadProfilePicture(file, userId);
-    return ResponseEntity.ok(url);
+    return new ResponseEntity<>(url, HttpStatus.CREATED);
   }
 
   @GetMapping
-  @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<UserDto>> getUsers() {
     List<UserDto> users = userService.getUsers();
     return ResponseEntity.ok(users);
@@ -60,19 +59,19 @@ public class UserController {
   public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
     return ResponseEntity.ok(userService.getUserById(id));
   }
-  
+
   @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteUser(@PathVariable Long id) {
     return ResponseEntity.ok(userService.deleteUser(id));
   }
-  
+
   @PutMapping("/{userId}/history")
   public ResponseEntity<String> updateVideoHistory(@PathVariable Long userId,
       @RequestBody VideoHistoryDto videoHistory) {
     String message = userService.updateVideoHistory(userId, videoHistory);
     return ResponseEntity.ok(message);
   }
-  
+
   @DeleteMapping("/{userId}/history/{videoId}")
   public ResponseEntity<String> removeVideoFromHistory(@PathVariable Long userId, @PathVariable Long videoId) {
     String message = userService.removeHistoryVideo(userId, videoId);
@@ -89,4 +88,23 @@ public class UserController {
     String message = userService.clearVideoHistory(userId);
     return ResponseEntity.ok(message);
   }
+
+  @PutMapping("/{userId}/subscribe/{channelId}")
+  public ResponseEntity<String> subscribe(@PathVariable Long userId, @PathVariable Long channelId) {
+    String message = userService.subscribe(userId, channelId);
+    return ResponseEntity.ok(message);
+  }
+  
+  @GetMapping("/{userId}/subscribe")
+  public ResponseEntity<List<UserDto>> getSubscriptions(@PathVariable Long userId) {
+    List<UserDto> list = userService.getSubscribeChannels(userId);
+    return ResponseEntity.ok(list);
+  }
+
+  @PutMapping("/{userId}/unsubscribe/{channelId}")
+  public ResponseEntity<String> unsubscribe(@PathVariable Long userId, @PathVariable Long channelId) {
+    String message = userService.unsubscribe(userId, channelId);
+    return ResponseEntity.ok(message);
+  }
+
 }

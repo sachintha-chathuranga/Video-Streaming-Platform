@@ -38,7 +38,7 @@ public class User {
   private List<Comment> comments = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "subscriptionId"))
+  @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "channelId"))
   private List<User> subscriptions = new ArrayList<>();
 
   @ManyToMany(mappedBy = "subscriptions")

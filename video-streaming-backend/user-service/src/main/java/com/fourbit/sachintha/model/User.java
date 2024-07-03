@@ -38,7 +38,7 @@ public class User {
   private List<Comment> comments = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "subscriptionId"))
+  @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "channelId"))
   private List<User> subscriptions = new ArrayList<>();
 
   @ManyToMany(mappedBy = "subscriptions")
@@ -56,10 +56,10 @@ public class User {
   private List<Video> dislikedVideos = new ArrayList<>();
 
   public User(
-   Long id,
-   String firstName,
-   String lastName,
-   String pictureUrl,
+      Long id,
+      String firstName,
+      String lastName,
+      String pictureUrl,
       String about) {
     this.id = id;
     this.firstName = firstName;
@@ -69,6 +69,6 @@ public class User {
   }
 
   public String getFullName() {
-    return this.firstName+" " + this.lastName;
-   }
+    return this.firstName + " " + this.lastName;
+  }
 }
