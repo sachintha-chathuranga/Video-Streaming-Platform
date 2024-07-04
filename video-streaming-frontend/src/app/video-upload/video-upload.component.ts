@@ -7,7 +7,7 @@ import {
   NgxFileDropModule,
 } from 'ngx-file-drop';
 import { MatButtonModule } from '@angular/material/button';
-import { VideoService } from '../service/video.service';
+import { VideoService } from '../video.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -59,6 +59,6 @@ export class VideoUploadComponent {
       //   });
       // });
     }
-    this.router.navigateByUrl('/update-video-details/' + 1);
+    this.router.navigateByUrl('/update-video-details/' + 102);
   }
 }

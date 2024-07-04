@@ -16,7 +16,7 @@ export const routes: Routes = [
     component: VideoFormComponent,
   },
   {
-    path: '?state',
+    path: 'selected-video',
     component: VideoFormComponent,
   },
 ];

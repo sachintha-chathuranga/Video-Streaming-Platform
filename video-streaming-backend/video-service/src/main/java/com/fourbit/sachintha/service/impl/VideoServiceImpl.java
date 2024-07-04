@@ -24,9 +24,9 @@ public class VideoServiceImpl implements VideoService {
 
   @Override
   public VideoDto uploadVideo(Long userId, MultipartFile file) {
-    // String videoUrl = awsS3Service.uploadFile(file, "Video");
+    String videoUrl = awsS3Service.uploadFile(file, "Video");
     User user = commonService.findUserById(userId);
-    String videoUrl = null;
+    // String videoUrl = null;
     var video = new Video();
     video.setVideoUrl(videoUrl);
     video.setUser(user);
