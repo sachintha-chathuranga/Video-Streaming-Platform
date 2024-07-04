@@ -7,10 +7,5 @@ export interface UserDto {
   lastName: string;
   pictureUrl: string;
   about: string;
-  comments: CommentDto[];
-  subscriptions: UserDto[];
-  subscribers: UserDto[];
-  videoHistory: VideoDto[];
-  likedVideos: VideoDto[];
-  dislikedVideos: VideoDto[];
+  subscribersCount: number;
 }

@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
     User user = this.commonService.findUserById(userId);
     // String photoUrl = awsS3Service.uploadFile(file, "profile_photoes");
     String photoUrl = "djfskf";
-    // user.setPictureUrl(photoUrl);
-    // userRepository.save(user);
+    user.setPictureUrl(photoUrl);
+    userRepository.save(user);
     return photoUrl;
   }
 

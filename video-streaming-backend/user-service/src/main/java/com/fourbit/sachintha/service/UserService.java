@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
-import com.fourbit.sachintha.model.User;
 
 public interface UserService {
   UserDto createUser(UserDto user);

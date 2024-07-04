@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UploadVideoResponse } from '../video-upload/UploadVideoResponse';
-import { VideoDto } from '../dto/video.dto';
+import { UploadVideoResponse } from './video-upload/UploadVideoResponse';
+import { VideoDto } from './dto/video.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class VideoService {
     });
 
     return this.httpClient.post<UploadVideoResponse>(
-      'http://localhost:8080/api/video/upload-video',
+      'http://localhost:8080/api/videos/upload-video/1',
       formData
     );
   }
@@ -34,7 +34,7 @@ export class VideoService {
     });
 
     return this.httpClient.post(
-      'http://localhost:8080/api/video/upload-thumbnail',
+      'http://localhost:8080/api/videos/upload-thumbnail',
       formData,
       {
         responseType: 'text',
@@ -42,9 +42,16 @@ export class VideoService {
     );
   }
 
+  saveVideo(videoMetaData: VideoDto): Observable<VideoDto> {
+    return this.httpClient.put<VideoDto>(
+      'http://localhost:8080/api/videos/update-details',
+      videoMetaData
+    );
+  }
+
   getVideoById(videoId: string): Observable<VideoDto> {
     return this.httpClient.get<VideoDto>(
-      'http://localhost:8080/api/video/' + videoId
+      'http://localhost:8080/api/videos/' + videoId
     );
   }
 }

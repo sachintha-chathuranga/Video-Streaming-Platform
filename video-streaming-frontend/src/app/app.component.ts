@@ -1,8 +1,8 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { Component, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -13,13 +13,10 @@ import { Component, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
 })
 export class AppComponent {
   title = 'video-streaming-frontend';
-  private readonly oidcSecurityService = inject(OidcSecurityService);
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  constructor(private oidcSecurityService: OidcSecurityService) {}
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      // Browser-specific code
-    }
     this.oidcSecurityService
       .checkAuth()
       .subscribe((loginResponse: LoginResponse) => {
