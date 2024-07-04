@@ -1,1 +1,9 @@
-<p>video-details works!</p>
+<div fxLayout="row">
+  <div fxFlex="65%" class="video-details">
+    <app-video-player *ngIf="videoAvalability" [videoUrl]="videoUrl"></app-video-player>
+  </div>
+  <div fxFlex="5%"></div>
+  <div fxFlex="30%">
+    Suggestions Bar
+  </div>
+</div>
