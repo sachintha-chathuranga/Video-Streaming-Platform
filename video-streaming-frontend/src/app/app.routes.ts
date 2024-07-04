@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { VideoUploadComponent } from './video-upload/video-upload.component';
 import { VideoFormComponent } from './video-form/video-form.component';
+import { VideoDetailsComponent } from './video-details/video-details.component';
 
 export const routes: Routes = [
   {
@@ -16,7 +17,7 @@ export const routes: Routes = [
     component: VideoFormComponent,
   },
   {
-    path: 'selected-video',
-    component: VideoFormComponent,
+    path: 'video-details/:videoId',
+    component: VideoDetailsComponent,
   },
 ];
