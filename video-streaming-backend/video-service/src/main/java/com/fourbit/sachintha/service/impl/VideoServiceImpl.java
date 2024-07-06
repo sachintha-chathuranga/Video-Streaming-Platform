@@ -23,9 +23,9 @@ public class VideoServiceImpl implements VideoService {
   private final CommonService commonService;
 
   @Override
-  public VideoDto uploadVideo(Long userId, MultipartFile file) {
+  public VideoDto uploadVideo(MultipartFile file) {
     String videoUrl = awsS3Service.uploadFile(file, "Video");
-    User user = commonService.findUserById(userId);
+    User user = commonService.getRequestedUser();
     // String videoUrl = null;
     var video = new Video();
     video.setVideoUrl(videoUrl);
@@ -85,9 +85,9 @@ public class VideoServiceImpl implements VideoService {
   }
 
   @Override
-  public String addLikeToVideo(Long videoId, UserDto userDto) {
+  public String addLikeToVideo(Long videoId) {
     Video video = commonService.findVideoById(videoId);
-    User user = commonService.findUserById(userDto.getId());
+    User user = commonService.getRequestedUser();
     List<User> videoLikes = video.getLikes();
     List<User> videoDisikes = video.getDislikes();
     List<Video> userLikes = user.getLikedVideos();
@@ -114,9 +114,9 @@ public class VideoServiceImpl implements VideoService {
   }
 
   @Override
-  public String addDislikeToVideo(Long videoId, UserDto userDto) {
+  public String addDislikeToVideo(Long videoId) {
     Video video = commonService.findVideoById(videoId);
-    User user = commonService.findUserById(userDto.getId());
+    User user = commonService.getRequestedUser();
     List<User> videoDislikes = video.getDislikes();
     List<User> videoLikes = video.getDislikes();
     List<Video> userDislikes = user.getDislikedVideos();

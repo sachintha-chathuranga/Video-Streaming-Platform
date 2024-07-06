@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 @RequestMapping("/api/users")
@@ -45,7 +44,6 @@ public class UserController {
   }
 
   @PutMapping("/update")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<UserDto> updateUserDetails(@RequestBody UserDto userDto) {
     UserDto savedUser = userService.updateUser(userDto);
     return ResponseEntity.ok(savedUser);
