@@ -61,7 +61,7 @@ public class User {
       Long id,
       String firstName,
       String lastName,
-          String email,
+      String email,
       String pictureUrl,
       String about) {
     this.id = id;
