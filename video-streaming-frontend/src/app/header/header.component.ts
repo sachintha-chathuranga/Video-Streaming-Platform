@@ -28,6 +28,8 @@ export class HeaderComponent implements OnInit {
     this.oidcSecurityService.authorize();
   }
   logout() {
+    console.log("logout")
+    this.isAuthenticated = false;
     this.oidcSecurityService.logoffAndRevokeTokens();
   }
 }

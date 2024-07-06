@@ -1,4 +1,4 @@
-import { PassedInitialConfig } from 'angular-auth-oidc-client';
+import { LogLevel, PassedInitialConfig } from 'angular-auth-oidc-client';
 
 export const authConfig: PassedInitialConfig = {
   config: {
@@ -9,11 +9,10 @@ export const authConfig: PassedInitialConfig = {
     responseType: 'code',
     silentRenew: true,
     useRefreshToken: true,
-    secureRoutes: [
-      'http://localhost:8080/'
-    ],
+    logLevel: LogLevel.Debug,
+    secureRoutes: ['http://localhost:8080/'],
     customParamsAuthRequest: {
-      audience: "http://localhost:8080/"
-    }
+      audience: 'http://localhost:8080/',
+    },
   },
 };
