@@ -23,6 +23,11 @@ export class AppComponent {
         const { isAuthenticated, userData, accessToken, idToken, configId } =
           loginResponse;
         console.log('isAuthenticated:' + isAuthenticated);
+       
+        console.log('Token:', accessToken);
+        // Decode the token to inspect the payload
+        const payload = JSON.parse(atob(accessToken.split('.')[1]));
+        console.log('Token payload:', payload);
       });
   }
 }
