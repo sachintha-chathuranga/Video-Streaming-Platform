@@ -16,8 +16,8 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-// @Configuration
-// @EnableWebSecurity
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
   @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
@@ -40,13 +40,14 @@ public class SecurityConfig {
 
   @Bean
   public JwtDecoder jwtDecoder() {
-    NimbusJwtDecoder jwtDecoder = JwtDecoders.fromIssuerLocation(issuer);
+    NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder)JwtDecoders.fromOidcIssuerLocation(issuer);
 
     OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
-    OAuth2TokenValidator<Jwt> withIssure = JwtValidators.createDefaultWithIssuer(issuer);
-    OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssure, audienceValidator);
+    OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
+    OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
 
     jwtDecoder.setJwtValidator(withAudience);
+
     return jwtDecoder;
   }
 }
