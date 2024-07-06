@@ -28,8 +28,10 @@ public class User {
   private Long id;
   private String firstName;
   private String lastName;
+  private String email;
   private String pictureUrl;
   private String about;
+  private String sub;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<Video> videos = new ArrayList<>();
@@ -59,11 +61,13 @@ public class User {
       Long id,
       String firstName,
       String lastName,
+          String email,
       String pictureUrl,
       String about) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.email = email;
     this.pictureUrl = pictureUrl;
     this.about = about;
   }
