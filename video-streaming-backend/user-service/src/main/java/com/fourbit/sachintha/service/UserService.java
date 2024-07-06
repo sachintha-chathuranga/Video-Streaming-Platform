@@ -9,27 +9,29 @@ import com.fourbit.sachintha.dto.VideoHistoryDto;
 public interface UserService {
   UserDto createUser(UserDto user);
 
-  UserDto updateUser(Long id, UserDto user);
+  UserDto signUp(String token);
 
-  String uploadProfilePicture(MultipartFile file, Long userId);
+  UserDto updateUser( UserDto user);
+
+  String uploadProfilePicture(MultipartFile file);
 
   List<UserDto> getUsers();
 
   UserDto getUserById(Long id);
-
+  
   String deleteUser(Long id);
   
-  String updateVideoHistory(Long userId, VideoHistoryDto videoHistoryDto);
+  String updateVideoHistory(VideoHistoryDto videoHistoryDto);
 
-  String removeHistoryVideo(Long userId, Long videoId);
+  String removeHistoryVideo(Long videoId);
   
-  List<VideoHistoryDto> getVideoHistory(Long userId);
+  List<VideoHistoryDto> getVideoHistory();
 
-  String clearVideoHistory(Long userId);
+  String clearVideoHistory();
 
-  String subscribe(Long userId, Long channelId);
+  String subscribe(Long channelId);
   
-  List<UserDto> getSubscribeChannels(Long userId);
+  List<UserDto> getSubscribeChannels();
   
-  String unsubscribe(Long userId, Long channelId);
+  String unsubscribe(Long channelId);
 }

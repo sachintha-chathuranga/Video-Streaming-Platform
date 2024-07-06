@@ -4,9 +4,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.exception.CustomException;
+import com.fourbit.sachintha.mapper.UserMapper;
 import com.fourbit.sachintha.model.Comment;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
@@ -23,11 +27,17 @@ public class CommonService {
   private final CommentRepository commentRepository;
   private final UserRepository userRepository;
 
+  public User getRequestedUser() {
+    String sub = ((Jwt) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getClaim("sub");
+    User user = userRepository.findBySub(sub);
+    return user;
+  }
+
   public Video findVideoById(Long id) {
     return videoRepository.findById(id)
         .orElseThrow(() -> new CustomException("Video does not exists!", HttpStatus.NOT_FOUND));
   }
-  
+
   public User findUserById(Long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new CustomException("User does not exists!", HttpStatus.NOT_FOUND));
