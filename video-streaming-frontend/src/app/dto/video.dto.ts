@@ -6,12 +6,11 @@ export interface VideoDto {
   description: string;
   title: string;
   userId: number;
-  likes: UserDto[];
-  dislikes: UserDto[];
-  tags: string[];
   videoUrl: string;
   videoStatus: string;
-  views: UserDto[];
   thumbnailUrl: string;
-  comments: CommentDto[];
+  tags: string[];
+  likesCount: number;
+  dislikesCount: number;
+  viewsCount: number;
 }

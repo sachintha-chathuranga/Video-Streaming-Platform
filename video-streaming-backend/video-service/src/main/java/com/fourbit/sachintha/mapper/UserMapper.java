@@ -13,6 +13,7 @@ public class UserMapper {
                                 userDto.getId(),
                                 userDto.getFirstName(),
                                 userDto.getLastName(),
+                                userDto.getEmail(),
                                 userDto.getPictureUrl(),
                                 userDto.getAbout());
                 return user;
@@ -27,6 +28,7 @@ public class UserMapper {
                                 user.getId(),
                                 user.getFirstName(),
                                 user.getLastName(),
+                                user.getEmail(),
                                 user.getPictureUrl(),
                                 user.getAbout(),
                                 subsCount);

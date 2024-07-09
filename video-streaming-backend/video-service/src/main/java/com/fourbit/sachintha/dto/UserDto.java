@@ -11,6 +11,7 @@ public class UserDto {
   private Long id;
   private String firstName;
   private String lastName;
+  private String email;
   private String pictureUrl;
   private String about;
   private Long subscribersCount = Long.valueOf(0);

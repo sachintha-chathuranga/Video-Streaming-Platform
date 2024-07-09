@@ -1,13 +1,24 @@
 package com.fourbit.sachintha.service.impl;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourbit.sachintha.dto.UserDto;
-
+import com.fourbit.sachintha.dto.UserTokenInfoDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
+import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.mapper.UserMapper;
 import com.fourbit.sachintha.mapper.VideoHistoryMapper;
 import com.fourbit.sachintha.model.User;
@@ -27,6 +38,33 @@ public class UserServiceImpl implements UserService {
   private final CommonService commonService;
   private final VideoHistoryRepository videoHistoryRepository;
 
+  @Value("${auth0.userInfoEndpoint}")
+  private String userInfoEndpoint;
+
+  @Override
+  public UserDto signUp(String token) {
+    HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(userInfoEndpoint))
+        .setHeader("Authorization", String.format("Bearer %s", token)).build();
+    HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
+    try {
+      HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+      String body = response.body();
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      UserTokenInfoDto userTokenInfoDto = objectMapper.readValue(body, UserTokenInfoDto.class);
+
+      User user = new User();
+      user.setFirstName(userTokenInfoDto.getGivenName());
+      user.setLastName(userTokenInfoDto.getFamailyName());
+      user.setEmail(userTokenInfoDto.getEmail());
+      user.setSub(userTokenInfoDto.getSub());
+      userRepository.save(user);
+      return UserMapper.mapToUserDto(user);
+    } catch (Exception e) {
+      throw new CustomException(e.getMessage(), HttpStatus.FORBIDDEN);
+    }
+  }
+
   @Override
   public UserDto createUser(UserDto userDto) {
     User user = UserMapper.mapToUser(userDto);
@@ -35,8 +73,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDto updateUser(Long id, UserDto userDto) {
-    User user = commonService.findUserById(id);
+  public UserDto updateUser(UserDto userDto) {
+    User user = commonService.getRequestedUser();
     if (userDto.getFirstName() != null) {
       user.setFirstName(userDto.getFirstName());
     }
@@ -51,12 +89,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public String uploadProfilePicture(MultipartFile file, Long userId) {
-    User user = this.commonService.findUserById(userId);
+  public String uploadProfilePicture(MultipartFile file) {
+    User user = this.commonService.getRequestedUser();
     // String photoUrl = awsS3Service.uploadFile(file, "profile_photoes");
     String photoUrl = "djfskf";
-    // user.setPictureUrl(photoUrl);
-    // userRepository.save(user);
+    user.setPictureUrl(photoUrl);
+    userRepository.save(user);
     return photoUrl;
   }
 
@@ -83,10 +121,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public String updateVideoHistory(Long userId, VideoHistoryDto videoHistoryDto) {
-    VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(userId, videoHistoryDto.getVideoId());
+  public String updateVideoHistory(VideoHistoryDto videoHistoryDto) {
+    User user = commonService.getRequestedUser();
+    VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), videoHistoryDto.getVideoId());
     if (videoHistory == null) {
-      User user = commonService.findUserById(userId);
       Video video = commonService.findVideoById(videoHistoryDto.getVideoId());
 
       // Save to user video history database
@@ -105,14 +143,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public String removeHistoryVideo(Long userId, Long videoId) {
-    videoHistoryRepository.deleteByUserAndVideo(userId, videoId);
+  public String removeHistoryVideo(Long videoId) {
+    User user = commonService.getRequestedUser();
+    videoHistoryRepository.deleteByUserAndVideo(user.getId(), videoId);
     return "Video remove from history";
   }
 
   @Override
-  public List<VideoHistoryDto> getVideoHistory(Long userId) {
-    List<VideoHistory> videoHistories = videoHistoryRepository.findByUserIdOrderByWatchTimeDesc(userId);
+  public List<VideoHistoryDto> getVideoHistory() {
+    User user = commonService.getRequestedUser();
+    List<VideoHistory> videoHistories = videoHistoryRepository.findByUserIdOrderByWatchTimeDesc(user.getId());
     // User user = commonService.findUserById(userId);
     // List<VideoHistory> videoHistories = user.getVideoHistories();
     // Collections.sort(videoHistories, new Comparator<VideoHistory>() {
@@ -125,14 +165,15 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public String clearVideoHistory(Long userId) {
-    videoHistoryRepository.deleteByUserId(userId);
+  public String clearVideoHistory() {
+    User user = commonService.getRequestedUser();
+    videoHistoryRepository.deleteByUserId(user.getId());
     return "Video remove from history";
   }
 
   @Override
-  public String subscribe(Long userId, Long channelId) {
-    User subscriber = commonService.findUserById(userId);
+  public String subscribe(Long channelId) {
+    User subscriber = commonService.getRequestedUser();
     User channel = commonService.findUserById(channelId);
     List<User> channels = subscriber.getSubscriptions();
     if (!channels.contains(channel)) {
@@ -143,16 +184,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserDto> getSubscribeChannels(Long userId) {
-    User user = commonService.findUserById(userId);
+  public List<UserDto> getSubscribeChannels() {
+    User user = commonService.getRequestedUser();
     List<User> channels = user.getSubscriptions();
     List<UserDto> channelDtos = channels.stream().map(channel -> UserMapper.mapToUserDto(channel)).toList();
     return channelDtos;
   }
 
   @Override
-  public String unsubscribe(Long userId, Long channelId) {
-    User subscriber = commonService.findUserById(userId);
+  public String unsubscribe(Long channelId) {
+    User subscriber = commonService.getRequestedUser();
     User channel = commonService.findUserById(channelId);
     List<User> channels = subscriber.getSubscriptions();
     channels.remove(channel);

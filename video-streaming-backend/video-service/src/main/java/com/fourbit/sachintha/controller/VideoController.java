@@ -26,16 +26,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class VideoController {
   private final VideoService videoService;
 
-  @PostMapping("/upload-video/{userId}")
+  @PostMapping("/upload-video")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<VideoDto> uploadVideo(@PathVariable Long userId, @RequestParam("file") MultipartFile file) {
-    VideoDto response = videoService.uploadVideo(userId, file);
+  public ResponseEntity<VideoDto> uploadVideo(@RequestParam("file") MultipartFile file) {
+    VideoDto response = videoService.uploadVideo(file);
     return ResponseEntity.ok(response);
   }
 
   @PostMapping("/upload-thumbnail")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> uploadThumbnail(@RequestParam("file") MultipartFile file, @RequestParam("videoId") Long videoId) {
+  public ResponseEntity<String> uploadThumbnail(@RequestParam("file") MultipartFile file,
+      @RequestParam("videoId") Long videoId) {
     String url = videoService.uploadThumbnail(file, videoId);
     return ResponseEntity.ok(url);
   }
@@ -58,20 +59,20 @@ public class VideoController {
   public ResponseEntity<VideoDto> getVideoById(@PathVariable Long id) {
     return ResponseEntity.ok(videoService.getVideoById(id));
   }
-  
+
   @DeleteMapping("/{id}/delete")
   public ResponseEntity<String> deleteVideo(@PathVariable Long id) {
     return ResponseEntity.ok(videoService.deleteVideo(id));
   }
 
   @PutMapping("/{videoId}/toggle-like")
-  public ResponseEntity<String> toggleLike(@PathVariable Long videoId, @RequestBody UserDto user) {
-      return ResponseEntity.ok(videoService.addLikeToVideo(videoId, user));
+  public ResponseEntity<String> toggleLike(@PathVariable Long videoId) {
+    return ResponseEntity.ok(videoService.addLikeToVideo(videoId));
   }
 
   @PutMapping("/{videoId}/toggle-dislike")
-  public ResponseEntity<String> toggleDilike(@PathVariable Long videoId, @RequestBody UserDto user) {
-      return ResponseEntity.ok(videoService.addDislikeToVideo(videoId, user));
+  public ResponseEntity<String> toggleDilike(@PathVariable Long videoId) {
+    return ResponseEntity.ok(videoService.addDislikeToVideo(videoId));
   }
 
 }

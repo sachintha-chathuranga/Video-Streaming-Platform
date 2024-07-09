@@ -1,8 +1,8 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HeaderComponent } from './header/header.component';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { Component, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { Component } from '@angular/core';
+import { HeaderComponent } from './components/header/header.component';
 
 @Component({
   selector: 'app-root',
@@ -13,19 +13,21 @@ import { Component, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
 })
 export class AppComponent {
   title = 'video-streaming-frontend';
-  private readonly oidcSecurityService = inject(OidcSecurityService);
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  constructor(private oidcSecurityService: OidcSecurityService) {}
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      // Browser-specific code
-    }
     this.oidcSecurityService
       .checkAuth()
       .subscribe((loginResponse: LoginResponse) => {
         const { isAuthenticated, userData, accessToken, idToken, configId } =
           loginResponse;
         console.log('isAuthenticated:' + isAuthenticated);
+
+        console.log('Token:', accessToken);
+        // Decode the token to inspect the payload
+        const payload = JSON.parse(atob(accessToken.split('.')[1]));
+        console.log('Token payload:', payload);
       });
   }
 }
