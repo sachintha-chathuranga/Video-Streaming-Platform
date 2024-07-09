@@ -21,9 +21,9 @@ public class CommentServiceImpl implements CommentService {
   private final CommonService commonService;
 
   @Override
-  public CommentDto addCommentToVideo(Long videoId,Long userId, CommentDto commentDto) {
+  public CommentDto addCommentToVideo(Long videoId, CommentDto commentDto) {
     Video video = commonService.findVideoById(videoId);
-    User user = commonService.findUserById(userId);
+    User user = commonService.getRequestedUser();
     Comment comment = CommentMapper.mapToComment(commentDto);
     comment.setVideo(video);
     comment.setUser(user);

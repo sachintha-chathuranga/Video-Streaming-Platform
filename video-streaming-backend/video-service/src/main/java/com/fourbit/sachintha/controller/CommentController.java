@@ -23,14 +23,14 @@ import lombok.RequiredArgsConstructor;
 public class CommentController {
   private final CommentService commentService;
 
-  @PostMapping("/{userId}")
-  public ResponseEntity<CommentDto> addComment(@PathVariable Long videoId,@PathVariable Long userId, @RequestBody CommentDto commentDto) {
-    return ResponseEntity.ok(commentService.addCommentToVideo(videoId, userId, commentDto));
+  @PostMapping
+  public ResponseEntity<CommentDto> addComment(@PathVariable Long videoId, @RequestBody CommentDto commentDto) {
+    return ResponseEntity.ok(commentService.addCommentToVideo(videoId, commentDto));
   }
 
   @PutMapping("/{commentId}")
   public ResponseEntity<CommentDto> updateComment(@PathVariable Long commentId, @RequestBody CommentDto commentDto) {
-    return ResponseEntity.ok(commentService.updateComment( commentId, commentDto));
+    return ResponseEntity.ok(commentService.updateComment(commentId, commentDto));
   }
 
   @GetMapping
@@ -49,16 +49,19 @@ public class CommentController {
     commentService.addLikeToComment(commentId);
     return ResponseEntity.ok("like added");
   }
+
   @PutMapping("/{commentId}/remove-like")
   public ResponseEntity<String> removeLike(@PathVariable Long commentId) {
     commentService.removeLikeFromComment(commentId);
     return ResponseEntity.ok("like removed");
   }
+
   @PutMapping("/{commentId}/add-dislike")
   public ResponseEntity<String> addDislike(@PathVariable Long commentId) {
     commentService.addDisLikeToComment(commentId);
     return ResponseEntity.ok("dilike added");
   }
+
   @PutMapping("/{commentId}/remove-dislike")
   public ResponseEntity<String> removeDislike(@PathVariable Long commentId) {
     commentService.removeDisLikeFromComment(commentId);
