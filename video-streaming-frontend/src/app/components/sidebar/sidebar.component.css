@@ -1,0 +1,17 @@
+mat-list {
+  padding: 0 10px;
+}
+
+mat-list-item {
+  border-radius: 10px !important;
+}
+mat-list-item:hover {
+  background-color: rgba(231, 231, 231, 0.747);
+  cursor: pointer;
+}
+
+.active {
+  background-color: rgba(231, 231, 231, 0.747);
+  font-weight: bold !important;
+}
+
