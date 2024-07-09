@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HeaderComponent } from './header/header.component';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
 import { Component } from '@angular/core';
+import { HeaderComponent } from './components/header/header.component';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +23,7 @@ export class AppComponent {
         const { isAuthenticated, userData, accessToken, idToken, configId } =
           loginResponse;
         console.log('isAuthenticated:' + isAuthenticated);
-       
+
         console.log('Token:', accessToken);
         // Decode the token to inspect the payload
         const payload = JSON.parse(atob(accessToken.split('.')[1]));
