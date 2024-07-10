@@ -1,0 +1,59 @@
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+}
+.dialog-close-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+}
+.dialog-close-btn:hover {
+  cursor: pointer;
+  background-color: rgba(231, 231, 231, 0.747);
+}
+
+.ngx-file-drop {
+  border: 1px solid rgba(12, 94, 218, 0.322);
+  height: 100%;
+  max-height: 425px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  flex-direction: row;
+}
+.ngx-file-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.image-container{
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(111, 161, 226);
+  margin-bottom: 30px;
+}
+.mat-icon-large {
+  font-size: 70px; /* Adjust size as needed */
+  width: 70px;
+  height: 70px;
+}
+/* .progress-bar-container {
+  width: 100%;
+  background-color: #e0e0e0;
+  margin-top: 20px;
+  height: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #3498db;
+  width: 0;
+} */
