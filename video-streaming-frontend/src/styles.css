@@ -8,6 +8,11 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-*{
+* {
   margin: 0;
+}
+
+.dialogbox-title {
+  font-weight: 500 !important;
+  font-size: 21px !important;
 }
