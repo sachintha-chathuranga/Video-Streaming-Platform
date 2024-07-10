@@ -1,35 +1,62 @@
-<div class="center">
+<div class="dialog-header">
+  <h3 mat-dialog-title class="dialogbox-title">Upload Videos</h3>
+  <mat-dialog-actions>
+    <span class="dialog-close-btn" mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </span>
+  </mat-dialog-actions>
+</div>
+<mat-dialog-content>
   <ngx-file-drop
-    dropZoneLabel="Drop files here"
     (onFileDrop)="dropped($event)"
     (onFileOver)="fileOver($event)"
     (onFileLeave)="fileLeave($event)"
+    dropZoneClassName="ngx-file-drop"
+    contentClassName="ngx-file-content"
+    class="ngx-file-drop"
+    accept=".mp4,.mpeg4,.mov,.avi"
+    [disabled]="isLoading"
+    [multiple]="false"
   >
     <ng-template
       ngx-file-drop-content-tmp
       let-openFileSelector="openFileSelector"
     >
-      Drag and Drop Videos in Here!
-      <button type="button" (click)="openFileSelector()">Browse Files</button>
+      <div class="ngx-file-content">
+        <!-- <div class="progress-bar-container">
+          <div class="progress-bar" [@uploadAnimation]="animationState"></div>
+        </div> -->
+        <div class="image-container">
+          <mat-spinner
+            *ngIf="isLoading; else icon"
+            mode="indeterminate"
+            [diameter]="50"
+          ></mat-spinner>
+          <ng-template #icon>
+            <mat-icon class="mat-icon-large">upload</mat-icon>
+          </ng-template>
+        </div>
+        <h4>Drag and drop video files to upload</h4>
+        <p>Your videos will be private until you publish them.</p>
+        <button
+          mat-raised-button
+          (click)="openFileSelector()"
+          style="margin-top: 20px"
+          [disabled]="isLoading"
+        >
+          Select Files
+        </button>
+      </div>
     </ng-template>
   </ngx-file-drop>
-  <div class="upload-table">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-        </tr>
-      </thead>
-      <tbody class="upload-name-style">
-        <tr *ngFor="let item of files; let i = index">
-          <td>
-            <strong>{{ item.relativePath }}</strong>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <button mat-raised-button (click)="uploadVideo()" *ngIf="isFileSelect">
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button
+    mat-button
+    (click)="uploadVideo()"
+    *ngIf="isFileSelect"
+    [disabled]="isLoading"
+  >
     Upload
   </button>
-</div>
+</mat-dialog-actions>

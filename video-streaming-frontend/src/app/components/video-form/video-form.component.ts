@@ -21,6 +21,7 @@ import { CommonModule } from '@angular/common';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { VideoDto } from '../../dto/video.dto';
 import { VideoService } from '../../services/video.service';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-video-form',
@@ -37,6 +38,7 @@ import { VideoService } from '../../services/video.service';
     MatButtonModule,
     MatSnackBarModule,
     VideoPlayerComponent,
+    MatDialogModule,
   ],
   templateUrl: './video-form.component.html',
   styleUrl: './video-form.component.css',
@@ -59,7 +61,7 @@ export class VideoFormComponent {
   constructor(
     private activatedRoute: ActivatedRoute,
     private videoService: VideoService,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {
     this.videoDetails = new FormGroup({
       title: this.title,
