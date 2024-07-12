@@ -1,37 +1,35 @@
 import { Component, inject } from '@angular/core';
 import {
   MatDialog,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
   MatDialogModule,
-  MatDialogTitle,
 } from '@angular/material/dialog';
-import { VideoUploadComponent } from '../../components/video-upload/video-upload.component';
 import { MatButtonModule } from '@angular/material/button';
+import { VideoFormComponent } from '../../components/video-form/video-form.component';
 
 @Component({
   selector: 'app-content',
   standalone: true,
-  imports: [
-    MatDialogModule,
-    MatButtonModule
-  ],
+  imports: [MatDialogModule, MatButtonModule],
   templateUrl: './content.component.html',
   styleUrl: './content.component.css',
 })
 export class ContentComponent {
   readonly dialog = inject(MatDialog);
   constructor() {
-    this.openDialog();
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(VideoUploadComponent, {
+    const dialogRef = this.dialog.open(VideoFormComponent, {
       width: '80%',
       maxWidth: '900px',
       height: '590px',
       disableClose: true,
+      data: {
+        videoId: '1',
+        videoUrl: '',
+        thumbnailUrl: '',
+        title: "Video Title"
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

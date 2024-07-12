@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { FeatureComponent } from '../feature/feature.component';
 import { SideBarItem } from '../../dto/sidebarItem.dto';
@@ -33,15 +33,26 @@ import { SideBarItem } from '../../dto/sidebarItem.dto';
 export class ProfileComponent {
   items: SideBarItem[] = itemList;
 
-  constructor(private router: Router) {
-    this.router.navigateByUrl('/profile/content');
+  constructor(private router: Router, private location: Location) {
   }
 
+  ngOnInit() {
+    const path = this.location.path();
+    this.items.map(i => {
+      if (i.link == path) {
+        i.active = true;
+     
+      } else {
+        i.active = false;
+      }
+    })
+  }
 }
+
 const itemList = [
   {
     icon: 'home',
-    text: 'Personal Informaion',
+    text: 'Profile',
     link: '/profile/personal-info',
     active: true,
   },

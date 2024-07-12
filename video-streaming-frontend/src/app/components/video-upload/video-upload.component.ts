@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   FileSystemFileEntry,
@@ -9,7 +9,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { VideoService } from '../../services/video.service';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -19,6 +19,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
+import { VideoFormComponent } from '../video-form/video-form.component';
 @Component({
   selector: 'app-video-upload',
   standalone: true,
@@ -33,31 +34,14 @@ import {
   ],
   templateUrl: './video-upload.component.html',
   styleUrl: './video-upload.component.css',
-  animations: [
-    trigger('uploadAnimation', [
-      state(
-        'start',
-        style({
-          width: '0%',
-        })
-      ),
-      state(
-        'end',
-        style({
-          width: '100%',
-        })
-      ),
-      transition('start => end', [animate('2s')]),
-    ]),
-  ],
 })
 export class VideoUploadComponent {
   public files: NgxFileDropEntry[] = [];
   isFileSelect: boolean = true;
   fileEntry: FileSystemFileEntry | undefined;
-  // animationState = 'start';
   isLoading = false;
   uploadProgress = 0;
+  readonly dialog = inject(MatDialog);
 
   constructor(private videoService: VideoService, private router: Router) {}
 
@@ -88,25 +72,38 @@ export class VideoUploadComponent {
   }
 
   public uploadVideo() {
-    // this.animationState = 'end';
     // if (this.fileEntry) {
     //   console.log('Start File upload...');
     // this.fileEntry.file((file: File) => {
     //   this.videoService.uploadVideo(file).subscribe((data) => {
-    //     this.router.navigateByUrl("/update-video-details/" + data.videoId);
+
     //   });
     // });
     // }
-    // this.router.navigateByUrl('/update-video-details/' + 102);
     this.isLoading = true;
-    this.uploadProgress = 0;
-    const interval = setInterval(() => {
-      if (this.uploadProgress < 100) {
-        this.uploadProgress += 10;
-      } else {
-        clearInterval(interval);
-        this.isLoading = false;
-      }
-    }, 200);
+    setTimeout(() => {
+      this.isLoading = false;
+      this.dialog.closeAll();
+      this.openDialog(1);
+    }, 2000);
+  }
+
+  openDialog(videoId: number) {
+    const dialogRef = this.dialog.open(VideoFormComponent, {
+      width: '80%',
+      maxWidth: '900px',
+      height: '590px',
+      disableClose: true,
+      data: {
+        videoId: videoId,
+        videoUrl: '',
+        thumbnailUrl: '',
+        title: 'Video Title',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }
