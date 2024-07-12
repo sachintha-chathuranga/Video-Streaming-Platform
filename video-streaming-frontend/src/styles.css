@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-
+:root{
+  --hover-bg-color: rgba(231, 231, 231, 0.747);
+  --theme-shadow-color: rgb(111, 161, 226);
+}
 html,
 body {
   height: 100%;
@@ -15,4 +18,21 @@ body {
 .dialogbox-title {
   font-weight: 500 !important;
   font-size: 21px !important;
+}
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.dialog-close-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+}
+.dialog-close-btn:hover {
+  cursor: pointer;
+  background-color: var(--hover-bg-color);
 }

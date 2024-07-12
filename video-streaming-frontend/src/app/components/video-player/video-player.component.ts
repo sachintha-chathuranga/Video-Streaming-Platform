@@ -7,6 +7,8 @@ import {
 } from '@videogular/ngx-videogular/core';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 
+
+
 @Component({
   selector: 'app-video-player',
   standalone: true,
@@ -26,10 +28,7 @@ export class VideoPlayerComponent {
 
   constructor() {}
 
-  ngOnInit() {
-    console.log('in child:' + this.videoUrl);
-  }
   ngOnUpdate() {
-    console.log('in child:' + this.videoUrl);
+    console.log('in video player on update:' + this.videoUrl);
   }
 }
