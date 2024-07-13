@@ -1,0 +1,29 @@
+<div fxLayout="row wrap" fxLayoutGap="20px grid">
+  <div fxFlex="100%" fxFlex.gt-sm="65%">
+    <h2 class="mat-firstName">User Details</h2>
+    <form [formGroup]="userDetails" #form>
+      <mat-form-field
+        appearance="outline"
+        hideRequiredMarker="true"
+        floatLable="auto"
+      >
+        <mat-label>Title</mat-label>
+        <input
+          matInput
+          placeholder="Add a firstName that describes your video"
+          [formControl]="firstName"
+          (blur)="updateErrorMessage('firstName')"
+          required
+        />
+        @if (firstName.invalid){
+        <mat-error>{{ errorMessage.firstName }}</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </div>
+  <div fxFlex="100%" fxFlex.gt-sm="35%">
+    <!-- <div class="video-container">
+      <app-video-player [videoUrl]="videoUrl"></app-video-player>
+    </div> -->
+  </div>
+</div>

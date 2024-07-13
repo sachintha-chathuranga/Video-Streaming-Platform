@@ -10,6 +10,7 @@
       mat-icon-button
       class="example-icon favorite-icon"
       aria-label="Example icon-button with heart icon"
+      (click)="gotoVideoUpload()"
     >
       <mat-icon>video_call</mat-icon>
     </button>
@@ -18,7 +19,7 @@
       class="example-icon favorite-icon"
       aria-label="Example icon-button with heart icon"
     >
-      <mat-icon matBadge="15">notifications</mat-icon>
+      <mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
     </button>
     <button
       *ngIf="isAuthenticated; else noAuth"

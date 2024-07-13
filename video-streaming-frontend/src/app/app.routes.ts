@@ -8,6 +8,11 @@ import { VideoUploadComponent } from './components/video-upload/video-upload.com
 import { VideoFormComponent } from './components/video-form/video-form.component';
 import { VideoDetailsComponent } from './components/video-details/video-details.component';
 import { CallbackComponent } from './pages/callback/callback.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { ContentComponent } from './pages/content/content.component';
+import { PersonalDataComponent } from './pages/personal-data/personal-data.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { AnalyticComponent } from './pages/analytic/analytic.component';
 
 export const routes: Routes = [
   {
@@ -33,12 +38,27 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'upload-video',
-    component: VideoUploadComponent,
-  },
-  {
-    path: 'update-video-details/:videoId',
-    component: VideoFormComponent,
+    path: 'profile',
+    component: ProfileComponent,
+
+    children: [
+      {
+        path: 'personal-info',
+        component: PersonalDataComponent,
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+      },
+      {
+        path: 'content',
+        component: ContentComponent,
+      },
+      {
+        path: 'analytics',
+        component: AnalyticComponent,
+      },
+    ],
   },
   {
     path: 'video-details/:videoId',
@@ -47,5 +67,5 @@ export const routes: Routes = [
   {
     path: 'callback',
     component: CallbackComponent,
-  }
+  },
 ];
