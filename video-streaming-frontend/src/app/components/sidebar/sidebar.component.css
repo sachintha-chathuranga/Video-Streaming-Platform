@@ -1,14 +1,14 @@
-.sidenav-container {
-  height: 100vh;
-}
+
 mat-sidenav {
   width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 64px;
 }
-mat-sidenav-content{
-  overflow: hidden;
-  padding-left: 33px;
+mat-sidenav-content {
+  /* overflow: hidden; */
+  padding: 0 33px;
 }
-
 
 mat-list {
   padding: 0 10px;
@@ -26,4 +26,3 @@ mat-list-item:hover {
   background-color: rgba(231, 231, 231, 0.747);
   font-weight: bold !important;
 }
-
