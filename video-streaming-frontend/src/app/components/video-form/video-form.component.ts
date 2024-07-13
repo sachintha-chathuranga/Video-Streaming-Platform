@@ -2,13 +2,21 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
+  ChangeDetectionStrategy,
   Component,
+  Inject,
+  signal,
 } from '@angular/core';
-
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MatChipEditedEvent,
   MatChipInputEvent,
@@ -21,6 +29,9 @@ import { CommonModule } from '@angular/common';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { VideoDto } from '../../dto/video.dto';
 import { VideoService } from '../../services/video.service';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { merge } from 'rxjs';
 
 @Component({
   selector: 'app-video-form',
@@ -28,6 +39,7 @@ import { VideoService } from '../../services/video.service';
   imports: [
     CommonModule,
     FlexLayoutModule,
+    VideoPlayerComponent,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -36,30 +48,39 @@ import { VideoService } from '../../services/video.service';
     ReactiveFormsModule,
     MatButtonModule,
     MatSnackBarModule,
-    VideoPlayerComponent,
+    MatDialogModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './video-form.component.html',
   styleUrl: './video-form.component.css',
 })
 export class VideoFormComponent {
   videoDetails: FormGroup;
-  title: FormControl = new FormControl('');
-  description: FormControl = new FormControl('');
+  title: FormControl = new FormControl('', [Validators.required]);
+  description: FormControl = new FormControl('', [Validators.required]);
   videoStatus: FormControl = new FormControl('');
+  errorMessage = {
+    title: '',
+    description: '',
+  };
   selectedFile!: File;
   selectedFileName: string = '';
   videoId = '';
   readonly addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   tags: string[] = [];
-  isFileSelected: boolean = false;
+  isFileSelect: boolean = false;
   videoUrl!: string;
   thumbnailUrl!: string;
+  isLoading = false;
+  uploadProgress = 0;
+  imageUrl!: string | ArrayBuffer | null | undefined;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private videoService: VideoService,
     private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.videoDetails = new FormGroup({
       title: this.title,
@@ -67,23 +88,45 @@ export class VideoFormComponent {
       videoStatus: this.videoStatus,
     });
   }
+  updateErrorMessage(controlName: string): void {
+    const control = this.videoDetails.get(controlName);
+    if (control?.hasError('required')) {
+      this.errorMessage = {
+        ...this.errorMessage,
+        [controlName]: `You must enter a ${controlName}`,
+      };
+    } else {
+      this.errorMessage = { title: '', description: '' };
+    }
+  }
   ngOnInit(): void {
-    this.getVideoDetails();
+    this.isLoading = true;
+    setTimeout(() => {
+      this.isLoading = false;
+      this.getVideoDetails();
+    }, 2000);
   }
 
   getVideoDetails(): void {
-    this.videoId = this.activatedRoute.snapshot.params['videoId'];
-    this.videoService.getVideoById(this.videoId).subscribe((data: VideoDto) => {
-      this.videoUrl = data.videoUrl;
-      this.thumbnailUrl = data.thumbnailUrl;
-    });
+    // this.videoId = this.activatedRoute.snapshot.params['videoId'];
+    // this.videoService.getVideoById(this.videoId).subscribe((data: VideoDto) => {
+    //   this.videoUrl = data.videoUrl;
+    //   this.thumbnailUrl = data.thumbnailUrl;
+    // });
+    this.videoId = this.data.videoId;
+    this.videoUrl = this.data.videoUrl;
+    this.thumbnailUrl = this.data.thumbnailUrl;
+    this.videoDetails.setValue({ title: this.data.title, description: this.data.title, videoStatus: ''});
   }
 
   onFileChange($event: Event) {
     // @ts-ignore
     this.selectedFile = $event.target?.files[0];
     this.selectedFileName = this.selectedFile.name;
-    this.isFileSelected = true;
+    this.isFileSelect = true;
+    const reader = new FileReader();
+    reader.onload = (e) => (this.imageUrl = e.target?.result);
+    reader.readAsDataURL(this.selectedFile);
   }
   uploadThumbnail() {
     console.log(this.videoId);
@@ -96,22 +139,38 @@ export class VideoFormComponent {
   }
   saveVideo() {
     // Call the video service to make a http call to our backend
-    const videoMetaData: VideoDto = {
-      id: Number(this.videoId),
-      title: this.videoDetails.get('title')?.value,
-      userId: 1,
-      description: this.videoDetails.get('description')?.value,
-      tags: this.tags,
-      videoStatus: this.videoDetails.get('videoStatus')?.value,
-      videoUrl: this.videoUrl,
-      thumbnailUrl: this.thumbnailUrl,
-      likesCount: 0,
-      dislikesCount: 0,
-      viewsCount: 0,
-    };
-    this.videoService.saveVideo(videoMetaData).subscribe((data) => {
-      this.snackBar.open('Video Metadata Updated successfully', 'OK');
-    });
+
+    // const videoMetaData: VideoDto = {
+    //   id: Number(this.videoId),
+    //   title: this.videoDetails.get('title')?.value,
+    //   userId: 1,
+    //   description: this.videoDetails.get('description')?.value,
+    //   tags: this.tags,
+    //   videoStatus: this.videoDetails.get('videoStatus')?.value,
+    //   videoUrl: this.videoUrl,
+    //   thumbnailUrl: this.thumbnailUrl,
+    //   likesCount: 0,
+    //   dislikesCount: 0,
+    //   viewsCount: 0,
+    // };
+    // this.videoService.saveVideo(videoMetaData).subscribe((data) => {
+    //   this.snackBar.open('Video Metadata Updated successfully', 'OK');
+    // });
+    console.log(this.videoDetails)
+    if (this.videoDetails.status =='VALID') {
+      this.isLoading = true;
+      this.uploadProgress = 0;
+      const interval = setInterval(() => {
+        if (this.uploadProgress < 100) {
+          this.uploadProgress += 10;
+        } else {
+          clearInterval(interval);
+          this.isLoading = false;
+        }
+      }, 200);
+    } else {
+      this.markAllAsTouched();
+    }
   }
 
   add(event: MatChipInputEvent): void {
@@ -148,5 +207,16 @@ export class VideoFormComponent {
     if (index >= 0) {
       this.tags[index] = value;
     }
+  }
+  autoGrow(event: Event): void {
+    const textArea = event.target as HTMLTextAreaElement;
+    textArea.style.height = 'auto';
+    textArea.style.height = textArea.scrollHeight + 'px';
+  }
+  private markAllAsTouched() {
+    Object.keys(this.videoDetails.controls).forEach((field) => {
+      const control = this.videoDetails.get(field);
+      control?.markAsTouched({ onlySelf: true });
+    });
   }
 }

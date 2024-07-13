@@ -1,11 +1,50 @@
-:host {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.example-chip-list {
-  width: 100%;
-}
 mat-form-field {
-  margin-right: 12px;
+  width: 100%;
+  margin-bottom: 6px;
 }
+.mat-title {
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+textarea {
+  resize: none;
+  overflow: hidden; /* Hide the scrollbar */
+  height: auto;
+}
+.thumbail-form-field{
+  display: flex;
+  gap: 25px;
+}
+.image-container {
+  width: 210px;
+  height: 120px;
+  border: 2px dotted var(--theme-shadow-color);;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  margin-top: 10px;
+  color: var(--theme-shadow-color);
+}
+.action-container{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+.mat-icon-medium {
+  font-size: 50px; 
+  width: 50px;
+  height: 50px;
+}
+.video-container{
+  margin-top: 40px;
+  position: sticky;
+  top: 0;
+}
+

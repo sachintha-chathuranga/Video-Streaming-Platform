@@ -1,0 +1,16 @@
+:host{
+display: inline-block;
+}
+vg-player {
+    width: 100%;
+    height: auto;
+}
+
+video {
+    width: 100%;
+    height: auto;
+}
+
+vg-controls{
+   justify-content: space-between;
+}
