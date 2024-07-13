@@ -8,6 +8,9 @@ import { VideoDto } from '../dto/video.dto';
   providedIn: 'root',
 })
 export class UserService {
+  getUserDetails(videoId: string) {
+    console.log("get user")
+  }
   unSubscribeUser(userId: void): Observable<VideoDto> {
     throw new Error('Method not implemented.');
   }

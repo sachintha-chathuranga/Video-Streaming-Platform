@@ -2,6 +2,8 @@
 :root{
   --hover-bg-color: rgba(231, 231, 231, 0.747);
   --theme-shadow-color: rgb(111, 161, 226);
+  --link-color:rgb(0, 140, 255);
+  --theme-font-shadow: rgb(110, 110, 110);
 }
 html,
 body {
@@ -14,7 +16,10 @@ body {
 * {
   margin: 0;
 }
-
+a{
+  text-decoration: none;
+  color: var(--link-color)
+}
 .dialogbox-title {
   font-weight: 500 !important;
   font-size: 21px !important;
