@@ -33,4 +33,7 @@ justify-content: space-around;
 }
 .mat-tab-group {
   margin-bottom: 48px;
+  overflow-y: unset;
+  overflow-x: unset;
 }
+

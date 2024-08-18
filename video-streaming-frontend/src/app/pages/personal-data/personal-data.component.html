@@ -12,20 +12,26 @@
         class="profile-image"
       ></div>
     </div>
-    <div class="header-details" >
+    <div class="header-details">
       <h1>Title of the channel</h1>
       <p>&#64;numofcode • 3.69K subscribers • 26 videos</p>
       <p>Welcome to numofcode ....</p>
       <a href="http://">instagram.com/numofcodevt</a>
       <div>
-         <button mat-raised-button> Subscribe</button>
+        <button mat-raised-button>Subscribe</button>
       </div>
     </div>
   </div>
 </header>
-<mat-tab-group animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
+<mat-tab-group
+  animationDuration="0ms"
+  mat-stretch-tabs="false"
+  mat-align-tabs="start"
+>
   <mat-tab label="Basic Info">
-   <app-user-form></app-user-form>
+    <app-user-form></app-user-form>
   </mat-tab>
-  <mat-tab label="Branding">Content 2</mat-tab>
+  <mat-tab label="Branding">
+    <app-branding></app-branding>
+  </mat-tab>
 </mat-tab-group>

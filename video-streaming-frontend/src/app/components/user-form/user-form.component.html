@@ -1,29 +1,80 @@
-<div fxLayout="row wrap" fxLayoutGap="20px grid">
-  <div fxFlex="100%" fxFlex.gt-sm="65%">
-    <h2 class="mat-firstName">User Details</h2>
-    <form [formGroup]="userDetails" #form>
-      <mat-form-field
-        appearance="outline"
-        hideRequiredMarker="true"
-        floatLable="auto"
-      >
-        <mat-label>Title</mat-label>
-        <input
-          matInput
-          placeholder="Add a firstName that describes your video"
-          [formControl]="firstName"
-          (blur)="updateErrorMessage('firstName')"
-          required
-        />
-        @if (firstName.invalid){
-        <mat-error>{{ errorMessage.firstName }}</mat-error>
-        }
-      </mat-form-field>
-    </form>
-  </div>
-  <div fxFlex="100%" fxFlex.gt-sm="35%">
-    <!-- <div class="video-container">
-      <app-video-player [videoUrl]="videoUrl"></app-video-player>
-    </div> -->
-  </div>
+<div class="user-form-container">
+  <form [formGroup]="userDetails" #form>
+    <div class="fxLayout" fxLayout="row wrap" fxLayoutGap="20px grid">
+      <div fxFlex="100%" fxFlex.gt-sm="40%">
+        <mat-form-field
+          appearance="outline"
+          hideRequiredMarker="true"
+          floatLable="auto"
+        >
+          <mat-label>First Name</mat-label>
+          <input
+            matInput
+            placeholder="Add a firstName that describes your video"
+            [formControl]="firstName"
+            (blur)="updateErrorMessage('firstName')"
+            required
+          />
+          @if (firstName.invalid){
+          <mat-error>{{ errorMessage.firstName }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div fxFlex="100%" fxFlex.gt-sm="40%">
+        <mat-form-field
+          appearance="outline"
+          hideRequiredMarker="true"
+          floatLable="auto"
+        >
+          <mat-label>Last Name</mat-label>
+          <input
+            matInput
+            placeholder="Add a firstName that describes your video"
+            [formControl]="lastName"
+            (blur)="updateErrorMessage('lastName')"
+            required
+          />
+          @if (lastName.invalid){
+          <mat-error>{{ errorMessage.lastName }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div fxFlex="100%" fxFlex.gt-sm="60%">
+        <mat-form-field
+          appearance="outline"
+          hideRequiredMarker="true"
+          floatLable="auto"
+        >
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            placeholder="Add a email"
+            [formControl]="email"
+            (blur)="updateErrorMessage('email')"
+            required
+          />
+          @if (email.invalid){
+          <mat-error>{{ errorMessage.email }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div fxFlex="100%" fxFlex.gt-sm="60%">
+        <mat-form-field
+          appearance="outline"
+          hideRequiredMarker="true"
+          floatLable="auto"
+        >
+          <mat-label>About</mat-label>
+          <textarea
+            matInput
+            [formControl]="about"
+            rows="5"
+            placeholder="Tell viewers about you"
+            (input)="autoGrow($event)"
+          >
+          </textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
 </div>
