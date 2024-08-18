@@ -1,1 +1,67 @@
-<p>dashboard works!</p>
+<h2 class="main-title">Channel dashboard</h2>
+<div class="fxLayout" fxLayout="row wrap" fxLayoutGap="20px grid">
+  <div fxFlex="33.3%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+    <div class="dashboard-card">
+      <h2>Latest video performance</h2>
+      <div class="img-container">
+        <img
+          src="https://ap-south-app-bucket.s3.ap-south-1.amazonaws.com/Thumbnail/9fab9749-c798-433a-93e0-d9430d03b49d.png"
+          alt=""
+        />
+        <p>
+          Linux Commands - Episode 03 (User and Group management) | FourBitLK
+        </p>
+      </div>
+      <p class="special-text">First 138 days 4 hours:</p>
+      <div class="table-row">
+        <p>Views</p>
+        <p>12</p>
+      </div>
+      <div class="table-row">
+        <p>Impressions click-through rate</p>
+        <p>7.3%</p>
+      </div>
+      <div class="table-row">
+        <p>Average view duration</p>
+        <p>3:49</p>
+      </div>
+      <button mat-button>Go to video analytics</button>
+      <button mat-button>See comments(3)</button>
+    </div>
+  </div>
+  <div fxFlex="33.3%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+    <div class="dashboard-card">
+      <h2>Channel analytics</h2>
+      <p>Current subscribers</p>
+      <h1>3</h1>
+      <hr />
+      <h3>Summary</h3>
+      <p class="special-text">Last 28 days</p>
+      <div class="table-row">
+        <p>Views</p>
+        <p>0 —</p>
+      </div>
+      <div class="table-row">
+        <p>Watch time (hours)</p>
+        <p>0.0 —</p>
+      </div>
+      <hr />
+      <h3>Top videos</h3>
+      <p class="special-text">Last 48 hours · Views</p>
+      <button mat-button>Go to channel analytics</button>
+    </div>
+  </div>
+  <div fxFlex="33.3%" fxFlex.lt-md="50%" fxFlex.lt-sm="100%">
+    <div class="dashboard-card">
+      <h2>News</h2>
+      <img src="roundUp.png" alt="" />
+      <h3>Your Monthly Roundup is here!</h3>
+      <p class="special-text">
+        Watch this month's Creator Roundup for all your updates. Get the latest
+        on everything you need to know as a Creator.
+      </p>
+      <button mat-button>Check it out</button>
+
+    </div>
+  </div>
+</div>

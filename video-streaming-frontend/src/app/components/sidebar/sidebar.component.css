@@ -8,6 +8,7 @@ mat-sidenav {
 mat-sidenav-content {
   /* overflow: hidden; */
   padding: 0 33px;
+  height: calc(100vh - 64px);
 }
 
 mat-list {

@@ -1,0 +1,43 @@
+.branding-container {
+  margin: 40px 10px 10px 10px;
+}
+.example-card {
+   border: none;
+   margin-bottom: 20px;
+}
+mat-card-header{
+   padding: 0;
+}
+mat-card-subtitle {
+  font-size: 15px;
+  font-weight: 400;
+}
+mat-card-content {
+  font-size: 15px;
+  font-weight: 400;
+}
+mat-card-title-group {
+  margin-top: 8px;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.img-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  min-width: 290px;
+  height: 160px;
+  border-radius: 8px;
+}
+.img-container img {
+  border-radius: 50%;
+  width: 140px;
+  height: 140px;
+}
+mat-card-content {
+  width: 330px;
+}
