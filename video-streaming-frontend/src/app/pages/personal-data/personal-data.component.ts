@@ -4,10 +4,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UserFormComponent } from '../../components/user-form/user-form.component';
+import { BrandingComponent } from '../../components/branding/branding.component';
 @Component({
   selector: 'app-personal-data',
   standalone: true,
-  imports: [CommonModule,UserFormComponent, MatButtonModule, MatTabsModule],
+  imports: [CommonModule,UserFormComponent, BrandingComponent, MatButtonModule, MatTabsModule],
   templateUrl: './personal-data.component.html',
   styleUrl: './personal-data.component.css',
 })
