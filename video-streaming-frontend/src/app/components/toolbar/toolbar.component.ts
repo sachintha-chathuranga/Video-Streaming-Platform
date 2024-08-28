@@ -1,15 +1,16 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { CommonModule } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router } from '@angular/router';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { VideoUploadComponent } from '../video-upload/video-upload.component';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+
 @Component({
-  selector: 'app-header',
+  selector: 'app-toolbar',
   standalone: true,
   imports: [
     CommonModule,
@@ -19,13 +20,22 @@ import { ActivatedRoute, Route, Router } from '@angular/router';
     MatBadgeModule,
     MatDialogModule,
   ],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.css',
+  templateUrl: './toolbar.component.html',
+  styleUrl: './toolbar.component.css',
 })
-export class HeaderComponent implements OnInit {
+export class ToolbarComponent {
+  @Input()
+  isMobile!: boolean;
+
+  @Input()
+  snav!: any;
+  
   isAuthenticated: boolean = false;
   readonly dialog = inject(MatDialog);
-  constructor(private oidcSecurityService: OidcSecurityService, private router: Router) { }
+  constructor(
+    private oidcSecurityService: OidcSecurityService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.oidcSecurityService.isAuthenticated$.subscribe(
@@ -45,7 +55,7 @@ export class HeaderComponent implements OnInit {
   gotoVideoUpload() {
     this.router.navigateByUrl('/profile/content');
     this.openDialog();
-  };
+  }
   openDialog() {
     const dialogRef = this.dialog.open(VideoUploadComponent, {
       width: '80%',

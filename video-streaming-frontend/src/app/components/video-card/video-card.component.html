@@ -2,8 +2,12 @@
   <img mat-card-image [src]="video.thumbnailUrl" alt="Thumbnail" />
   <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
-    <mat-card-title>{{ video.title }}</mat-card-title>
-    <mat-card-subtitle >Programming Techie</mat-card-subtitle>
-    <mat-card-subtitle >1M views</mat-card-subtitle>
+    <mat-card-title
+      ><h3 class="text-overflow-2">
+        {{ video.title }}
+      </h3>
+    </mat-card-title>
+    <mat-card-subtitle>Programming Techie</mat-card-subtitle>
+    <mat-card-subtitle>1M views</mat-card-subtitle>
   </mat-card-header>
 </mat-card>
