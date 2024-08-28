@@ -51,20 +51,25 @@ export class ProfileComponent {
 
 const itemList = [
   {
-    icon: 'home',
+    icon: 'account_circle',
     text: 'Profile',
     link: '/profile/personal-info',
     active: true,
   },
   {
-    icon: 'subscriptions',
+    icon: 'dashboard',
     text: 'Dashboard',
     link: '/profile/dashboard',
     active: false,
   },
-  { icon: 'history', text: 'Content', link: '/profile/content', active: false },
   {
-    icon: 'thumb_up',
+    icon: 'video_library',
+    text: 'Content',
+    link: '/profile/content',
+    active: false,
+  },
+  {
+    icon: 'insert_chart',
     text: 'Analytics',
     link: '/profile/analytics',
     active: false,

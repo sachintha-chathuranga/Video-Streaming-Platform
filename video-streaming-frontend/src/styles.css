@@ -1,8 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-:root{
+:root {
   --hover-bg-color: rgba(231, 231, 231, 0.747);
   --theme-shadow-color: rgb(111, 161, 226);
-  --link-color:rgb(0, 140, 255);
+  --link-color: rgb(0, 140, 255);
   --theme-font-shadow: rgb(110, 110, 110);
 }
 html,
@@ -16,9 +16,9 @@ body {
 * {
   margin: 0;
 }
-a{
+a {
   text-decoration: none;
-  color: var(--link-color)
+  color: var(--link-color);
 }
 .dialogbox-title {
   font-weight: 500 !important;
@@ -40,4 +40,31 @@ a{
 .dialog-close-btn:hover {
   cursor: pointer;
   background-color: var(--hover-bg-color);
+}
+.fxLayout {
+  margin: 0 !important;
+}
+.fxItem {
+  padding: 10px;
+}
+.text-overflow-1, .text-overflow-2{
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.text-overflow-1{
+  -webkit-line-clamp: 1;
+}
+.text-overflow-2{
+  -webkit-line-clamp: 2;
+}
+@media screen and (max-width: 600px) {
+  .fxItem {
+    padding: 10px 0;
+  }
+  mat-sidenav-content {
+    padding: 0 10px;
+  }
 }

@@ -1,10 +1,10 @@
-<mat-toolbar color="primary" class="example-toolbar">
+<mat-toolbar class="example-toolbar">
   <mat-toolbar-row>
-    <button mat-icon-button>
+    <button class="menu-button" [style]="isMobile ? 'display: block;' : 'display: none'" mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
     <h1 class="example-app-name">MediaPulse</h1>
-    
+
     <span class="example-spacer"></span>
     <button
       mat-icon-button
@@ -35,4 +35,3 @@
     </ng-template>
   </mat-toolbar-row>
 </mat-toolbar>
-
