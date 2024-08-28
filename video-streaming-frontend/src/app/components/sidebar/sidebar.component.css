@@ -6,9 +6,7 @@ mat-sidenav {
   top: 64px;
 }
 mat-sidenav-content {
-  /* overflow: hidden; */
   padding: 0 33px;
-  height: calc(100vh - 64px);
 }
 
 mat-list {
@@ -26,4 +24,31 @@ mat-list-item:hover {
 .active {
   background-color: rgba(231, 231, 231, 0.747);
   font-weight: bold !important;
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.example-is-mobile .example-toolbar {
+  position: fixed;
+  z-index: 2;
+}
+
+h1.example-app-name {
+  margin-left: 8px;
+}
+
+.example-sidenav-container {
+  flex: 1;
+}
+
+.example-is-mobile .example-sidenav-container {
+  flex: 1 0 auto;
 }

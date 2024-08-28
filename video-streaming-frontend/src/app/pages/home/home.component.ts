@@ -36,7 +36,7 @@ import { SideBarItem } from '../../dto/sidebarItem.dto';
 export class HomeComponent {
   items: SideBarItem[] = itemList;
   constructor(private router: Router) {
-    this.router.navigateByUrl('/profile/personal-info');
+    // this.router.navigateByUrl('/profile/p');
     // this.router.navigateByUrl('/feature');
   }
 }
