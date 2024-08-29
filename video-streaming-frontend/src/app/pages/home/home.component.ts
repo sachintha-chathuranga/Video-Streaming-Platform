@@ -41,18 +41,17 @@ export class HomeComponent {
   }
 }
 const itemList = [
-  { icon: 'home', text: 'Home', link: '/feature', active: true },
+  { icon: 'home', text: 'Home', link: '/' },
   {
     icon: 'subscriptions',
     text: 'Subscriptions',
     link: '/subscriptions',
     active: false,
   },
-  { icon: 'history', text: 'History', link: '/history', active: false },
+  { icon: 'history', text: 'History', link: '/history' },
   {
     icon: 'thumb_up',
     text: 'Liked Videos',
-    link: '/liked-videos',
-    active: false,
+    link: '/liked-videos'
   },
 ];

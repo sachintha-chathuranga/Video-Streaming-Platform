@@ -13,6 +13,7 @@ import { ContentComponent } from './pages/content/content.component';
 import { PersonalDataComponent } from './pages/personal-data/personal-data.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AnalyticComponent } from './pages/analytic/analytic.component';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 
 export const routes: Routes = [
   {
@@ -20,7 +21,7 @@ export const routes: Routes = [
     component: HomeComponent,
     children: [
       {
-        path: 'feature',
+        path: '',
         component: FeatureComponent,
       },
       {
@@ -68,4 +69,8 @@ export const routes: Routes = [
     path: 'callback',
     component: CallbackComponent,
   },
+  {
+    path: "**",
+    component: PageNotFoundComponent
+  }
 ];

@@ -4,15 +4,21 @@ import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { VideoDto } from '../../dto/video.dto';
 import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-video-card',
   standalone: true,
-  imports: [MatCardModule, MatMenuModule, RouterModule, MatButtonModule],
+  imports: [MatCardModule, CommonModule, MatMenuModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: './video-card.component.html',
   styleUrl: './video-card.component.css',
 })
 export class VideoCardComponent {
   @Input()
   video!: VideoDto;
+  @Input()
+  isLoading: boolean=true;
+  constructor() {
+  }
 }

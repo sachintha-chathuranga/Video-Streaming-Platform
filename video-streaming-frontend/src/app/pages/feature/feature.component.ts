@@ -1,29 +1,76 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { VideoCardComponent } from '../../components/video-card/video-card.component';
 import { VideoDto } from '../../dto/video.dto';
 import { VideoService } from '../../services/video.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorDto } from '../../dto/error.dto';
+import { ErrorMessageComponent } from '../../components/error-message/error-message.component';
+import { ErrorService } from '../../services/error.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { VideoCardSkeletonComponent } from '../../skeleton/video-card-skeleton/video-card-skeleton.component';
 
 @Component({
   selector: 'app-feature',
   standalone: true,
-  imports: [VideoCardComponent, CommonModule, FlexLayoutModule],
+  imports: [
+    VideoCardComponent,
+    CommonModule,
+    FlexLayoutModule,
+    ErrorMessageComponent,
+    VideoCardSkeletonComponent
+  ],
   templateUrl: './feature.component.html',
   styleUrl: './feature.component.css',
 })
-export class FeatureComponent {
-  featuredVideos: Array<VideoDto> =[];
+export class FeatureComponent implements OnInit, OnDestroy {
+  featuredVideos: Array<VideoDto> = [];
+  errorObject!: ErrorDto;
+  isLoading: boolean = false;
+  private timeoutId: any;
 
-  constructor(private videoService: VideoService) {}
+  constructor(
+    private videoService: VideoService,
+    private snackBar: MatSnackBar,
+    private errorService: ErrorService
+  ) {}
 
   ngOnInit(): void {
-    // this.videoService.getAllVideos().subscribe((response) => {
-    //   this.featuredVideos = response;
-    // });
-    this.videoService.getAllVideos().then((data) => {
-      this.featuredVideos = data
-    })
+    this.fetchData();
+  }
+  fetchData() {
+    this.isLoading = true;
+    this.timeoutId = setTimeout(() => {
+      console.log('After 5 second');
+      this.videoService.getAllVideos().subscribe({
+        next: (data: VideoDto[]) => {
+          this.featuredVideos = data;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.snackBar.open(error.message, '', {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+          this.errorObject = this.errorService.generateError(error);
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.snackBar.open('Video data retrieval completed', '', {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+          this.isLoading = false;
+        },
+      });
+    }, 2000);
+  }
+  ngOnDestroy() {
+    // Clear the timeout when the component is destroyed
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
   }
 }
-

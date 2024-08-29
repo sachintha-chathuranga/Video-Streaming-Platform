@@ -43,16 +43,6 @@ export class SidebarComponent implements OnDestroy {
 
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
   }
-  selectItem(item: SideBarItem) {
-    this.items.map((i) => {
-      if (i.icon == item.icon) {
-        i.active = true;
-      } else {
-        i.active = false;
-      }
-      return i;
-    });
-  }
 
   private _mobileQueryListener: () => void;
 

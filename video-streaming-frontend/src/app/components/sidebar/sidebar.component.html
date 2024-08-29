@@ -18,9 +18,8 @@
           *ngFor="let item of items"
           role="listitem"
           [routerLink]="item.link"
-          [ngClass]="{ active: item.active == true }"
-          (click)="selectItem(item)"
-        >
+          routerLinkActive="active"
+          >
           <mat-icon class="mat-icon" matListItemIcon>{{ item.icon }}</mat-icon>
           <p matListItemTitle>{{ item.text }}</p>
         </mat-list-item>

@@ -1,12 +1,40 @@
-<div fxLayout="row wrap" class="fxLayout">
-  <div
-  class="fxItem"
-    fxFlex="25%"
-    fxFlex.lg="33.33%"
-    fxFlex.lt-lg="50%"
-    fxFlex.xs="100%"
-    *ngFor="let featuredVideo of featuredVideos"
-  >
-    <app-video-card [video]="featuredVideo"></app-video-card>
+<ng-container
+  *ngIf="isLoading; then loadingTemplate; else contentTemplate"
+></ng-container>
+
+<ng-template #loadingTemplate>
+  <div fxLayout="row wrap" class="fxLayout">
+    <div
+      class="fxItem"
+      fxFlex="25%"
+      fxFlex.lg="33.33%"
+      fxFlex.lt-lg="50%"
+      fxFlex.xs="100%"
+      *ngFor="let skelton of [1,2,3,4,5]"
+    >
+      <!-- <app-video-card-skeleton></app-video-card-skeleton> -->
+
+      <app-video-card [isLoading]="isLoading" ></app-video-card>
+    </div>
   </div>
-</div>
+</ng-template>
+
+<ng-template #contentTemplate>
+  <div fxLayout="row wrap" class="fxLayout">
+    <div
+      class="fxItem"
+      fxFlex="25%"
+      fxFlex.lg="33.33%"
+      fxFlex.lt-lg="50%"
+      fxFlex.xs="100%"
+      *ngFor="let featuredVideo of featuredVideos"
+    >
+      <app-video-card [video]="featuredVideo"  [isLoading]="isLoading" ></app-video-card>
+    </div>
+  </div>
+  <app-error-message
+    *ngIf="errorObject"
+    [errorObject]="errorObject"
+    (onRetryClick)="fetchData()"
+  ></app-error-message>
+</ng-template>

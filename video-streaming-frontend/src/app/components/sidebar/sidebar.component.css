@@ -21,7 +21,7 @@ mat-list-item:hover {
   cursor: pointer;
 }
 
-.active {
+mat-list-item.active {
   background-color: rgba(231, 231, 231, 0.747);
   font-weight: bold !important;
 }

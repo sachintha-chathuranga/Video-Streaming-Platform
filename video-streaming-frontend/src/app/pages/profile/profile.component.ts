@@ -35,43 +35,27 @@ export class ProfileComponent {
 
   constructor(private router: Router, private location: Location) {
   }
-
-  ngOnInit() {
-    const path = this.location.path();
-    this.items.map(i => {
-      if (i.link == path) {
-        i.active = true;
-     
-      } else {
-        i.active = false;
-      }
-    })
-  }
 }
 
 const itemList = [
   {
     icon: 'account_circle',
     text: 'Profile',
-    link: '/profile/personal-info',
-    active: true,
+    link: '/profile/personal-info'
   },
   {
     icon: 'dashboard',
     text: 'Dashboard',
-    link: '/profile/dashboard',
-    active: false,
+    link: '/profile/dashboard'
   },
   {
     icon: 'video_library',
     text: 'Content',
-    link: '/profile/content',
-    active: false,
+    link: '/profile/content'
   },
   {
     icon: 'insert_chart',
     text: 'Analytics',
-    link: '/profile/analytics',
-    active: false,
+    link: '/profile/analytics'
   },
 ];

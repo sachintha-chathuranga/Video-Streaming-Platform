@@ -1,0 +1,23 @@
+.error-message-container {
+  width: 100%;
+  padding-top: 13%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+.error-message-container img{
+   width: 150px;
+}
+.messages-div {
+  margin: 24px auto 24px;
+}
+.messages-div h2 {
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+.messages-div p {
+  font-size: 14px;
+  font-weight: 400;
+}
