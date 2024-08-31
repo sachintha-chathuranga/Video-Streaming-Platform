@@ -1,3 +1,4 @@
+<app-filter-toolbar></app-filter-toolbar>
 <ng-container
   *ngIf="isLoading; then loadingTemplate; else contentTemplate"
 ></ng-container>
@@ -10,11 +11,9 @@
       fxFlex.lg="33.33%"
       fxFlex.lt-lg="50%"
       fxFlex.xs="100%"
-      *ngFor="let skelton of [1,2,3,4,5]"
+      *ngFor="let skelton of [1, 2, 3, 4, 5]"
     >
-      <!-- <app-video-card-skeleton></app-video-card-skeleton> -->
-
-      <app-video-card [isLoading]="isLoading" ></app-video-card>
+      <app-video-card [isLoading]="isLoading"></app-video-card>
     </div>
   </div>
 </ng-template>
@@ -29,7 +28,10 @@
       fxFlex.xs="100%"
       *ngFor="let featuredVideo of featuredVideos"
     >
-      <app-video-card [video]="featuredVideo"  [isLoading]="isLoading" ></app-video-card>
+      <app-video-card
+        [video]="featuredVideo"
+        [isLoading]="isLoading"
+      ></app-video-card>
     </div>
   </div>
   <app-error-message

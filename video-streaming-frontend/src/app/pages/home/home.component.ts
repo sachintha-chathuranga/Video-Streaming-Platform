@@ -45,8 +45,7 @@ const itemList = [
   {
     icon: 'subscriptions',
     text: 'Subscriptions',
-    link: '/subscriptions',
-    active: false,
+    link: '/subscriptions'
   },
   { icon: 'history', text: 'History', link: '/history' },
   {

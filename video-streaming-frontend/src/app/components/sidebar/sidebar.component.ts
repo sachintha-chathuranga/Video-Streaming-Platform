@@ -24,7 +24,7 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
     MatIconModule,
     RouterModule,
     MatButtonModule,
-    ToolbarComponent
+    ToolbarComponent,
   ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
@@ -33,8 +33,10 @@ export class SidebarComponent implements OnDestroy {
   @Input()
   items!: SideBarItem[];
   mobileQuery: MediaQueryList;
+  private _mobileQueryListener: () => void;
+  activeButtonIndex: number = 0;
 
-  constructor() {
+  constructor(private router: Router) {
     const changeDetectorRef = inject(ChangeDetectorRef);
     const media = inject(MediaMatcher);
 
@@ -44,9 +46,12 @@ export class SidebarComponent implements OnDestroy {
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
   }
 
-  private _mobileQueryListener: () => void;
+  navigate(link: string, index: number) {
+    this.activeButtonIndex = index;
+    this.router.navigate([link]);
+  }
 
   ngOnDestroy(): void {
-   this.mobileQuery.removeEventListener('change', this._mobileQueryListener);
+    this.mobileQuery.removeEventListener('change', this._mobileQueryListener);
   }
 }

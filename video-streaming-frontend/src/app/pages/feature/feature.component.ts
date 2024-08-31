@@ -9,7 +9,9 @@ import { ErrorDto } from '../../dto/error.dto';
 import { ErrorMessageComponent } from '../../components/error-message/error-message.component';
 import { ErrorService } from '../../services/error.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { VideoCardSkeletonComponent } from '../../skeleton/video-card-skeleton/video-card-skeleton.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatChipsModule } from '@angular/material/chips';
+import { FilterToolbarComponent } from '../../components/filter-toolbar/filter-toolbar.component';
 
 @Component({
   selector: 'app-feature',
@@ -19,7 +21,9 @@ import { VideoCardSkeletonComponent } from '../../skeleton/video-card-skeleton/v
     CommonModule,
     FlexLayoutModule,
     ErrorMessageComponent,
-    VideoCardSkeletonComponent
+    MatTabsModule,
+    MatChipsModule,
+    FilterToolbarComponent
   ],
   templateUrl: './feature.component.html',
   styleUrl: './feature.component.css',
@@ -29,7 +33,7 @@ export class FeatureComponent implements OnInit, OnDestroy {
   errorObject!: ErrorDto;
   isLoading: boolean = false;
   private timeoutId: any;
-
+ 
   constructor(
     private videoService: VideoService,
     private snackBar: MatSnackBar,
@@ -57,11 +61,11 @@ export class FeatureComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         complete: () => {
-          this.snackBar.open('Video data retrieval completed', '', {
-            duration: 3000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-          });
+          // this.snackBar.open('Video data retrieval completed', '', {
+          //   duration: 3000,
+          //   horizontalPosition: 'right',
+          //   verticalPosition: 'top',
+          // });
           this.isLoading = false;
         },
       });

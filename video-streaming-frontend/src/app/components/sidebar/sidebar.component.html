@@ -1,26 +1,23 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  
   <app-toolbar [isMobile]="mobileQuery.matches" [snav]="snav"></app-toolbar>
 
-  <mat-sidenav-container
-    class="example-sidenav-container"
-  >
+  <mat-sidenav-container class="example-sidenav-container">
     <!-- Sidebar (mat-sidenav) -->
     <mat-sidenav
       #snav
       [mode]="mobileQuery.matches ? 'over' : 'side'"
       [opened]="!mobileQuery.matches"
       [fixedInViewport]="mobileQuery.matches"
-      fixedTopGap="56"
+      fixedTopGap="64"
     >
       <mat-list role="list">
         <mat-list-item
-          *ngFor="let item of items"
+          *ngFor="let item of items; let i = index"
           role="listitem"
-          [routerLink]="item.link"
-          routerLinkActive="active"
-          >
-          <mat-icon class="mat-icon" matListItemIcon>{{ item.icon }}</mat-icon>
+          [ngClass]="{ 'active': activeButtonIndex === i }" 
+          (click)="navigate(item.link, i)"
+        >
+          <mat-icon [fontIcon]="item.icon" class="mat-icon" [ngClass]="{'material-icons-outlined': activeButtonIndex !==i, 'material-icons': activeButtonIndex===i}" matListItemIcon></mat-icon>
           <p matListItemTitle>{{ item.text }}</p>
         </mat-list-item>
       </mat-list>

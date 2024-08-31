@@ -23,6 +23,7 @@ export const routes: Routes = [
       {
         path: '',
         component: FeatureComponent,
+        pathMatch: 'full',
       },
       {
         path: 'subscriptions',
@@ -70,7 +71,7 @@ export const routes: Routes = [
     component: CallbackComponent,
   },
   {
-    path: "**",
-    component: PageNotFoundComponent
-  }
+    path: '**',
+    component: PageNotFoundComponent,
+  },
 ];

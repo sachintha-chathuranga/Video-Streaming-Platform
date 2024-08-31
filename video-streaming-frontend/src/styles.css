@@ -77,6 +77,10 @@ a {
     background-color: #e0e0e0;
   }
 }
+
+.custom-menu {
+  background-color: white !important;
+}
 @media screen and (max-width: 600px) {
   .fxItem {
     padding: 10px 0;
