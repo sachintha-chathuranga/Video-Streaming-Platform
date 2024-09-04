@@ -4,9 +4,6 @@ import { FeatureComponent } from './pages/feature/feature.component';
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
 import { HistoryComponent } from './pages/history/history.component';
 import { LikedVideosComponent } from './pages/liked-videos/liked-videos.component';
-import { VideoUploadComponent } from './components/video-upload/video-upload.component';
-import { VideoFormComponent } from './components/video-form/video-form.component';
-import { VideoDetailsComponent } from './components/video-details/video-details.component';
 import { CallbackComponent } from './pages/callback/callback.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { ContentComponent } from './pages/content/content.component';
@@ -14,6 +11,8 @@ import { PersonalDataComponent } from './pages/personal-data/personal-data.compo
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AnalyticComponent } from './pages/analytic/analytic.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
+import { VideoComponent } from './pages/video/video.component';
+import { WatchComponent } from './pages/watch/watch.component';
 
 export const routes: Routes = [
   {
@@ -40,9 +39,18 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'watch',
+    component: WatchComponent,
+    children: [
+      {
+        path: '',
+        component: VideoComponent
+      }
+    ]
+  },
+  {
     path: 'profile',
     component: ProfileComponent,
-
     children: [
       {
         path: 'personal-info',
@@ -61,10 +69,6 @@ export const routes: Routes = [
         component: AnalyticComponent,
       },
     ],
-  },
-  {
-    path: 'video-details/:videoId',
-    component: VideoDetailsComponent,
   },
   {
     path: 'callback',

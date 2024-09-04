@@ -46,7 +46,6 @@ export class FeatureComponent implements OnInit, OnDestroy {
   fetchData() {
     this.isLoading = true;
     this.timeoutId = setTimeout(() => {
-      console.log('After 5 second');
       this.videoService.getAllVideos().subscribe({
         next: (data: VideoDto[]) => {
           this.featuredVideos = data;

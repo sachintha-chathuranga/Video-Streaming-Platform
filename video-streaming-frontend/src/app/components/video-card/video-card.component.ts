@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { VideoDto } from '../../dto/video.dto';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -19,6 +19,11 @@ export class VideoCardComponent {
   video!: VideoDto;
   @Input()
   isLoading: boolean=true;
-  constructor() {
+  @Input()
+  isSmall!: boolean;
+  constructor(private router: Router) {
+  }
+  openVideo() {
+     this.router.navigate(['/watch'], { queryParams: { v: this.video.id } });
   }
 }

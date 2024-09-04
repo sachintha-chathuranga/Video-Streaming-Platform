@@ -1,9 +1,18 @@
-import { ChangeDetectorRef, Component, inject, Input, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListItem, MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { link } from 'fs';
@@ -29,21 +38,26 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent implements OnDestroy {
+export class SidebarComponent implements OnDestroy, OnInit {
   @Input()
   items!: SideBarItem[];
+  @Input()
+  sidebarMode!: boolean;
   mobileQuery: MediaQueryList;
   private _mobileQueryListener: () => void;
-  activeButtonIndex: number = 0;
+  activeButtonIndex!: number;
+  activatedPath!: string;
 
   constructor(private router: Router) {
     const changeDetectorRef = inject(ChangeDetectorRef);
     const media = inject(MediaMatcher);
-
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
-
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
+  }
+  ngOnInit(): void {
+    this.activeButtonIndex = this.sidebarMode ? 0 : -1;
+    console.log(this.sidebarMode);
   }
 
   navigate(link: string, index: number) {

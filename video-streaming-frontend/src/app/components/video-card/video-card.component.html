@@ -1,33 +1,38 @@
-<mat-card
-  class="example-card"
->
+<mat-card class="example-card" [ngClass]="{ small: isSmall }">
   <div *ngIf="isLoading; else image" class="skeleton skeleton-img"></div>
   <ng-template #image>
-    <img
-      mat-card-image
-      [src]="video && video.thumbnailUrl"
-      [ngClass]="{ skeleton: isLoading }"
-    />
+    <div class="img">
+
+      <img
+        mat-card-image
+        [src]="video && video.thumbnailUrl"
+        [ngClass]="{ skeleton: isLoading }"
+        (click)="openVideo()"
+      />
+    </div>
   </ng-template>
-  <mat-card-header [ngClass]="{ loading: isLoading }">
+  <mat-card-header [ngClass]="{ loading: isLoading, small: isSmall }">
     <div
+      *ngIf="!isSmall"
       mat-card-avatar
       class="example-header-image"
       [ngClass]="{ skeleton: isLoading }"
     ></div>
-    <mat-card-title [ngClass]="{ skeleton: isLoading }"
-      ><h3 class="text-overflow-2" *ngIf="video">
-        {{ video.title }}
-      </h3>
-    </mat-card-title>
-    <mat-card-subtitle [ngClass]="{ skeleton: isLoading }">
-      <a>
-        {{ video && video.description }}
-      </a>
-    </mat-card-subtitle>
-    <mat-card-subtitle>
-      {{ video && video.viewsCount + " views" }}</mat-card-subtitle
-    >
+    <div class="details">
+      <mat-card-title [ngClass]="{ skeleton: isLoading }"
+        ><h3 class="text-overflow-2" *ngIf="video">
+          {{ video.title }}
+        </h3>
+      </mat-card-title>
+      <mat-card-subtitle [ngClass]="{ skeleton: isLoading }">
+        <a>
+          {{ video && video.description }}
+        </a>
+      </mat-card-subtitle>
+      <mat-card-subtitle>
+        {{ video && video.viewsCount + " views" }}</mat-card-subtitle
+      >
+    </div>
     <mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
     <mat-menu #menu="matMenu" class="custom-menu">
       <button mat-menu-item>

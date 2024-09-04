@@ -1,0 +1,124 @@
+<div fxLayout="row" class="main-container">
+  <div fxFlex class="video-details-container">
+    <app-video-player
+      [videoUrl]="video?.videoUrl || ''"
+      class="video-player"
+    ></app-video-player>
+    <div class="meta-data">
+      <div class="video-title">
+        <h1>
+          {{ video?.title }} | Programm tehci | Production (Available on 100)
+        </h1>
+      </div>
+      <div fxLayout="row wrap">
+        <div fxFlex="50%">
+          <mat-card-header>
+            <div
+              mat-card-avatar
+              class="example-header-image"
+              [ngClass]="{ skeleton: isLoading }"
+            ></div>
+            <div class="details">
+              <mat-card-title [ngClass]="{ skeleton: isLoading }">
+                <a href="/"> SL Movie Review </a>
+              </mat-card-title>
+              <mat-card-subtitle>
+                {{ video && video.viewsCount + " views" }}</mat-card-subtitle
+              >
+            </div>
+            <button
+              *ngIf="showSubscribeButton"
+              class="subscribe-button"
+              mat-flat-button
+              color="warn"
+              (click)="subscribeToUser()"
+            >
+              Subscribe
+            </button>
+            <button
+              *ngIf="showUnSubscribeButton"
+              class="subscribe-button"
+              mat-flat-button
+              color="accent"
+              (click)="unSubscribeToUser()"
+            >
+              UNSUBSCRIBE
+            </button>
+          </mat-card-header>
+        </div>
+        <div fxFlex="50%" fxLayoutAlign="end">
+          <div class="actions">
+            <span class="like-dislike-btn-group">
+              <button class="like-btn">
+                <div class="right-border">
+                  <mat-icon>thumb_up_off_alt</mat-icon>
+                  {{ video?.likesCount }}
+                </div>
+              </button>
+              <button class="dislike-btn">
+                <mat-icon>thumb_down_off_alt</mat-icon>
+              </button>
+            </span>
+            <button>
+              <mat-icon>vertical_align_bottom</mat-icon>
+              Download
+            </button>
+            <button id="menu-btn">
+              <mat-icon [matMenuTriggerFor]="menu">more_horiz</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" class="custom-menu">
+              <button mat-menu-item>
+                <mat-icon>dialpad</mat-icon>
+                <span>Redial</span>
+              </button>
+              <button mat-menu-item disabled>
+                <mat-icon>voicemail</mat-icon>
+                <span>Check voice mail</span>
+              </button>
+              <button mat-menu-item>
+                <mat-icon>notifications_off</mat-icon>
+                <span>Disable alerts</span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-description">
+      <p [ngClass]="{ expanded: isExpanded }" >
+        Welcome to our ultimate guide on graphic design using Adobe Illustrator!
+        Whether you're a beginner or looking to refine your skills, this video
+        is packed with essential tips and techniques to help you create stunning
+        designs. Learn the ins and outs of Illustrator, from basic tools to
+        advanced features, and discover how to bring your creative ideas to
+        life. We’ll cover vector art, logo design, typography, and more, all
+        while providing step-by-step instructions that are easy to follow. Join
+        us on this creative journey and start designing like a pro today!
+        Welcome to our ultimate guide on graphic design using Adobe Illustrator!
+        Whether you're a beginner or looking to refine your skills, this video
+        is packed with essential tips and techniques to help you create stunning
+        designs. Learn the ins and outs of Illustrator, from basic tools to
+        advanced features, and discover how to bring your creative ideas to
+        life. We’ll cover vector art, logo design, typography, and more, all
+        while providing step-by-step instructions that are easy to follow. Join
+        us on this creative journey and start designing like a pro today!
+      </p>
+      <span class="more-btn" (click)="toggleExpand()">
+        {{ isExpanded ? "less" : "...more" }}
+      </span>
+    </div>
+    <app-comment [videoId]="videoId"></app-comment>
+  </div>
+  <div class="related-videos-container" fxFlex="402px">
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
+        <app-video-card
+          [video]="video"
+          [isLoading]="isLoading"
+          [isSmall]="true"
+        ></app-video-card>
+      </div>
+    </div>
+  </div>
+</div>

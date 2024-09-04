@@ -1,12 +1,12 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  <app-toolbar [isMobile]="mobileQuery.matches" [snav]="snav"></app-toolbar>
+  <app-toolbar [isMobile]="mobileQuery.matches || !sidebarMode" [snav]="snav"></app-toolbar>
 
   <mat-sidenav-container class="example-sidenav-container">
     <!-- Sidebar (mat-sidenav) -->
     <mat-sidenav
       #snav
-      [mode]="mobileQuery.matches ? 'over' : 'side'"
-      [opened]="!mobileQuery.matches"
+      [mode]="mobileQuery.matches || !sidebarMode ? 'over' : 'side'"
+      [opened]="!mobileQuery.matches && sidebarMode"
       [fixedInViewport]="mobileQuery.matches"
       fixedTopGap="64"
     >

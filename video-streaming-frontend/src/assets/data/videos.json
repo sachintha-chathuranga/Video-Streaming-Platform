@@ -4,7 +4,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/5.jpg",
@@ -18,7 +18,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/3.jpg",
@@ -32,7 +32,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/4.jpg",
@@ -46,7 +46,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/r2.jpg",
@@ -60,7 +60,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/7.jpg",
@@ -74,7 +74,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/h9.jpg",
@@ -88,7 +88,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/r9.jpg",
@@ -102,7 +102,7 @@
       "description": "here my first video",
       "title": "How to Become a Software Engeneer",
       "userId": 1,
-      "videoUrl": "null",
+      "videoUrl": "/assets/video/video.mov",
       "videoStatus": "UNLISTED",
       "thumbnailUrl":
         "/assets/96.jpg",

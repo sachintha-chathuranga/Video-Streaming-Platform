@@ -1,0 +1,48 @@
+<div fxLayout="row" fxLayoutGap="17px">
+  <div fxFlex="none" matCardAvatar class="commentor-img"></div>
+  <div fxFlex="100%" class="comment-content" fxLayout="column">
+    <div class="comment-header">
+      <a matCardTitle routerLink="">sachintha</a>
+      <p matCardSubtitle>1 month ago</p>
+    </div>
+    <div class="comment-body">
+      <p [ngClass]="{ expanded: isExpanded }" class="paragraph">
+        thiis is my first comment after longe time . so dont think about it . kd
+        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
+        thiis is my first comment after longe time . so dont think about it sdf
+        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
+        thiis is my first comment after longe time . so dont think about it sdf
+        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
+        thiis is my first comment after longe time . so dont think about it sdf
+        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
+        thiis is my first comment after longe time . so dont think about it . kd
+        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
+      </p>
+      <span class="more-btn" (click)="toggleExpand()">
+        {{ isExpanded ? "Show less" : "Read more" }}
+      </span>
+    </div>
+    <div
+      class="comment-actions"
+      fxLayout="row"
+      fxLayoutGap="5px"
+      fxLayoutAlign="start center"
+    >
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <button mat-icon-button>
+          <mat-icon>thumb_up_off_alt</mat-icon>
+        </button>
+        <span>5</span>
+      </div>
+      <button mat-icon-button>
+        <mat-icon>thumb_down_off_alt</mat-icon>
+      </button>
+      <button mat-button>Reply</button>
+    </div>
+  </div>
+  <div class="comment-options">
+    <button mat-icon-button>
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+</div>

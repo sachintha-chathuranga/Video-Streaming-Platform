@@ -1,9 +1,13 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { VideoDto } from '../dto/video.dto';
 import { UploadVideoResponse } from '../dto/uploadResponse.dto';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
@@ -62,14 +66,16 @@ export class VideoService {
     );
   }
 
-  getVideoById(videoId: string): Observable<VideoDto> {
-    return this.httpClient.get<VideoDto>(
-      'http://localhost:8080/api/videos/' + videoId
-    );
+  getVideoById(videoId: string): Observable<VideoDto | undefined> {
+    // return this.httpClient.get<VideoDto>(
+    //   'http://localhost:8080/api/videos/' + videoId
+    // );
+
+    return this.getAllVideos().pipe(
+      map(videos => videos.find(video => video.id === parseInt(videoId))));
+    
   }
-  // getAllVideos(): Observable<VideoDto[]>{
-  //   return this.httpClient.get<Array<VideoDto>>("dssfds");
-  // }
+
   getAllVideos(): Observable<VideoDto[]> {
     return this.httpClient
       .get<VideoDto[]>(this._url)
@@ -77,6 +83,6 @@ export class VideoService {
   }
   errorHandler(error: HttpErrorResponse) {
     // return throwError(() => new Error(error.message || 'Server Error'));
-    return throwError(() => error );
+    return throwError(() => error);
   }
 }
