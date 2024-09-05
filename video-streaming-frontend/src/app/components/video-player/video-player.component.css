@@ -1,17 +1,19 @@
-:host{
-display: inline-block;
+:host {
+  display: inline-block;
 }
 vg-player {
-    width: 100%;
-    height: auto;
-    border-radius: 14px;
+  width: 100%;
+  border-radius: 14px;
+  aspect-ratio: 16 / 9; /* Aspect ratio of 16:9, adjust as needed */
+  overflow: hidden;
 }
 
 video {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-vg-controls{
-   justify-content: space-between;
+vg-controls {
+  justify-content: space-between;
 }
