@@ -4,8 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
+// import org.springframework.security.core.context.SecurityContextHolder;
+// import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import com.fourbit.sachintha.exception.CustomException;
