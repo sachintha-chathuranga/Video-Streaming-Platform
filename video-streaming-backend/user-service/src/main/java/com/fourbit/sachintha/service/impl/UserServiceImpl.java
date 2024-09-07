@@ -42,24 +42,20 @@ public class UserServiceImpl implements UserService {
   private String userInfoEndpoint;
 
   @Override
-  public UserDto signUp(String token) {
-    HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(userInfoEndpoint))
-        .setHeader("Authorization", String.format("Bearer %s", token)).build();
-    HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
+  public UserDto signUp( UserDto user) {
+    
     try {
-      HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-      String body = response.body();
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-      UserTokenInfoDto userTokenInfoDto = objectMapper.readValue(body, UserTokenInfoDto.class);
-
-      User user = new User();
-      user.setFirstName(userTokenInfoDto.getGivenName());
-      user.setLastName(userTokenInfoDto.getFamailyName());
-      user.setEmail(userTokenInfoDto.getEmail());
-      user.setSub(userTokenInfoDto.getSub());
-      userRepository.save(user);
-      return UserMapper.mapToUserDto(user);
+      User isUser = userRepository.findBySub(user.getSub());
+      if (isUser == null) {
+        User newUser = new User();
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
+        newUser.setEmail(user.getEmail());
+        newUser.setSub(user.getSub());
+        userRepository.save(newUser);
+        return UserMapper.mapToUserDto(newUser);
+      }
+      return user;
     } catch (Exception e) {
       throw new CustomException(e.getMessage(), HttpStatus.FORBIDDEN);
     }

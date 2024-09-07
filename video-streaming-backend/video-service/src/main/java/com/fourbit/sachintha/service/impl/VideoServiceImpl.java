@@ -10,6 +10,7 @@ import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.mapper.VideoMapper;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
+import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
 import com.fourbit.sachintha.service.VideoService;
 
@@ -21,10 +22,12 @@ public class VideoServiceImpl implements VideoService {
   private final AwsS3Service awsS3Service;
   private final VideoRepository videoRepository;
   private final CommonService commonService;
+  private final VideoHistoryRepository historyRepository;
 
   @Override
   public VideoDto uploadVideo(MultipartFile file) {
     String videoUrl = awsS3Service.uploadFile(file, "Video");
+    System.out.println(videoUrl);
     User user = commonService.getRequestedUser();
     // String videoUrl = null;
     var video = new Video();
@@ -79,7 +82,11 @@ public class VideoServiceImpl implements VideoService {
   public String deleteVideo(Long id) {
     Video video = commonService.findVideoById(id);
     String key = commonService.getObjectKeyFromUrl(video.getVideoUrl());
-    awsS3Service.deleteFile(key);
+    if (key != null) {
+      awsS3Service.deleteFile(key);
+    }
+    // Delete all associated video history records
+    historyRepository.deleteByVideoId(video.getId());
     videoRepository.deleteById(id);
     return "Video Delete Successfully!";
   }
