@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { SideBarItem } from '../../dto/sidebarItem.dto';
+import { SideBarItem } from '../../interfaces/sidebarItem.dto';
 
 @Component({
   selector: 'app-home',
@@ -45,12 +45,12 @@ const itemList = [
   {
     icon: 'subscriptions',
     text: 'Subscriptions',
-    link: '/subscriptions'
+    link: '/subscriptions',
   },
   { icon: 'history', text: 'History', link: '/history' },
   {
     icon: 'thumb_up',
     text: 'Liked Videos',
-    link: '/liked-videos'
+    link: '/liked-videos',
   },
 ];

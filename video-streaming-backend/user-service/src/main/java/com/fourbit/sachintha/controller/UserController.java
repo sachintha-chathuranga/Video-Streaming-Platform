@@ -31,9 +31,8 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping("/signUp")
-  public ResponseEntity<UserDto> signUp(Authentication authentication) {
-    Jwt jwt = (Jwt) authentication.getPrincipal();
-    UserDto userDto = userService.signUp(jwt.getTokenValue());
+  public ResponseEntity<UserDto> signUp(@RequestBody UserDto user) {
+    UserDto userDto = userService.signUp(user);
     return new ResponseEntity<>(userDto, HttpStatus.CREATED);
   }
 

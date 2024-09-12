@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { VideoService } from '../../services/video.service';
-import { VideoDto } from '../../dto/video.dto';
+import { VideoDto } from '../../interfaces/video.dto';
 
 @Component({
   selector: 'app-save-video-details',

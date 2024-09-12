@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'app-callback',
@@ -10,8 +11,9 @@ import { UserService } from '../../services/user.service';
   styleUrl: './callback.component.css',
 })
 export class CallbackComponent {
-  constructor(private userService: UserService, private router: Router) {
-    this.userService.registerUser();
-    this.router.navigateByUrl('');
+  constructor(
+  ) {
+  
   }
+  
 }

@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -72,6 +73,20 @@ public class Video {
     this.thumbnailUrl = thumbnailUrl;
     this.tags = tags;
     this.viewsCount = viewsCount;
+  }
+
+  @PreRemove
+  private void removeAssociationsWithUsers() {
+    // Clear likes associations
+    for (User user : likes) {
+      user.getLikedVideos().remove(this);
+    }
+
+    // Clear dislikes associations
+    for (User user : dislikes) {
+      user.getDislikedVideos().remove(this);
+    }
+    
   }
 
 }

@@ -9,7 +9,7 @@ import com.fourbit.sachintha.dto.VideoHistoryDto;
 public interface UserService {
   UserDto createUser(UserDto user);
 
-  UserDto signUp(String token);
+  UserDto signUp(UserDto user);
 
   UserDto updateUser( UserDto user);
 

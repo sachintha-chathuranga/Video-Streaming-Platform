@@ -8,4 +8,5 @@ export interface UserDto {
   pictureUrl: string;
   about: string;
   subscribersCount: number;
+  sub: string;
 }
