@@ -77,7 +77,6 @@ export class ToolbarComponent {
     this.oidcSecurityService.authorize();
   }
   logout() {
-    console.log('logout');
     this.isAuthenticated = false;
     this.oidcSecurityService.logoffAndRevokeTokens();
   }

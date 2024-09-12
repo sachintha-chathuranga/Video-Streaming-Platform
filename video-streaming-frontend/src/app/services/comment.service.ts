@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CommentDto } from '../dto/comment.dto';
+import { CommentDto } from '../interfaces/comment.dto';
 
 @Injectable({
   providedIn: 'root',

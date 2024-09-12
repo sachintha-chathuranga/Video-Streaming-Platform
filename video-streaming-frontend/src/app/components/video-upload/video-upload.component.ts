@@ -20,6 +20,12 @@ import {
   animate,
 } from '@angular/animations';
 import { VideoFormComponent } from '../video-form/video-form.component';
+import { VideoDto } from '../../interfaces/video.dto';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UploadVideoResponse } from '../../interfaces/uploadResponse.dto';
+import { ErrorDto } from '../../interfaces/error.dto';
+import { ErrorService } from '../../services/error.service';
+import { ErrorMessageComponent } from '../error-message/error-message.component';
 @Component({
   selector: 'app-video-upload',
   standalone: true,
@@ -31,6 +37,7 @@ import { VideoFormComponent } from '../video-form/video-form.component';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    ErrorMessageComponent,
   ],
   templateUrl: './video-upload.component.html',
   styleUrl: './video-upload.component.css',
@@ -41,9 +48,14 @@ export class VideoUploadComponent {
   fileEntry: FileSystemFileEntry | undefined;
   isLoading = false;
   uploadProgress = 0;
+  errorObject!: ErrorDto;
   readonly dialog = inject(MatDialog);
 
-  constructor(private videoService: VideoService, private router: Router) {}
+  constructor(
+    private videoService: VideoService,
+    private errorService: ErrorService,
+    private router: Router
+  ) {}
 
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
@@ -72,23 +84,31 @@ export class VideoUploadComponent {
   }
 
   public uploadVideo() {
-    // if (this.fileEntry) {
-    //   console.log('Start File upload...');
-    // this.fileEntry.file((file: File) => {
-    //   this.videoService.uploadVideo(file).subscribe((data) => {
-
-    //   });
-    // });
-    // }
-    this.isLoading = true;
-    setTimeout(() => {
-      this.isLoading = false;
-      this.dialog.closeAll();
-      this.openDialog(1);
-    }, 2000);
+    if (this.fileEntry) {
+      console.log('Start File upload...');
+      this.fileEntry.file((file: File) => {
+        this.videoService.uploadVideo(file).subscribe({
+          next: (data: UploadVideoResponse) => {
+            this.isLoading = false;
+            this.dialog.closeAll();
+            this.openDialog(data.videoId, data.videoUrl);
+          },
+          error: (error: HttpErrorResponse) => {
+            this.errorObject = this.errorService.generateError(error);
+            this.isLoading = false;
+          },
+        });
+      });
+    }
+    // this.isLoading = true;
+    // setTimeout(() => {
+    //   this.isLoading = false;
+    //   this.dialog.closeAll();
+    //   this.openDialog(1);
+    // }, 2000);
   }
 
-  openDialog(videoId: number) {
+  openDialog(videoId: number, videoUrl: string) {
     const dialogRef = this.dialog.open(VideoFormComponent, {
       width: '80%',
       maxWidth: '900px',
@@ -96,7 +116,7 @@ export class VideoUploadComponent {
       disableClose: true,
       data: {
         videoId: videoId,
-        videoUrl: '',
+        videoUrl: videoUrl,
         thumbnailUrl: '',
         title: 'Video Title',
       },

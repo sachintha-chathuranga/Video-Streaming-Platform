@@ -14,6 +14,16 @@ video {
   object-fit: contain;
 }
 
-vg-controls {
-  justify-content: space-between;
+vg-time-display {
+  font-size: 14px;
+  width: 45px;
 }
+vg-controls span {
+  font-size: 14px; /* Adjust size as needed */
+  color: #ffffff; /* Change color to match your design */
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+

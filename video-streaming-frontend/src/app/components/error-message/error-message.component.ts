@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { ErrorDto } from '../../dto/error.dto';
+import { ErrorDto } from '../../interfaces/error.dto';
 
 @Component({
   selector: 'app-error-message',
@@ -12,7 +12,7 @@ import { ErrorDto } from '../../dto/error.dto';
 export class ErrorMessageComponent {
   @Output()
   onRetryClick = new EventEmitter<void>();
-  
+
   @Input()
   errorObject!: ErrorDto;
 

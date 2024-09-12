@@ -27,7 +27,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
-import { VideoDto } from '../../dto/video.dto';
+import { VideoDto } from '../../interfaces/video.dto';
 import { VideoService } from '../../services/video.service';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -101,22 +101,18 @@ export class VideoFormComponent {
   }
   ngOnInit(): void {
     this.isLoading = true;
-    setTimeout(() => {
-      this.isLoading = false;
-      this.getVideoDetails();
-    }, 2000);
+    this.getVideoDetails();
   }
 
   getVideoDetails(): void {
-    // this.videoId = this.activatedRoute.snapshot.params['videoId'];
-    // this.videoService.getVideoById(this.videoId).subscribe((data: VideoDto) => {
-    //   this.videoUrl = data.videoUrl;
-    //   this.thumbnailUrl = data.thumbnailUrl;
-    // });
     this.videoId = this.data.videoId;
     this.videoUrl = this.data.videoUrl;
     this.thumbnailUrl = this.data.thumbnailUrl;
-    this.videoDetails.setValue({ title: this.data.title, description: this.data.title, videoStatus: ''});
+    this.videoDetails.setValue({
+      title: this.data.title,
+      description: this.data.title,
+      videoStatus: '',
+    });
   }
 
   onFileChange($event: Event) {
@@ -140,24 +136,24 @@ export class VideoFormComponent {
   saveVideo() {
     // Call the video service to make a http call to our backend
 
-    // const videoMetaData: VideoDto = {
-    //   id: Number(this.videoId),
-    //   title: this.videoDetails.get('title')?.value,
-    //   userId: 1,
-    //   description: this.videoDetails.get('description')?.value,
-    //   tags: this.tags,
-    //   videoStatus: this.videoDetails.get('videoStatus')?.value,
-    //   videoUrl: this.videoUrl,
-    //   thumbnailUrl: this.thumbnailUrl,
-    //   likesCount: 0,
-    //   dislikesCount: 0,
-    //   viewsCount: 0,
-    // };
-    // this.videoService.saveVideo(videoMetaData).subscribe((data) => {
-    //   this.snackBar.open('Video Metadata Updated successfully', 'OK');
-    // });
-    console.log(this.videoDetails)
-    if (this.videoDetails.status =='VALID') {
+    const videoMetaData: VideoDto = {
+      id: Number(this.videoId),
+      title: this.videoDetails.get('title')?.value,
+      userId: 1,
+      description: this.videoDetails.get('description')?.value,
+      tags: this.tags,
+      videoStatus: this.videoDetails.get('videoStatus')?.value,
+      videoUrl: this.videoUrl,
+      thumbnailUrl: this.thumbnailUrl,
+      likesCount: 0,
+      dislikesCount: 0,
+      viewsCount: 0,
+    };
+    this.videoService.saveVideo(videoMetaData).subscribe((data) => {
+      this.snackBar.open('Video Metadata Updated successfully', 'OK');
+    });
+
+    if (this.videoDetails.status == 'VALID') {
       this.isLoading = true;
       this.uploadProgress = 0;
       const interval = setInterval(() => {

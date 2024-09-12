@@ -16,7 +16,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { link } from 'fs';
-import { SideBarItem } from '../../dto/sidebarItem.dto';
+import { SideBarItem } from '../../interfaces/sidebarItem.dto';
 import { MatButtonModule } from '@angular/material/button';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
@@ -57,7 +57,6 @@ export class SidebarComponent implements OnDestroy, OnInit {
   }
   ngOnInit(): void {
     this.activeButtonIndex = this.sidebarMode ? 0 : -1;
-    console.log(this.sidebarMode);
   }
 
   navigate(link: string, index: number) {

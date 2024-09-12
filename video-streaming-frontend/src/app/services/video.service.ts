@@ -5,15 +5,16 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { VideoDto } from '../dto/video.dto';
-import { UploadVideoResponse } from '../dto/uploadResponse.dto';
+import { VideoDto } from '../interfaces/video.dto';
+import { UploadVideoResponse } from '../interfaces/uploadResponse.dto';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class VideoService {
-  // private _url: string = 'https://www.youtube.com/youtubei/v1/browse?prettyPrint=false';
   private _url: string = 'assets/data/videos.json';
+  // private _url: string = environment.videoApiUrl;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -35,10 +36,9 @@ export class VideoService {
       'security-token': 'mytoken',
     });
 
-    return this.httpClient.post<UploadVideoResponse>(
-      'http://localhost:8080/api/videos/upload-video/1',
-      formData
-    );
+    return this.httpClient
+      .post<UploadVideoResponse>(this._url + '/videos/upload-video', formData)
+      .pipe(catchError(this.errorHandler));
   }
 
   uploadThumbnail(file: File, videoId: string): Observable<string> {
@@ -72,14 +72,17 @@ export class VideoService {
     // );
 
     return this.getAllVideos().pipe(
-      map(videos => videos.find(video => video.id === parseInt(videoId))));
-    
+      map((videos) => videos.find((video) => video.id === parseInt(videoId)))
+    );
   }
 
   getAllVideos(): Observable<VideoDto[]> {
-    return this.httpClient
-      .get<VideoDto[]>(this._url)
-      .pipe(catchError(this.errorHandler));
+    return (
+      this.httpClient
+        .get<VideoDto[]>(this._url)
+        // .get<VideoDto[]>(this._url+'/videos/get-all')
+        .pipe(catchError(this.errorHandler))
+    );
   }
   errorHandler(error: HttpErrorResponse) {
     // return throwError(() => new Error(error.message || 'Server Error'));

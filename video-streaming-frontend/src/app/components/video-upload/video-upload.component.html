@@ -7,45 +7,55 @@
   </mat-dialog-actions>
 </div>
 <mat-dialog-content>
-  <ngx-file-drop
-    (onFileDrop)="dropped($event)"
-    (onFileOver)="fileOver($event)"
-    (onFileLeave)="fileLeave($event)"
-    dropZoneClassName="ngx-file-drop"
-    contentClassName="ngx-file-content"
-    class="ngx-file-drop"
-    accept=".mp4,.mpeg4,.mov,.avi"
-    [disabled]="isLoading"
-    [multiple]="false"
-  >
-    <ng-template
-      ngx-file-drop-content-tmp
-      let-openFileSelector="openFileSelector"
+  <app-error-message
+    *ngIf="errorObject; else fileDroper"
+    [errorObject]="errorObject"
+    (onRetryClick)="uploadVideo()"
+  ></app-error-message>
+
+  <ng-template #fileDroper>
+    <ngx-file-drop
+      (onFileDrop)="dropped($event)"
+      (onFileOver)="fileOver($event)"
+      (onFileLeave)="fileLeave($event)"
+      dropZoneClassName="ngx-file-drop"
+      contentClassName="ngx-file-content"
+      class="ngx-file-drop"
+      accept=".mp4,.mpeg4,.mov,.avi"
+      [disabled]="isLoading"
+      [multiple]="false"
+      #fileDroper
     >
-      <div class="ngx-file-content">
-        <div class="image-container">
-          <mat-spinner
-            *ngIf="isLoading; else icon"
-            mode="indeterminate"
-            [diameter]="50"
-          ></mat-spinner>
-          <ng-template #icon>
-            <mat-icon class="mat-icon-large">upload</mat-icon>
-          </ng-template>
+      <ng-template
+        ngx-file-drop-content-tmp
+        let-openFileSelector="openFileSelector"
+      >
+        <div class="ngx-file-content">
+          <div class="image-container">
+            <mat-spinner
+              *ngIf="isLoading; else icon"
+              mode="indeterminate"
+              [diameter]="50"
+            ></mat-spinner>
+            <ng-template #icon>
+              <mat-icon class="mat-icon-large">upload</mat-icon>
+            </ng-template>
+          </div>
+          <h4>Drag and drop video files to upload</h4>
+          <p>Your videos will be private until you publish them.</p>
+          <button
+            mat-raised-button
+            (click)="openFileSelector()"
+            style="margin-top: 20px"
+            [disabled]="isLoading"
+          >
+            Select Files
+          </button>
         </div>
-        <h4>Drag and drop video files to upload</h4>
-        <p>Your videos will be private until you publish them.</p>
-        <button
-          mat-raised-button
-          (click)="openFileSelector()"
-          style="margin-top: 20px"
-          [disabled]="isLoading"
-        >
-          Select Files
-        </button>
-      </div>
-    </ng-template>
-  </ngx-file-drop>
+      </ng-template>
+    </ngx-file-drop>
+  </ng-template>
+
 </mat-dialog-content>
 <mat-dialog-actions>
   <button

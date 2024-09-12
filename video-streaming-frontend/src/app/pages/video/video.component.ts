@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { VideoDto } from '../../dto/video.dto';
+import { VideoDto } from '../../interfaces/video.dto';
 import { UserService } from '../../services/user.service';
 import { VideoService } from '../../services/video.service';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import { CommentComponent } from '../../components/comment/comment.component';
 import { VideoPlayerComponent } from '../../components/video-player/video-player.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorService } from '../../services/error.service';
-import { ErrorDto } from '../../dto/error.dto';
+import { ErrorDto } from '../../interfaces/error.dto';
 import { VideoCardComponent } from '../../components/video-card/video-card.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
@@ -69,6 +69,7 @@ export class VideoComponent implements OnInit {
       .subscribe((data: VideoDto | undefined) => {
         if (data) {
           this.video = data;
+          console.log(data);
         }
       });
     this.videoService.getAllVideos().subscribe({

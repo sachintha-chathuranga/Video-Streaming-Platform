@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://your-production-api.com',
+  videoApiUrl: 'http://localhost:8080/api',
+  userApiUrl: 'http://localhost:8081/api',
 };

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
 import { Component } from '@angular/core';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'video-streaming-frontend';
 
-  constructor(private oidcSecurityService: OidcSecurityService) {}
+  constructor(private oidcSecurityService: OidcSecurityService, private userService: UserService) {}
 
   ngOnInit() {
     this.oidcSecurityService
@@ -21,12 +22,7 @@ export class AppComponent {
       .subscribe((loginResponse: LoginResponse) => {
         const { isAuthenticated, userData, accessToken, idToken, configId } =
           loginResponse;
-        console.log('isAuthenticated:' + isAuthenticated);
-
-        console.log('Token:', accessToken);
-        // Decode the token to inspect the payload
-        const payload = JSON.parse(atob(accessToken.split('.')[1]));
-        console.log('Token payload:', payload);
+        // this.userService.registerUser(userData, accessToken)
       });
   }
 }

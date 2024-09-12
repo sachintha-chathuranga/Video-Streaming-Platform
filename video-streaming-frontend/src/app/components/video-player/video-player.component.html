@@ -1,66 +1,45 @@
-<vg-player>
-  <!-- <vg-overlay-play></vg-overlay-play> -->
+<vg-player (onPlayerReady)="onPlayerReady($event)">
   <vg-buffering></vg-buffering>
 
-  <vg-scrub-bar [vgSlider]="true">
+  <vg-scrub-bar vgFor="my-video" [vgSlider]="true">
+    <vg-scrub-bar-buffering-time vgFor="my-video"></vg-scrub-bar-buffering-time>
     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-    <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
   </vg-scrub-bar>
-
-  <vg-controls>
+  <vg-controls [vgAutohide]="true">
     <vg-play-pause></vg-play-pause>
-    <!-- <vg-playback-button></vg-playback-button> -->
-    <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-    <!-- <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display> -->
-    <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
 
-    <vg-scrub-bar style="pointer-events: none"></vg-scrub-bar>
+    <vg-time-display
+      vgFor="my-video"
+      [vgProperty]="'current'"
+      [vgFormat]="'mm:ss'"
+    ></vg-time-display>
+    <span> / </span>
+    <vg-time-display
+      vgFor="my-video"
+      [vgProperty]="'total'"
+      [vgFormat]="'mm:ss'"
+    ></vg-time-display>
 
-    <vg-track-selector vgFor="singleVideo"></vg-track-selector>
+
+    <vg-scrub-bar style="pointer-events: none;" ></vg-scrub-bar>
     <vg-mute></vg-mute>
     <vg-volume></vg-volume>
 
     <vg-quality-selector
-      [bitrates]="dashBitrates"
-      (onBitrateChange)="vgDash.setBitrate($event)"
+      [bitrates]="hlsBitrates"
+      (onBitrateChange)="vgHls.setBitrate($event)"
     >
     </vg-quality-selector>
 
     <vg-fullscreen></vg-fullscreen>
   </vg-controls>
-
   <video
-    [vgMedia]="$any(media)"
     #media
-    #vgDash="vgDash"
-    [vgDash]="stream.source"
-    (onGetBitrates)="dashBitrates = $event"
-    id="singleVideo"
-    preload="auto"
+    [vgMedia]="$any(media)"
+    #vgHls="vgHls"
+    [vgHls]="videoSource"
+    (onGetBitrates)="hlsBitrates = $event"
+    id="my-video"
     crossorigin
-  >
-    <!-- <source *ngIf="videoUrl" src="{{ videoUrl }}" type="video/mp4" /> -->
-
-    <!-- <source
-      src="http://static.videogular.com/assets/videos/videogular.ogg"
-      type="video/ogg"
-    />
-    <source
-      src="http://static.videogular.com/assets/videos/videogular.webm"
-      type="video/webm"
-    /> -->
-    <!-- <track
-      kind="subtitles"
-      label="English"
-      src="http://static.videogular.com/assets/subs/pale-blue-dot.vtt"
-      srclang="en"
-      default
-    /> -->
-    <!-- <track
-      kind="subtitles"
-      label="Español"
-      src="http://static.videogular.com/assets/subs/pale-blue-dot-es.vtt"
-      srclang="es"
-    /> -->
-  </video>
+  ></video>
 </vg-player>

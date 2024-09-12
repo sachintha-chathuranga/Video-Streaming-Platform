@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SideBarItem } from '../../dto/sidebarItem.dto';
+import { SideBarItem } from '../../interfaces/sidebarItem.dto';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 
 @Component({
