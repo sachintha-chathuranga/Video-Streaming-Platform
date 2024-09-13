@@ -1,4 +1,4 @@
-<vg-player (onPlayerReady)="onPlayerReady($event)">
+<vg-player *ngIf="videoSource" (onPlayerReady)="onPlayerReady($event)">
   <vg-buffering></vg-buffering>
 
   <vg-scrub-bar vgFor="my-video" [vgSlider]="true">
@@ -20,19 +20,22 @@
       [vgFormat]="'mm:ss'"
     ></vg-time-display>
 
-
-    <vg-scrub-bar style="pointer-events: none;" ></vg-scrub-bar>
+    <vg-scrub-bar style="pointer-events: none"></vg-scrub-bar>
     <vg-mute></vg-mute>
     <vg-volume></vg-volume>
+    <vg-playback-button
+      vgFor="my-video"
+       [playbackValues]="[ '1', '2', '4' ]"
+    ></vg-playback-button>
 
-    <vg-quality-selector
+    <app-quality-selector
       [bitrates]="hlsBitrates"
       (onBitrateChange)="vgHls.setBitrate($event)"
-    >
-    </vg-quality-selector>
+    ></app-quality-selector>
 
     <vg-fullscreen></vg-fullscreen>
   </vg-controls>
+
   <video
     #media
     [vgMedia]="$any(media)"

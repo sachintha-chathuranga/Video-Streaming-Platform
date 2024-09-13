@@ -1,0 +1,130 @@
+:host {
+  display: flex;
+  position: relative;
+}
+button[mat-icon-button] {
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+}
+#menu-container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  right: -50px;
+  bottom: 0px;
+  z-index: 1;
+}
+
+
+.video-menu {
+  background-color: #1a1a1aed;
+  position: absolute;
+  right: -40px;
+  bottom: 63px;
+  border-radius: 8px;
+  flex-direction: column;
+  z-index: 2;
+  overflow-y: auto; /* Shows the scrollbar only when needed */
+  box-sizing: border-box;
+  max-width: 250px;
+  overflow-x: hidden;
+  max-height: calc(100vw * 0.35);
+  display: none;
+}
+
+.visible {
+  display: flex;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #1a1a1a00;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #666666;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.video-menu mat-divider {
+  border-top-color: #7070706c;
+}
+.video-menu .back-btn {
+  background-color: transparent;
+  width: 250px;
+  color: #f8f8f8;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 12px;
+  gap: 6px;
+}
+.video-menu .back-btn > span,
+mat-icon {
+  cursor: pointer;
+}
+button[mat-menu-item] {
+  width: 250px;
+  color: #f8f8f8;
+  min-height: 40px;
+}
+button[mat-menu-item] i {
+  display: flex;
+}
+button[mat-menu-item] i > mat-icon {
+  margin: 0;
+}
+button[mat-menu-item]:hover {
+  background-color: rgba(204, 204, 204, 0.103);
+}
+
+::ng-deep button[mat-menu-item] span {
+  font-size: 13px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+button[mat-menu-item] mat-icon {
+  color: #dadada;
+}
+button[mat-menu-item] .check-mark {
+  font-size: 18px;
+  display: flex;
+  visibility: hidden;
+  align-items: center;
+}
+
+button[mat-menu-item].select .check-mark {
+  visibility: initial;
+}
+@media only screen and (min-width: 1027px) {
+  .video-menu {
+    max-height: calc(100vw * 0.23);
+  }
+}
+@media only screen and (max-width: 600px) {
+  .video-menu .back-btn {
+    width: 200px;
+  }
+  button[mat-menu-item] {
+    width: 200px;
+  }
+}
