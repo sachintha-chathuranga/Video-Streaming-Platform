@@ -36,3 +36,18 @@ vg-scrub-bar-current-time {
 ::ng-deep vg-scrub-bar-current-time .background {
   background-color: red !important;
 }
+
+vg-volume {
+  display: none;
+  width: 0;
+  transition: width 1s ease;
+}
+vg-volume:hover{
+  display: flex;
+  width: 100px;
+}
+vg-mute:hover + vg-volume{
+  display: flex;
+  width: 100px;
+} 
+

@@ -21,8 +21,8 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: FeatureComponent,
         pathMatch: 'full',
+        component: FeatureComponent,
       },
       {
         path: 'subscriptions',

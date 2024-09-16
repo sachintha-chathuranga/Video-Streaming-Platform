@@ -48,7 +48,6 @@ a {
   padding: 10px;
 }
 .text-overflow-1, .text-overflow-2{
-  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

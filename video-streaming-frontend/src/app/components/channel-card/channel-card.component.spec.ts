@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FilterToolbarComponent } from './filter-toolbar.component';
+import { ChannelCardComponent } from './channel-card.component';
 
-describe('FilterToolbarComponent', () => {
-  let component: FilterToolbarComponent;
-  let fixture: ComponentFixture<FilterToolbarComponent>;
+describe('ChannelCardComponent', () => {
+  let component: ChannelCardComponent;
+  let fixture: ComponentFixture<ChannelCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FilterToolbarComponent]
+      imports: [ChannelCardComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FilterToolbarComponent);
+    fixture = TestBed.createComponent(ChannelCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
