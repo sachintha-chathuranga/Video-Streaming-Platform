@@ -1,8 +1,41 @@
-<div fxLayout="row wrap">
-  <h3>Watch History</h3>
-</div>
-<div fxLayout="row wrap" fxLayoutGap="12px grid">
-  <!-- <div fxFlex="30%" *ngFor="let num of [1,2,3,4,5,6,7,8]">
-    <app-video-card></app-video-card>
-  </div> -->
+<h1>Watch History</h1>
+
+<div fxLayout="row wrap" fxLayout.lt-lg="column">
+  <div fxFlex="58%" fxFlex.lt-lg="100%" fxFlexOrder.lt-lg="2">
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
+        <app-video-card
+          [video]="video"
+          [isLoading]="isLoading"
+          cardSize="meadium"
+        ></app-video-card>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="42%" fxLayoutAlign="center" fxFlex.lt-lg="100%" fxFlexOrder.lt-lg="1" fxLayoutAlign.lt-lg="start" fxLayoutAlign.lt-sm="center">
+    <div class="setting-container">
+      <mat-form-field>
+        <mat-icon>search</mat-icon>
+        <input matInput placeholder="Search watch history" [(ngModel)]="searchInput"/>
+        @if (searchInput) {
+        <button
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="searchInput = ''"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+        }
+      </mat-form-field>
+      <button mat-flat-button>
+        <mat-icon>delete</mat-icon>
+        Clear all watch history
+      </button>
+      <button mat-flat-button>
+        <mat-icon>pause</mat-icon>
+        Pause watch history
+      </button>
+    </div>
+  </div>
 </div>

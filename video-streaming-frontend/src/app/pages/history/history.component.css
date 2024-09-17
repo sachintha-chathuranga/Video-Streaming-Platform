@@ -1,0 +1,41 @@
+.list-container {
+  height: 100%;
+}
+.setting-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: fixed;
+  gap: 15px;
+}
+h1 {
+  padding: 20px 10px;
+}
+mat-form-field {
+  width: 250px;
+}
+::ng-deep mat-form-field .mat-mdc-form-field-infix {
+  display: flex !important;
+  padding-bottom: 2px !important;
+  gap: 10px;
+  align-items: center;
+}
+::ng-deep .mdc-text-field--filled {
+  background-color: transparent !important;
+  height: 20px;
+  font-size: 14px;
+}
+::ng-deep .mdc-text-field {
+  padding: 0 !important;
+}
+@media screen and (max-width: 1280px) {
+  .setting-container {
+    position: static;
+  }
+}
+@media screen and (max-width: 600px) {
+  .setting-container {
+    align-items: center;
+  }
+}
