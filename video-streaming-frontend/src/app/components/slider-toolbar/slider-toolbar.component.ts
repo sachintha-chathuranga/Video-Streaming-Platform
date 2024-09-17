@@ -1,17 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { ChannelCardComponent } from '../channel-card/channel-card.component';
 
 @Component({
-  selector: 'app-filter-toolbar',
+  selector: 'slider-toolbar',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
-  templateUrl: './filter-toolbar.component.html',
-  styleUrl: './filter-toolbar.component.css',
+  imports: [CommonModule, MatIconModule, MatButtonModule, ChannelCardComponent],
+  templateUrl: './slider-toolbar.component.html',
+  styleUrl: './slider-toolbar.component.css',
 })
-export class FilterToolbarComponent {
+export class SliderToolbarComponent {
+  @Input()
+  mode!: string;
+
+  @Input()
+  isWindowView!: boolean;
+
   @ViewChild('scrollableContent', { read: ElementRef })
   scrollableContent!: ElementRef;
   activeButtonIndex: number = 0;
@@ -35,7 +41,7 @@ export class FilterToolbarComponent {
   ];
 
   scrollTo(isRight: boolean) {
-    const scrollPoints = isRight ? 100 : -100;
+    const scrollPoints = isRight ? 300 : -300;
     const element = this.scrollableContent.nativeElement;
     const scrollLeft = element.scrollLeft + scrollPoints; // Current scroll position from the top
     const scrollWidth = element.scrollWidth; // Total height of the scrollable content

@@ -38,17 +38,17 @@ import { ToolbarComponent } from '../toolbar/toolbar.component';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent implements OnDestroy, OnInit {
+export class SidebarComponent implements OnDestroy, OnInit, OnChanges {
   @Input()
   items!: SideBarItem[];
   @Input()
   sidebarMode!: boolean;
   mobileQuery: MediaQueryList;
   private _mobileQueryListener: () => void;
-  activeButtonIndex!: number;
+  activeButton!: string;
   activatedPath!: string;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private activeRoute: ActivatedRoute) {
     const changeDetectorRef = inject(ChangeDetectorRef);
     const media = inject(MediaMatcher);
     this.mobileQuery = media.matchMedia('(max-width: 900px)');
@@ -56,14 +56,18 @@ export class SidebarComponent implements OnDestroy, OnInit {
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
   }
   ngOnInit(): void {
-    this.activeButtonIndex = this.sidebarMode ? 0 : -1;
+    this.activeButton = this.sidebarMode ? this.router.url : "";
   }
-
-  navigate(link: string, index: number) {
-    this.activeButtonIndex = index;
+  
+  navigate(link: string) {
+    this.activeButton = link;
     this.router.navigate([link]);
   }
-
+  
+  ngOnChanges() {
+    
+  }
+  
   ngOnDestroy(): void {
     this.mobileQuery.removeEventListener('change', this._mobileQueryListener);
   }

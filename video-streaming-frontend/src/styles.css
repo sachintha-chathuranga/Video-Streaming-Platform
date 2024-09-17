@@ -48,7 +48,6 @@ a {
   padding: 10px;
 }
 .text-overflow-1, .text-overflow-2{
-  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -81,6 +80,9 @@ a {
 .custom-menu {
   background-color: white !important;
 }
+
+
+
 @media screen and (max-width: 600px) {
   .fxItem {
     padding: 10px 0;

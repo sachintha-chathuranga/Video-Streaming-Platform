@@ -1,0 +1,38 @@
+<div class="scroll-container">
+  <span class="btn-cover left-btn" [ngClass]="{ hidden: !leftButton || isWindowView}"> </span>
+  <button
+    [ngClass]="{ hidden: !leftButton || isWindowView }"
+    class="mat-button left-btn"
+    mat-icon-button
+    (click)="scrollTo(false)"
+    aria-label="Scroll Left"
+  >
+    <mat-icon style="right: -2px">arrow_back_ios</mat-icon>
+  </button>
+
+  <div #scrollableContent class="scrollable-content" [ngClass]="{'window-view': isWindowView}">
+    <span class="loop-wrapper" *ngFor="let item of categories; let i = index">
+      <span
+        *ngIf="mode=='chips'"
+        class="mat-chip"
+        [ngClass]="{ active: activeButtonIndex === i }"
+        (click)="filterList(item, i)"
+      >
+        {{ item }}</span
+      >
+      <channel-card *ngIf="mode=='cards'" #channels [isWindowView]="isWindowView"></channel-card>
+    </span>
+  </div>
+
+  <span class="btn-cover right-btn" [ngClass]="{ hidden: !rightButton || isWindowView}">
+  </span>
+  <button
+    [ngClass]="{ hidden: !rightButton || isWindowView}"
+    class="mat-button right-btn"
+    mat-icon-button
+    (click)="scrollTo(true)"
+    aria-label="Scroll Right"
+  >
+    <mat-icon>arrow_forward_ios</mat-icon>
+  </button>
+</div>

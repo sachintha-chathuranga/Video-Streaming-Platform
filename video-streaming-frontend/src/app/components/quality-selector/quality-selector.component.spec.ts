@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FilterToolbarComponent } from './filter-toolbar.component';
+import { QualitySelectorComponent } from './quality-selector.component';
 
-describe('FilterToolbarComponent', () => {
-  let component: FilterToolbarComponent;
-  let fixture: ComponentFixture<FilterToolbarComponent>;
+describe('QualitySelectorComponent', () => {
+  let component: QualitySelectorComponent;
+  let fixture: ComponentFixture<QualitySelectorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FilterToolbarComponent]
+      imports: [QualitySelectorComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FilterToolbarComponent);
+    fixture = TestBed.createComponent(QualitySelectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -6,7 +6,8 @@ mat-sidenav {
   border-radius: 0;
 }
 mat-sidenav-content {
-  padding: 0 33px;
+  padding-right: 33px;
+  padding-left: 20px;
 }
 
 mat-list {

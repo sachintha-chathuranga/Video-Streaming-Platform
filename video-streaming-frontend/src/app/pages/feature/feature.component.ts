@@ -11,8 +11,8 @@ import { ErrorService } from '../../services/error.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
-import { FilterToolbarComponent } from '../../components/filter-toolbar/filter-toolbar.component';
-
+import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { SliderToolbarComponent } from '../../components/slider-toolbar/slider-toolbar.component';
 @Component({
   selector: 'app-feature',
   standalone: true,
@@ -23,7 +23,7 @@ import { FilterToolbarComponent } from '../../components/filter-toolbar/filter-t
     ErrorMessageComponent,
     MatTabsModule,
     MatChipsModule,
-    FilterToolbarComponent,
+    SliderToolbarComponent
   ],
   templateUrl: './feature.component.html',
   styleUrl: './feature.component.css',

@@ -1,8 +1,10 @@
-<mat-card class="example-card" [ngClass]="{ small: isSmall }">
+<mat-card
+  class="example-card"
+  [ngClass]="{ small: cardSize == 'small', meadium: cardSize == 'meadium' }"
+>
   <div *ngIf="isLoading; else image" class="skeleton skeleton-img"></div>
   <ng-template #image>
     <div class="img">
-
       <img
         mat-card-image
         [src]="video && video.thumbnailUrl"
@@ -11,9 +13,15 @@
       />
     </div>
   </ng-template>
-  <mat-card-header [ngClass]="{ loading: isLoading, small: isSmall }">
+  <mat-card-header
+    [ngClass]="{
+      loading: isLoading,
+      small: cardSize == 'small',
+      meadium: cardSize == 'meadium'
+    }"
+  >
     <div
-      *ngIf="!isSmall"
+      *ngIf="cardSize == 'large'"
       mat-card-avatar
       class="example-header-image"
       [ngClass]="{ skeleton: isLoading }"
@@ -24,14 +32,25 @@
           {{ video.title }}
         </h3>
       </mat-card-title>
-      <mat-card-subtitle [ngClass]="{ skeleton: isLoading }">
-        <a>
-          {{ video && video.description }}
-        </a>
+      <mat-card-subtitle class="channel-name">
+        <a> FourBit LK </a>
       </mat-card-subtitle>
-      <mat-card-subtitle>
-        {{ video && video.viewsCount + " views" }}</mat-card-subtitle
+      <mat-card-subtitle class="views">
+        <span id="views-count">
+          {{ video && video.viewsCount + " views" }}
+        </span>
+        <span id="dot">   •   </span>
+        <span *ngIf="cardSize !=='meadium'" >2 years ago</span>
+      </mat-card-subtitle>
+      <mat-card-subtitle
+        class="description"
+        *ngIf="cardSize == 'meadium'"
+        [ngClass]="{ skeleton: isLoading }"
       >
+        <p>
+          {{ video && video.description }}
+        </p>
+      </mat-card-subtitle>
     </div>
     <mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
     <mat-menu #menu="matMenu" class="custom-menu">

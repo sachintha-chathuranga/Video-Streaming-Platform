@@ -27,7 +27,7 @@ export class VideoCardComponent {
   @Input()
   isLoading: boolean = true;
   @Input()
-  isSmall!: boolean;
+  cardSize!: string;
   constructor(private router: Router) {}
   openVideo() {
     this.router.navigate(['/watch'], { queryParams: { v: this.video.id } });

@@ -1,4 +1,4 @@
-<app-filter-toolbar></app-filter-toolbar>
+<slider-toolbar mode="chips"></slider-toolbar>
 <ng-container
   *ngIf="isLoading; then loadingTemplate; else contentTemplate"
 ></ng-container>
@@ -31,7 +31,7 @@
       <app-video-card
         [video]="featuredVideo"
         [isLoading]="isLoading"
-        [isSmall]="false"
+        cardSize="large"
       ></app-video-card>
     </div>
   </div>

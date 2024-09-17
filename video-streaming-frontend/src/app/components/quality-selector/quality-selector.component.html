@@ -1,0 +1,55 @@
+<button mat-icon-button (click)="toggleMenu()">
+  <mat-icon>settings</mat-icon>
+</button>
+<div class="video-menu" [ngClass]="{ 'visible': activeMenuIndex == 1, 'hidden':  activeMenuIndex != 1}">
+  <button mat-menu-item (click)="activeMenu(2)">
+    <mat-icon>slow_motion_video</mat-icon> Playback speed<i
+      ><mat-icon>chevron_right</mat-icon>
+    </i>
+  </button>
+  <button mat-menu-item (click)="activeMenu(3)">
+    <mat-icon>tune</mat-icon>
+
+    Quality
+    <i><mat-icon>chevron_right</mat-icon></i>
+  </button>
+</div>
+
+<div class="video-menu" [ngClass]="{ 'visible': activeMenuIndex == 2, 'hidden':  activeMenuIndex != 2 }">
+    <div class="back-btn" (click)="activeMenu(1)">
+      <mat-icon>chevron_left</mat-icon>
+      <span> Playback speed </span>
+    </div>
+    <mat-divider></mat-divider>
+    <button
+      mat-menu-item
+      *ngFor="let speedObject of playbackSpeeds"
+      (click)="changePlaybackSpeed(speedObject)"
+      [ngClass]="{ select: selectedSpeed.speed == speedObject.speed }"
+    >
+      <mat-icon class="check-mark">check_small</mat-icon>
+      {{ speedObject.label }}
+    </button>
+</div>
+
+<div class="video-menu" [ngClass]="{ 'visible': activeMenuIndex == 3, 'hidden':  activeMenuIndex != 3 }">
+  <div class="back-btn" (click)="activeMenu(1)">
+    <mat-icon>chevron_left</mat-icon>
+    <span> Quality </span>
+  </div>
+  <mat-divider></mat-divider>
+  <button
+    mat-menu-item
+    *ngFor="let quality of bitrates"
+    (click)="changeQuality(quality)"
+    [ngClass]="{ select: selectedBitrate.bitrate == quality.bitrate }"
+  >
+    <mat-icon class="check-mark">check_small</mat-icon>
+    {{ quality.label }}
+  </button>
+</div>
+<div
+  id="menu-container"
+  (click)="activeMenu(-1)"
+  *ngIf="activeMenuIndex != -1"
+></div>

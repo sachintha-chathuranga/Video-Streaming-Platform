@@ -18,6 +18,9 @@ vg-time-display {
   font-size: 14px;
   width: 45px;
 }
+vg-controls {
+  background-color: #00000000 !important;
+}
 vg-controls span {
   font-size: 14px; /* Adjust size as needed */
   color: #ffffff; /* Change color to match your design */
@@ -25,5 +28,26 @@ vg-controls span {
   align-items: center;
   user-select: none;
 }
+vg-scrub-bar,
+vg-scrub-bar-buffering-time,
+vg-scrub-bar-current-time {
+  height: 3px !important;
+}
+::ng-deep vg-scrub-bar-current-time .background {
+  background-color: red !important;
+}
 
+vg-volume {
+  display: none;
+  width: 0;
+  transition: width 1s ease;
+}
+vg-volume:hover{
+  display: flex;
+  width: 100px;
+}
+vg-mute:hover + vg-volume{
+  display: flex;
+  width: 100px;
+} 
 
