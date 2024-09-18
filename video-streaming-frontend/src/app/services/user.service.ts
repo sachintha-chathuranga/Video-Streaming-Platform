@@ -13,14 +13,21 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class UserService {
-  // private userSubject = new BehaviorSubject<any>(null);
-  // user$ = this.userSubject.asObservable();
-  private user!: UserDto;
-  constructor(private httpClient: HttpClient) {}
-  private _url: string = environment.userApiUrl;
+  private user!: UserDto | null;
+  constructor(private httpClient: HttpClient) {
+    let localUser = sessionStorage.getItem('user');
+    if (localUser) {
+      this.user = JSON.parse(localUser);
+    }
+  }
+  private _url: string = environment.apiUrl;
 
-  getUser(): UserDto {
+  getUser(): UserDto | null {
     return this.user;
+  }
+  removeUser() {
+    sessionStorage.removeItem('user');
+    this.user = null;
   }
 
   subscribeToUser(channelId: void): Observable<String> {
@@ -42,12 +49,8 @@ export class UserService {
   }
   registerUser(userData: any, token: any) {
     let newUser: UserDto = {
-      id: 0,
       firstName: userData?.given_name,
       lastName: userData?.family_name,
-      pictureUrl: '',
-      about: '',
-      subscribersCount: 0,
       sub: userData?.sub,
     };
     const headers = new HttpHeaders({
@@ -57,6 +60,7 @@ export class UserService {
       .post<UserDto>(this._url + '/users/signUp', newUser, { headers })
       .subscribe((data) => {
         this.user = data;
+        sessionStorage.setItem('user', JSON.stringify(data));
       });
   }
 

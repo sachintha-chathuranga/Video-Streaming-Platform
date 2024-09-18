@@ -16,7 +16,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>video-service</module>
-        <module>user-service</module>
         <module>api-gateway</module>
     </modules>
 

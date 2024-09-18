@@ -19,6 +19,7 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -51,11 +52,12 @@ export class ToolbarComponent {
   snav!: any;
   value = '';
 
-  isAuthenticated: boolean = false;
+  isAuthenticated!: boolean;
   readonly dialog = inject(MatDialog);
   constructor(
     private oidcSecurityService: OidcSecurityService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -64,6 +66,9 @@ export class ToolbarComponent {
         this.isAuthenticated = isAuthenticated;
       }
     );
+    this.oidcSecurityService.isAuthenticated().subscribe((data) => {
+      this.isAuthenticated = data;
+    });
   }
   openSearchBox() {
     if (this.searchBox.nativeElement.classList.contains('hide')) {
@@ -77,8 +82,10 @@ export class ToolbarComponent {
     this.oidcSecurityService.authorize();
   }
   logout() {
-    this.isAuthenticated = false;
-    this.oidcSecurityService.logoffAndRevokeTokens();
+    this.oidcSecurityService.logoffAndRevokeTokens().subscribe((result) => {
+      console.log('Log Out');
+      this.userService.removeUser();
+    });
   }
   gotoVideoUpload() {
     this.router.navigateByUrl('/profile/content');

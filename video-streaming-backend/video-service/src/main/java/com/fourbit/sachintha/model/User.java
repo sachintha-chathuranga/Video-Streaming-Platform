@@ -63,13 +63,15 @@ public class User {
       String lastName,
       String email,
       String pictureUrl,
-      String about) {
+      String about,
+          String sub) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.pictureUrl = pictureUrl;
     this.about = about;
+    this.sub = sub;
   }
 
   public String getFullName() {
