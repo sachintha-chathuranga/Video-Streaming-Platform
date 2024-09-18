@@ -3,7 +3,6 @@ package com.fourbit.sachintha.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.service.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +54,7 @@ public class VideoController {
     return ResponseEntity.ok(videos);
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/get-video/{id}")
   public ResponseEntity<VideoDto> getVideoById(@PathVariable Long id) {
     return ResponseEntity.ok(videoService.getVideoById(id));
   }
