@@ -13,7 +13,6 @@ export const authConfig: PassedInitialConfig = {
     logLevel: LogLevel.Debug,
     secureRoutes: ['http://localhost:8080/'],
     customParamsAuthRequest: {
-      clientSecret: 'EzD6zPXLJA8ashBc4qSGJufJPqwlo0M1',
       audience: 'http://localhost:8080/',
     },
   },
