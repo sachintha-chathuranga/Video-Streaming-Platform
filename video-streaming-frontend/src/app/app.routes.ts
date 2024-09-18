@@ -3,7 +3,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { FeatureComponent } from './pages/feature/feature.component';
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
 import { HistoryComponent } from './pages/history/history.component';
-import { LikedVideosComponent } from './pages/liked-videos/liked-videos.component';
 import { CallbackComponent } from './pages/callback/callback.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { ContentComponent } from './pages/content/content.component';
@@ -13,6 +12,7 @@ import { AnalyticComponent } from './pages/analytic/analytic.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { VideoComponent } from './pages/video/video.component';
 import { WatchComponent } from './pages/watch/watch.component';
+import { SavedVideosComponent } from './pages/saved-videos/saved-videos.component';
 
 export const routes: Routes = [
   {
@@ -33,8 +33,8 @@ export const routes: Routes = [
         component: HistoryComponent,
       },
       {
-        path: 'liked-videos',
-        component: LikedVideosComponent,
+        path: 'saved-videos',
+        component: SavedVideosComponent,
       },
     ],
   },

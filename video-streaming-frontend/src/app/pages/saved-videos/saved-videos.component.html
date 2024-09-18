@@ -1,4 +1,4 @@
-<h1>Watch History</h1>
+<h1>Saved Videos</h1>
 
 <div fxLayout="row wrap" fxLayout.lt-lg="column">
   <div fxFlex="58%" fxFlex.lt-lg="100%" fxFlexOrder.lt-lg="2">
@@ -16,7 +16,7 @@
     <div class="setting-container">
       <mat-form-field class="mat-form-field">
         <mat-icon>search</mat-icon>
-        <input matInput placeholder="Search watch history" [(ngModel)]="searchInput"/>
+        <input matInput placeholder="Search save videos" [(ngModel)]="searchInput"/>
         @if (searchInput) {
         <button
           matSuffix
@@ -30,12 +30,9 @@
       </mat-form-field>
       <button mat-flat-button>
         <mat-icon>delete</mat-icon>
-        Clear all watch history
-      </button>
-      <button mat-flat-button>
-        <mat-icon>pause</mat-icon>
-        Pause watch history
+        Clear all saved videos
       </button>
     </div>
   </div>
 </div>
+

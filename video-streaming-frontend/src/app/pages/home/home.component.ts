@@ -49,8 +49,8 @@ const itemList = [
   },
   { icon: 'history', text: 'History', link: '/history' },
   {
-    icon: 'thumb_up',
-    text: 'Liked Videos',
-    link: '/liked-videos',
+    icon: 'save',
+    text: 'Saved Videos',
+    link: '/saved-videos',
   },
 ];

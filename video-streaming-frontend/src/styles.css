@@ -65,6 +65,9 @@ a {
   margin-bottom: 13px;
   animation: skeleton-loading 1.5s infinite linear;
 }
+.mat-form-field {
+  width: 250px;
+}
 @keyframes skeleton-loading {
   0% {
     background-color: #e0e0e0;
