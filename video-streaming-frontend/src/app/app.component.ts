@@ -14,15 +14,27 @@ import { UserService } from './services/user.service';
 export class AppComponent {
   title = 'video-streaming-frontend';
 
-  constructor(private oidcSecurityService: OidcSecurityService, private userService: UserService) {}
+  constructor(
+    private oidcSecurityService: OidcSecurityService,
+    private userService: UserService,
+  ) {}
 
   ngOnInit() {
+    let localUser = this.userService.getUser();
+    console.log('LocalUser :' + localUser);
+
     this.oidcSecurityService
       .checkAuth()
       .subscribe((loginResponse: LoginResponse) => {
         const { isAuthenticated, userData, accessToken, idToken, configId } =
           loginResponse;
-        // this.userService.registerUser(userData, accessToken)
+        console.log("Auth : "+isAuthenticated)
+        if (isAuthenticated) {
+          if (!localUser) {
+            console.log('Request Send!');
+            this.userService.registerUser(userData, accessToken);
+          }
+        }
       });
   }
 }

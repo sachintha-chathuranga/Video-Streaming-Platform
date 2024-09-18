@@ -13,6 +13,7 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 import { VideoComponent } from './pages/video/video.component';
 import { WatchComponent } from './pages/watch/watch.component';
 import { SavedVideosComponent } from './pages/saved-videos/saved-videos.component';
+import { AutoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
 
 export const routes: Routes = [
   {
@@ -44,9 +45,9 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: VideoComponent
-      }
-    ]
+        component: VideoComponent,
+      },
+    ],
   },
   {
     path: 'profile',

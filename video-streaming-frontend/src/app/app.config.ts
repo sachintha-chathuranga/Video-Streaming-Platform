@@ -7,6 +7,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import {
+  AbstractSecurityStorage,
   authInterceptor,
   provideAuth,
 } from 'angular-auth-oidc-client';
