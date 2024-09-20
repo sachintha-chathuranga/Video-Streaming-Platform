@@ -1,19 +1,50 @@
-.user-form-container{
-  margin: 40px 10px 10px 10px;
+.user-form-container {
+	margin: 40px 10px 10px 10px;
 }
 mat-form-field {
-  width: 100%;
-  margin-bottom: 6px;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.section label {
+	display: block;
+	font-size: 16px;
+	font-weight: 500;
+	margin-bottom: 10px;
+}
+.section p {
+	font-size: 13px;
+	font-weight: 400;
+	color: gray;
+  margin-bottom: 12px;
 }
 .mat-title {
-  margin-bottom: 20px;
-  font-weight: 500;
+	margin-bottom: 20px;
+	font-weight: 500;
 }
+.custom-form-field{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid gray;
+  border-radius: 5px;
+  position: relative;
+  padding: 10px 15px;
+  margin-bottom: 35px;
+}
+.custom-form-field input{
+  outline: none;
+  border: none;
+  font-size: 16px;
+  width: 100%;
+}
+.custom-form-field button{
+  position: absolute;
+  right: 0;
+}
+
 textarea {
-  resize: none;
-  overflow: hidden; /* Hide the scrollbar */
-  height: auto;
-}
-.fxLayout{
-  margin: 0 !important;
+	resize: none;
+	overflow: hidden; /* Hide the scrollbar */
+	height: auto;
 }

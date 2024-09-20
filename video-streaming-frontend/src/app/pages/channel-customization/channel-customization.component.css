@@ -1,0 +1,38 @@
+.main-title {
+	margin-top: 10px;
+	font-weight: 500;
+	font-size: 23px;
+	line-height: 32px;
+	margin-bottom: 20px;
+}
+.top-bar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid rgb(223, 223, 223);
+	padding: 10px 0;
+	margin-bottom: 15px;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background-color: white;
+}
+.top-bar h3 {
+	font-weight: 500;
+}
+.top-bar button {
+	margin-left: 10px;
+	background-color: #e8eaedc5;
+	color: black;
+}
+.top-bar button:hover {
+	background-color: #dee0e2;
+}
+.top-bar button:last-child{
+	margin-left: 10px;
+	background-color: #0c0c0c;
+	color: rgb(255, 255, 255);
+}
+.top-bar button:last-child:hover{
+	background-color: #1f1f1f;
+}

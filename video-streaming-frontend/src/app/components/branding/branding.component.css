@@ -1,6 +1,4 @@
-.branding-container {
-  margin: 40px 10px 10px 10px;
-}
+
 .example-card {
    border: none;
    margin-bottom: 20px;
@@ -8,14 +6,16 @@
 mat-card-header{
    padding: 0;
 }
-mat-card-subtitle {
-  font-size: 15px;
-  font-weight: 400;
+mat-card-title{
+  font-size: 16px;
+  font-weight: 500;
 }
-mat-card-content {
-  font-size: 15px;
+mat-card-subtitle, mat-card-content {
+  font-size: 13px;
   font-weight: 400;
+  color: gray;
 }
+
 mat-card-title-group {
   margin-top: 8px;
   align-items: flex-start;
@@ -28,15 +28,19 @@ mat-card-title-group {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: black;
+  background-color: transparent;
   min-width: 290px;
   height: 160px;
   border-radius: 8px;
+  object-fit: cover;
 }
-.img-container img {
+.img-container #profile-img {
   border-radius: 50%;
   width: 140px;
   height: 140px;
+}
+.img-container #banner-img{
+  width: 100%;
 }
 mat-card-content {
   width: 330px;

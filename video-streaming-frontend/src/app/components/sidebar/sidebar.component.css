@@ -6,8 +6,8 @@ mat-sidenav {
   border-radius: 0;
 }
 mat-sidenav-content {
-  padding-right: 33px;
-  padding-left: 20px;
+  padding: 0 33px;
+
 }
 
 mat-list {

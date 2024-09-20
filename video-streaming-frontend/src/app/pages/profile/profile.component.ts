@@ -43,7 +43,7 @@ const itemList = [
   {
     icon: 'account_circle',
     text: 'Profile',
-    link: '/profile/personal-info',
+    link: '/profile',
   },
   {
     icon: 'dashboard',

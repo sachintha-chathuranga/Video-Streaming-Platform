@@ -1,80 +1,73 @@
 <div class="user-form-container">
-  <form [formGroup]="userDetails" #form>
-    <div class="fxLayout" fxLayout="row wrap" fxLayoutGap="20px grid">
-      <div fxFlex="100%" fxFlex.gt-sm="40%">
-        <mat-form-field
-          appearance="outline"
-          hideRequiredMarker="true"
-          floatLable="auto"
-        >
-          <mat-label>First Name</mat-label>
-          <input
-            matInput
-            placeholder="Add a firstName that describes your video"
-            [formControl]="firstName"
-            (blur)="updateErrorMessage('firstName')"
-            required
-          />
-          @if (firstName.invalid){
-          <mat-error>{{ errorMessage.firstName }}</mat-error>
-          }
-        </mat-form-field>
-      </div>
-      <div fxFlex="100%" fxFlex.gt-sm="40%">
-        <mat-form-field
-          appearance="outline"
-          hideRequiredMarker="true"
-          floatLable="auto"
-        >
-          <mat-label>Last Name</mat-label>
-          <input
-            matInput
-            placeholder="Add a firstName that describes your video"
-            [formControl]="lastName"
-            (blur)="updateErrorMessage('lastName')"
-            required
-          />
-          @if (lastName.invalid){
-          <mat-error>{{ errorMessage.lastName }}</mat-error>
-          }
-        </mat-form-field>
-      </div>
-      <div fxFlex="100%" fxFlex.gt-sm="60%">
-        <mat-form-field
-          appearance="outline"
-          hideRequiredMarker="true"
-          floatLable="auto"
-        >
-          <mat-label>Email</mat-label>
-          <input
-            matInput
-            placeholder="Add a email"
-            [formControl]="email"
-            (blur)="updateErrorMessage('email')"
-            required
-          />
-          @if (email.invalid){
-          <mat-error>{{ errorMessage.email }}</mat-error>
-          }
-        </mat-form-field>
-      </div>
-      <div fxFlex="100%" fxFlex.gt-sm="60%">
-        <mat-form-field
-          appearance="outline"
-          hideRequiredMarker="true"
-          floatLable="auto"
-        >
-          <mat-label>About</mat-label>
-          <textarea
-            matInput
-            [formControl]="about"
-            rows="5"
-            placeholder="Tell viewers about you"
-            (input)="autoGrow($event)"
-          >
-          </textarea>
-        </mat-form-field>
-      </div>
-    </div>
-  </form>
+	<form [formGroup]="userDetails" #form>
+		<div class="section">
+			<label>Name</label>
+			<p>
+				Choose a channel name that represents you and your content. Changes made to your
+				name and picture are visible only on YouTube and not other Google services. You can
+				change your name twice in 14 days.
+			</p>
+			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
+				<input
+					matInput
+					placeholder="Enter Channel Name"
+					[formControl]="channelName"
+					(blur)="updateErrorMessage('channelName')"
+					required
+				/>
+				@if (channelName.invalid){
+				<mat-error>{{ errorMessage.channelName }}</mat-error>
+				}
+			</mat-form-field>
+		</div>
+		<div class="section">
+			<label>Description</label>
+			<p>
+				Tell viewers about your channel. Your description will appear in the About section
+				of your channel and search result, among other places.
+			</p>
+			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
+				<textarea
+					matInput
+					[formControl]="about"
+					rows="5"
+					placeholder="Enter Description"
+					(input)="autoGrow($event)"
+				></textarea>
+			</mat-form-field>
+		</div>
+		<div class="section">
+			<label>Channel URL</label>
+			<p>
+				This is the standard web address for your channel. It includes your unique channel
+				ID, which is the numbers and letters at the end of the URL.
+			</p>
+			<div class="custom-form-field">
+				<input mat-input type="text" [value]="generatedUrl" readonly />
+				<button mat-icon-button matSuffix (click)="copyToClipboard()">
+					<mat-icon>content_copy</mat-icon>
+				</button>
+			</div>
+		</div>
+		<div class="section">
+      <label>Contact info</label>
+      <p>
+        Let people know how to contact you with business inquiries. The email address
+        you enter may appear in the About section of your channel and be visible to
+        viewers.
+      </p>
+			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
+				<input
+					matInput
+					placeholder="Enter your email"
+					[formControl]="email"
+					(blur)="updateErrorMessage('email')"
+					required
+				/>
+				@if (email.invalid){
+				<mat-error>{{ errorMessage.email }}</mat-error>
+				}
+			</mat-form-field>
+		</div>
+	</form>
 </div>
