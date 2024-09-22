@@ -21,11 +21,12 @@ export class AppComponent {
 
 	ngOnInit() {
 		let localUser = this.userService.getUser();
-		console.log('LocalUser :' + localUser);
+		console.log(localUser);
 
 		this.oidcSecurityService.checkAuth().subscribe((loginResponse: LoginResponse) => {
 			const { isAuthenticated, userData, accessToken, idToken, configId } = loginResponse;
 			console.log('Auth : ' + isAuthenticated);
+			console.log(accessToken)
 			if (isAuthenticated) {
 				if (!localUser) {
 					console.log('Request Send!');

@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { UserDto } from '../interfaces/user.dto';
 import { VideoDto } from '../interfaces/video.dto';
 import { environment } from '../../environments/environment';
@@ -18,8 +18,12 @@ export class UserService {
 	}
 	private _url: string = environment.apiUrl;
 
-	getUser(): UserDto | null {
+	getUser(): UserDto | null  {
 		return this.user;
+	}
+	setUser(user:UserDto){
+		this.user=user;
+		sessionStorage.setItem('user', JSON.stringify(user))
 	}
 	removeUser() {
 		sessionStorage.removeItem('user');
@@ -43,10 +47,27 @@ export class UserService {
 	getUserId() {
 		throw new Error('Method not implemented.');
 	}
+// 	http.post('/api/upload', myData, {
+//   reportProgress: true,
+//   observe: 'events',
+// }).subscribe(event => {
+//   switch (event.type) {
+//     case HttpEventType.UploadProgress:
+//       console.log('Uploaded ' + event.loaded + ' out of ' + event.total + ' bytes');
+//       break;
+//     case HttpEventType.Response:
+//       console.log('Finished uploading!');
+//       break;
+//   }
+// });
+	updateUser(userData:UserDto): Observable<UserDto>{
+			return (this.httpClient
+			.put<UserDto>(this._url + '/users/update', userData)
+			.pipe(catchError(this.errorHandler)));
+	}
 	registerUser(userData: any, token: any) {
 		console.log(userData);
 		let newUser: UserDto = {
-			username: userData?.username,
 			firstName: userData?.given_name,
 			lastName: userData?.family_name,
 			email: userData?.email,
@@ -55,6 +76,8 @@ export class UserService {
 		const headers = new HttpHeaders({
 			Authorization: `Bearer ${token}`,
 		});
+		this.user = newUser;
+		sessionStorage.setItem('user', JSON.stringify(newUser));
 		this.httpClient
 			.post<UserDto>(this._url + '/users/signUp', newUser, { headers })
 			.subscribe((data) => {

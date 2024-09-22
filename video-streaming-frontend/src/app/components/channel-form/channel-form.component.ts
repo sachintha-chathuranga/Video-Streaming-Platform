@@ -1,29 +1,19 @@
-import { Component, Output, ViewEncapsulation } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  MatChipEditedEvent,
-  MatChipInputEvent,
-  MatChipsModule,
-} from '@angular/material/chips';
+import { Component } from '@angular/core';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { UserDto } from '../../interfaces/user.dto';
-import { HttpErrorResponse } from '@angular/common/http';
+import { BrandingComponent } from '../branding/branding.component';
 
 @Component({
-	selector: 'app-user-form',
+	selector: 'app-channel-form',
 	standalone: true,
 	imports: [
 		MatFormFieldModule,
@@ -35,25 +25,26 @@ import { HttpErrorResponse } from '@angular/common/http';
 		MatButtonModule,
 		MatSnackBarModule,
 		FlexLayoutModule,
+    BrandingComponent
 	],
-	templateUrl: './user-form.component.html',
-	styleUrl: './user-form.component.css',
+	templateUrl: './channel-form.component.html',
+	styleUrl: './channel-form.component.css',
 })
-export class UserFormComponent {
+export class ChannelFormComponent {
 	userDetails: FormGroup;
-	firstName: FormControl = new FormControl('', [Validators.required]);
+	channelName: FormControl = new FormControl('', [Validators.required]);
 	lastName: FormControl = new FormControl('', [Validators.required]);
 	email: FormControl = new FormControl('', [Validators.required]);
 	about: FormControl = new FormControl('');
 	errorMessage = {
-		firstName: '',
+		channelName: '',
 		lastName: '',
 		email: '',
 	};
 	selectedFile!: File;
 	selectedFileName: string = '';
 	videoId = '';
-	logginUser!: UserDto | null;
+	readonly addOnBlur = true;
 
 	isLoading = false;
 	uploadProgress = 0;
@@ -63,39 +54,20 @@ export class UserFormComponent {
 		private snackBar: MatSnackBar,
 		private userService: UserService
 	) {
-		this.logginUser = this.userService.getUser();
-		this.firstName.setValue(this.logginUser?.firstName);
-		this.lastName.setValue(this.logginUser?.lastName);
-		this.about.setValue(this.logginUser?.about);
 		this.userDetails = new FormGroup({
-			firstName: this.firstName,
+			channelName: this.channelName,
 			lastName: this.lastName,
 			email: this.email,
 			about: this.about,
 		});
 	}
-	
-	resetForm(): void {
-		this.userDetails.reset(this.logginUser);
-	}
-	publishChanges(){
-		const updatedUser: UserDto ={
-			firstName: this.userDetails.get('firstName')?.value,
-			lastName: this.userDetails.get('lastName')?.value,
-			about: this.userDetails.get('about')?.value,
-			sub: this.logginUser?.sub
-		}
-		if (this.userDetails.dirty) {
-			this.userService.updateUser(updatedUser).subscribe({
-          next: (data: UserDto) => {
-				console.log(data)
-            this.logginUser=data;
-				this.userService.setUser(data);
-          },
-          error: (error: HttpErrorResponse) => {
-            console.log(error.message)
-          },
-        });
+	generatedUrl: string = 'https://example.com/your-generated-url'; // Replace with your actual value
+
+	copyToClipboard() {
+		if (navigator.clipboard) {
+			navigator.clipboard.writeText(this.generatedUrl).catch((err) => {
+				console.error('Failed to copy: ', err);
+			});
 		}
 	}
 	updateErrorMessage(controlName: string): void {
@@ -106,7 +78,7 @@ export class UserFormComponent {
 				[controlName]: `You must enter a ${controlName}`,
 			};
 		} else {
-			this.errorMessage = { firstName: '', lastName: '', email: '' };
+			this.errorMessage = { channelName: '', lastName: '', email: '' };
 		}
 	}
 	autoGrow(event: Event): void {

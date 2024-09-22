@@ -1,7 +1,8 @@
+<app-branding></app-branding>
 <div class="user-form-container">
 	<form [formGroup]="userDetails" #form>
 		<div class="section">
-			<label>First Name</label>
+			<label>Name</label>
 			<p>
 				Choose a channel name that represents you and your content. Changes made to your
 				name and picture are visible only on YouTube and not other Google services. You can
@@ -11,37 +12,17 @@
 				<input
 					matInput
 					placeholder="Enter Channel Name"
-					[formControl]="firstName"
-					(blur)="updateErrorMessage('firstName')"
+					[formControl]="channelName"
+					(blur)="updateErrorMessage('channelName')"
 					required
 				/>
-				@if (firstName.invalid){
-				<mat-error>{{ errorMessage.firstName }}</mat-error>
+				@if (channelName.invalid){
+				<mat-error>{{ errorMessage.channelName }}</mat-error>
 				}
 			</mat-form-field>
 		</div>
 		<div class="section">
-			<label>Last Name</label>
-			<p>
-				Choose a channel name that represents you and your content. Changes made to your
-				name and picture are visible only on YouTube and not other Google services. You can
-				change your name twice in 14 days.
-			</p>
-			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
-				<input
-					matInput
-					placeholder="Enter Channel Name"
-					[formControl]="lastName"
-					(blur)="updateErrorMessage('lastName')"
-					required
-				/>
-				@if (lastName.invalid){
-				<mat-error>{{ errorMessage.lastName }}</mat-error>
-				}
-			</mat-form-field>
-		</div>
-		<div class="section">
-			<label>About</label>
+			<label>Description</label>
 			<p>
 				Tell viewers about your channel. Your description will appear in the About section
 				of your channel and search result, among other places.
@@ -57,14 +38,36 @@
 			</mat-form-field>
 		</div>
 		<div class="section">
-			<label>Email</label>
+			<label>Channel URL</label>
 			<p>
 				This is the standard web address for your channel. It includes your unique channel
 				ID, which is the numbers and letters at the end of the URL.
 			</p>
 			<div class="custom-form-field">
-				<input mat-input type="text" [value]="logginUser?.email" readonly />
+				<input mat-input type="text" [value]="generatedUrl" readonly />
+				<button mat-icon-button matSuffix (click)="copyToClipboard()">
+					<mat-icon>content_copy</mat-icon>
+				</button>
 			</div>
+		</div>
+		<div class="section">
+			<label>Contact info</label>
+			<p>
+				Let people know how to contact you with business inquiries. The email address you
+				enter may appear in the About section of your channel and be visible to viewers.
+			</p>
+			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
+				<input
+					matInput
+					placeholder="Enter your email"
+					[formControl]="email"
+					(blur)="updateErrorMessage('email')"
+					required
+				/>
+				@if (email.invalid){
+				<mat-error>{{ errorMessage.email }}</mat-error>
+				}
+			</mat-form-field>
 		</div>
 	</form>
 </div>

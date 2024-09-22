@@ -68,9 +68,6 @@ export class ToolbarComponent {
 		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
 			this.isAuthenticated = isAuthenticated;
 		});
-		this.oidcSecurityService.isAuthenticated().subscribe((data) => {
-			this.isAuthenticated = data;
-		});
 	}
 	navigate(link:string) {
 		this.router.navigate([link]);

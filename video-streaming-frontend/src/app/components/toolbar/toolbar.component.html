@@ -41,12 +41,12 @@
 		<button mat-icon-button>
 			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
 		</button>
-		<div class="profile-img-cover" [matMenuTriggerFor]="menu" *ngIf="!isAuthenticated; else noAuth">
+		<div class="profile-img-cover" [matMenuTriggerFor]="menu" *ngIf="isAuthenticated; else noAuth">
 			<img src="/assets/no-person.png" />
 		</div>
 		<mat-menu #menu="matMenu" class="custom-menu ">
 			<div class="menu-header">
-				<div class="profile-img-cover" [matMenuTriggerFor]="menu">
+				<div class="profile-img-cover">
 					<img src="/assets/no-person.png" />
 				</div>
 				<div class="menu-user-info">
