@@ -1,22 +1,13 @@
 package com.fourbit.sachintha.service.impl;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourbit.sachintha.dto.UserDto;
-import com.fourbit.sachintha.dto.UserTokenInfoDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.mapper.UserMapper;
@@ -158,7 +149,8 @@ public class UserServiceImpl implements UserService {
       // return v2.getWatchTime().compareTo(v1.getWatchTime()); // Descending order
       // }
       // });
-      return videoHistories.stream().map(vh -> VideoHistoryMapper.maptoVideoHistoryDto(vh)).toList();
+      return videoHistories.stream().map(vh -> VideoHistoryMapper.maptoVideoHistoryDto(vh))
+            .toList();
    }
 
    @Override
@@ -184,7 +176,8 @@ public class UserServiceImpl implements UserService {
    public List<UserDto> getSubscribeChannels() {
       User user = commonService.getRequestedUser();
       List<User> channels = user.getSubscriptions();
-      List<UserDto> channelDtos = channels.stream().map(channel -> UserMapper.mapToUserDto(channel)).toList();
+      List<UserDto> channelDtos =
+            channels.stream().map(channel -> UserMapper.mapToUserDto(channel)).toList();
       return channelDtos;
    }
 

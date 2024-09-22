@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.mapper.VideoMapper;
 import com.fourbit.sachintha.model.User;

@@ -40,7 +40,8 @@ public class User {
   private List<Comment> comments = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "channelId"))
+  @JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"),
+      inverseJoinColumns = @JoinColumn(name = "channelId"))
   private List<User> subscriptions = new ArrayList<>();
 
   @ManyToMany(mappedBy = "subscriptions")
@@ -50,21 +51,23 @@ public class User {
   private List<VideoHistory> videoHistories;
 
   @ManyToMany
-  @JoinTable(name = "user_likes_video", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
+  @JoinTable(name = "user_likes_video", joinColumns = @JoinColumn(name = "userId"),
+      inverseJoinColumns = @JoinColumn(name = "videoId"))
   private List<Video> likedVideos = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(name = "user_dislikes_video", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
+  @JoinTable(name = "user_dislikes_video", joinColumns = @JoinColumn(name = "userId"),
+      inverseJoinColumns = @JoinColumn(name = "videoId"))
   private List<Video> dislikedVideos = new ArrayList<>();
 
   public User(
-      Long id,
+      Long id,  
       String firstName,
       String lastName,
       String email,
       String pictureUrl,
       String about,
-          String sub) {
+      String sub) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
