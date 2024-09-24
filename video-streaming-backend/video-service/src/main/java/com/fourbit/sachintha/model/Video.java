@@ -11,10 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,67 +24,50 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Video {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
-  private String description;
-  private String title;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	private String description;
+	private String title;
+	private String videoUrl;
+	private VideoStatus videoStatus;
+	private String thumbnailUrl;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId")
-  private User user;
+	// Many-to-one relationship with Channel
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "channelId")
+	private Channel channel;// this will create new field in table name as channel_id
 
-  private String videoUrl;
-  private VideoStatus videoStatus;
-  private String thumbnailUrl;
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Tag> tags = new ArrayList<>();
 
-  private List<String> tags = new ArrayList<>();
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
+	private List<VideoLikeStatus> likeUsers = new ArrayList<>();
 
-  @ManyToMany(mappedBy = "likedVideos")
-  private List<User> likes = new ArrayList<>();
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
+	private List<Comment> comments = new ArrayList<>();
 
-  @ManyToMany(mappedBy = "dislikedVideos")
-  private List<User> dislikes = new ArrayList<>();
+	@Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+	private Long viewsCount = Long.valueOf(0);
 
-  @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
-  private List<Comment> comments = new ArrayList<>();
+	public Video(Long id, String description, String title, Channel channel, String videoUrl, VideoStatus videoStatus,
+			String thumbnailUrl, Long viewsCount) {
+		this.id = id;
+		this.description = description;
+		this.title = title;
+		this.channel = channel;
+		this.videoUrl = videoUrl;
+		this.videoStatus = videoStatus;
+		this.thumbnailUrl = thumbnailUrl;
+		this.viewsCount = viewsCount;
+	}
 
-  @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
-  private Long viewsCount = Long.valueOf(0);
+	public List<VideoLikeStatus> getLikes() {
+		return this.likeUsers.stream().filter(data -> data.getLikeStatus()).toList();
+	}
 
-  public Video(
-      Long id,
-      String description,
-      String title,
-      User user,
-      String videoUrl,
-      VideoStatus videoStatus,
-      String thumbnailUrl,
-      List<String> tags,
-      Long viewsCount) {
-    this.id = id;
-    this.description = description;
-    this.title = title;
-    this.user = user;
-    this.videoUrl = videoUrl;
-    this.videoStatus = videoStatus;
-    this.thumbnailUrl = thumbnailUrl;
-    this.tags = tags;
-    this.viewsCount = viewsCount;
-  }
-
-  @PreRemove
-  private void removeAssociationsWithUsers() {
-    // Clear likes associations
-    for (User user : likes) {
-      user.getLikedVideos().remove(this);
-    }
-
-    // Clear dislikes associations
-    for (User user : dislikes) {
-      user.getDislikedVideos().remove(this);
-    }
-    
-  }
+	public List<VideoLikeStatus> getDisLikes() {
+		return this.likeUsers.stream().filter(data -> !data.getLikeStatus()).toList();
+	}
 
 }

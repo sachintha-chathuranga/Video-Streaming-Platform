@@ -31,9 +31,3 @@ justify-content: space-around;
 .header-details p{
    color: var(--theme-font-shadow);
 }
-.mat-tab-group {
-  margin-bottom: 48px;
-  overflow-y: unset;
-  overflow-x: unset;
-}
-

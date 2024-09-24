@@ -2,6 +2,7 @@ package com.fourbit.sachintha.service;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 
@@ -30,7 +31,7 @@ public interface UserService {
 
    String subscribe(Long channelId);
 
-   List<UserDto> getSubscribeChannels();
+   List<ChannelDto> getSubscribeChannels();
 
    String unsubscribe(Long channelId);
 }

@@ -20,17 +20,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VideoHistory {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "video_id", nullable = false)
-  private Video video;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "video_id", nullable = false)
+	private Video video;
 
-  private LocalDateTime watchTime;
+	private LocalDateTime watchTime;
+
+	private Long watchDuration;
 }

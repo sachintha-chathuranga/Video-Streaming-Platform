@@ -20,40 +20,32 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-  @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-  private String issuer;
+	@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+	private String issuer;
 
-  @Value("${auth0.audience}")
-  private String audience;
+	@Value("${auth0.audience}")
+	private String audience;
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers("/api/videos/get-video/**", "/api/videos/get-all").permitAll()
-            .anyRequest()
-            .authenticated()
-        )
-            .cors(Customizer.withDefaults())
-        .oauth2ResourceServer((oauth2) -> oauth2
-            .jwt(Customizer.withDefaults()))
-        .sessionManagement(
-              (session) -> session
-          .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
-    return http.build();
-  }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests(
+				(authorize) -> authorize.requestMatchers("/api/videos/get-video/**", "/api/videos/get-all").permitAll()
+						.anyRequest().authenticated())
+				.cors(Customizer.withDefaults()).oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
+				.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		return http.build();
+	}
 
-  @Bean
-  public JwtDecoder jwtDecoder() {
-    NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder)JwtDecoders.fromOidcIssuerLocation(issuer);
+	@Bean
+	public JwtDecoder jwtDecoder() {
+		NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuer);
 
-    OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
-    OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
-    OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
+		OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
+		OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
+		OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
 
-    jwtDecoder.setJwtValidator(withAudience);
+		jwtDecoder.setJwtValidator(withAudience);
 
-    return jwtDecoder;
-  }
+		return jwtDecoder;
+	}
 }

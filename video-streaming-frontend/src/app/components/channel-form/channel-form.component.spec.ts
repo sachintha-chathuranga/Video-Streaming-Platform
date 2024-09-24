@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PersonalDataComponent } from './personal-data.component';
+import { ChannelFormComponent } from './channel-form.component';
 
-describe('PersonalDataComponent', () => {
-  let component: PersonalDataComponent;
-  let fixture: ComponentFixture<PersonalDataComponent>;
+describe('ChannelFormComponent', () => {
+  let component: ChannelFormComponent;
+  let fixture: ComponentFixture<ChannelFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PersonalDataComponent]
+      imports: [ChannelFormComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PersonalDataComponent);
+    fixture = TestBed.createComponent(ChannelFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

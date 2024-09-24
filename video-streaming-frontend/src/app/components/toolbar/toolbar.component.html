@@ -1,59 +1,72 @@
 <mat-toolbar class="example-toolbar">
-  <mat-toolbar-row>
-    <button
-      class="menu-button"
-      [style]="isMobile ? 'display: block;' : 'display: none'"
-      mat-icon-button
-      (click)="snav.toggle()"
-    >
-      <mat-icon>menu</mat-icon>
-    </button>
-    <h1 class="example-app-name">MediaPulse</h1>
+	<mat-toolbar-row>
+		<button
+			class="menu-button"
+			[style]="isMobile ? 'display: block;' : 'display: none'"
+			mat-icon-button
+			(click)="snav.toggle()"
+		>
+			<mat-icon>menu</mat-icon>
+		</button>
+		<h1 class="example-app-name" (click)="navigate('/')">MediaPulse</h1>
 
-    <span class="example-spacer">
-      <div class="search-container hide" #searchBox>
-        <button
-          mat-icon-button
-          class="search-toggle-btn"
-          (click)="openSearchBox()"
-        >
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <div class="search-box">
-          <input #inputField type="text" [(ngModel)]="value" placeholder="Search" />
-          @if (value) {
-          <mat-icon>close</mat-icon>
-          <button
-            matSuffix
-            mat-icon-button
-            aria-label="Clear"
-            (click)="value = ''"
-          ></button>
-          }
-        </div>
-        <div class="search-btn" matTooltip="Search">
-          <mat-icon>search</mat-icon>
-        </div>
-      </div>
-    </span>
-    <button mat-icon-button class="search-toggle-btn" (click)="openSearchBox()">
-      <mat-icon>search</mat-icon>
-    </button>
-    <button mat-icon-button (click)="gotoVideoUpload()">
-      <mat-icon>video_call</mat-icon>
-    </button>
-    <button mat-icon-button>
-      <mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
-    </button>
-    <button
-      *ngIf="isAuthenticated; else noAuth"
-      mat-icon-button
-      (click)="logout()"
-    >
-      <mat-icon>account_circle</mat-icon>
-    </button>
-    <ng-template #noAuth>
-      <button mat-stroked-button class="login-btn" (click)="login()">Sign in</button>
-    </ng-template>
-  </mat-toolbar-row>
+		<span class="example-spacer">
+			<div class="search-container hide" #searchBox>
+				<button mat-icon-button class="search-toggle-btn" (click)="openSearchBox()">
+					<mat-icon>arrow_back</mat-icon>
+				</button>
+				<div class="search-box">
+					<input #inputField type="text" [(ngModel)]="value" placeholder="Search" />
+					@if (value) {
+					<mat-icon>close</mat-icon>
+					<button
+						matSuffix
+						mat-icon-button
+						aria-label="Clear"
+						(click)="value = ''"
+					></button>
+					}
+				</div>
+				<div class="search-btn" matTooltip="Search">
+					<mat-icon>search</mat-icon>
+				</div>
+			</div>
+		</span>
+		<button mat-icon-button class="search-toggle-btn" (click)="openSearchBox()">
+			<mat-icon>search</mat-icon>
+		</button>
+		<button id="create-btn" mat-flat-button *ngIf="isAuthenticated" (click)="gotoVideoUpload()">
+			<mat-icon>add</mat-icon>
+			<span>Create</span>
+		</button>
+		<button mat-icon-button>
+			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
+		</button>
+		<div class="profile-img-cover" [matMenuTriggerFor]="menu" *ngIf="isAuthenticated; else noAuth">
+			<img src="/assets/no-person.png" />
+		</div>
+		<mat-menu #menu="matMenu" class="custom-menu ">
+			<div class="menu-header">
+				<div class="profile-img-cover">
+					<img src="/assets/no-person.png" />
+				</div>
+				<div class="menu-user-info">
+					<p class="text-overflow-1 name">Sachintha Chathuranga dsf d df sd dsa fs d</p>
+					<p class="text-overflow-1 email">mmschathuranga1&#64;gmail.com  df d ds afds   dffd </p>
+				</div>
+			</div>
+			<mat-divider></mat-divider>
+			<button mat-menu-item (click)="navigate('/profile')">
+				<mat-icon>account_circle</mat-icon>
+				<span>Your Account</span>
+			</button>
+			<button mat-menu-item (click)="logout()">
+				<mat-icon>logout</mat-icon>
+				<span>Sign out</span>
+			</button>
+		</mat-menu>
+		<ng-template #noAuth>
+			<button mat-stroked-button class="login-btn" (click)="login()">Sign in</button>
+		</ng-template>
+	</mat-toolbar-row>
 </mat-toolbar>

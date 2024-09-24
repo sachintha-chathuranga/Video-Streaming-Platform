@@ -9,14 +9,9 @@ public class UserMapper {
                 if (userDto == null) {
                         return null;
                 }
-                User user = new User(
-                                userDto.getId(),
-                                userDto.getFirstName(),
-                                userDto.getLastName(),
-                                userDto.getEmail(),
-                                userDto.getPictureUrl(),
-                                userDto.getAbout(),
-                                userDto.getSub());
+                User user = new User(userDto.getId(), userDto.getFirstName(),
+                                userDto.getLastName(), userDto.getEmail(), userDto.getPictureUrl(),
+                                userDto.getAbout(), userDto.getSub());
                 return user;
         }
 
@@ -24,16 +19,9 @@ public class UserMapper {
                 if (user == null) {
                         return null;
                 }
-                Long subsCount = Long.valueOf(user.getSubscribers().size());
-                UserDto userDto = new UserDto(
-                                user.getId(),
-                                user.getFirstName(),
-                                user.getLastName(),
-                                user.getEmail(),
-                                user.getPictureUrl(),
-                                user.getAbout(),
-                                subsCount,
-                                user.getSub());
+                UserDto userDto = new UserDto(user.getId(), user.getFirstName(),
+                                user.getLastName(), user.getEmail(), user.getPictureUrl(),
+                                user.getAbout(), user.getSub());
                 return userDto;
         }
 }

@@ -14,7 +14,6 @@ public class UserDto {
   private String email;
   private String pictureUrl;
   private String about;
-  private Long subscribersCount = Long.valueOf(0);
   private String sub;
   // private List<CommentDto> comments = new ArrayList<>();
   // private List<UserDto> subscriptions = new ArrayList<>();

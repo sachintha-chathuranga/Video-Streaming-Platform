@@ -1,0 +1,32 @@
+<h2 class="main-title">Profile Customizations</h2>
+<div class="top-bar">
+	<div class="tab-wrapper">
+		<button
+			mat-flat-button
+			(click)="selectTab('channel')"
+			[ngClass]="{ active: activeTab == 'channel' }"
+		>
+			Channel
+		</button>
+		<button
+			mat-flat-button
+			(click)="selectTab('account')"
+			[ngClass]="{ active: activeTab == 'account' }"
+		>
+			Account
+		</button>
+	</div>
+	<div class="buttons-wrapper">
+		<button mat-flat-button (click)="navigate('/channel')" >View channel</button>
+		<button mat-flat-button (click)="resetUserdForm()" >Cancel</button>
+		<button mat-flat-button (click)="publishUser()" >Publish</button>
+	</div>
+</div>
+<ng-container *ngIf="activeTab == 'channel'; then channel; else account"></ng-container>
+<ng-template #channel>
+
+	<app-channel-form></app-channel-form>
+</ng-template>
+<ng-template #account>
+	<app-user-form ></app-user-form>
+</ng-template>
