@@ -69,6 +69,13 @@ h1.example-app-name {
 .search-toggle-btn {
 	display: none;
 }
+#create-btn{
+	background-color: rgba(240, 240, 240, 0.801);
+	color: black;
+}
+#create-btn:hover{
+	background-color: rgba(230, 230, 230, 0.945);
+}
 .login-btn {
 	margin: 0 15px;
 	border-radius: 25px;

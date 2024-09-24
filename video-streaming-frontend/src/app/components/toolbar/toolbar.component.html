@@ -35,8 +35,9 @@
 		<button mat-icon-button class="search-toggle-btn" (click)="openSearchBox()">
 			<mat-icon>search</mat-icon>
 		</button>
-		<button mat-icon-button (click)="gotoVideoUpload()">
-			<mat-icon>video_call</mat-icon>
+		<button id="create-btn" mat-flat-button *ngIf="isAuthenticated" (click)="gotoVideoUpload()">
+			<mat-icon>add</mat-icon>
+			<span>Create</span>
 		</button>
 		<button mat-icon-button>
 			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>

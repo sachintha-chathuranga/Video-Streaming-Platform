@@ -26,7 +26,6 @@ export class AppComponent {
 		this.oidcSecurityService.checkAuth().subscribe((loginResponse: LoginResponse) => {
 			const { isAuthenticated, userData, accessToken, idToken, configId } = loginResponse;
 			console.log('Auth : ' + isAuthenticated);
-			console.log(accessToken)
 			if (isAuthenticated) {
 				if (!localUser) {
 					console.log('Request Send!');

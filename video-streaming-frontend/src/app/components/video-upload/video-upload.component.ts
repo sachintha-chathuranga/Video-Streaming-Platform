@@ -22,10 +22,10 @@ import {
 import { VideoFormComponent } from '../video-form/video-form.component';
 import { VideoDto } from '../../interfaces/video.dto';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UploadVideoResponse } from '../../interfaces/uploadResponse.dto';
 import { ErrorDto } from '../../interfaces/error.dto';
 import { ErrorService } from '../../services/error.service';
 import { ErrorMessageComponent } from '../error-message/error-message.component';
+import { Channel } from '../../interfaces/channel.dto';
 @Component({
   selector: 'app-video-upload',
   standalone: true,
@@ -88,10 +88,10 @@ export class VideoUploadComponent {
       console.log('Start File upload...');
       this.fileEntry.file((file: File) => {
         this.videoService.uploadVideo(file).subscribe({
-          next: (data: UploadVideoResponse) => {
+          next: (data: VideoDto) => {
             this.isLoading = false;
             this.dialog.closeAll();
-            this.openDialog(data.videoId, data.videoUrl);
+            this.openDialog(data.id,data.title,data.channel, data.videoUrl);
           },
           error: (error: HttpErrorResponse) => {
             this.errorObject = this.errorService.generateError(error);
@@ -108,7 +108,7 @@ export class VideoUploadComponent {
     // }, 2000);
   }
 
-  openDialog(videoId: number, videoUrl: string) {
+  openDialog(videoId: number,videoTitle: string, channel: Channel, videoUrl?: string) {
     const dialogRef = this.dialog.open(VideoFormComponent, {
       width: '80%',
       maxWidth: '900px',
@@ -117,8 +117,8 @@ export class VideoUploadComponent {
       data: {
         videoId: videoId,
         videoUrl: videoUrl,
-        thumbnailUrl: '',
-        title: 'Video Title',
+        title: videoTitle,
+        channel: channel,
       },
     });
 

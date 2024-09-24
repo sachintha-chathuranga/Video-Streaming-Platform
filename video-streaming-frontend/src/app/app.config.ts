@@ -3,16 +3,15 @@ import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { AbstractSecurityStorage, authInterceptor, provideAuth } from 'angular-auth-oidc-client';
+import {  authInterceptor, provideAuth } from 'angular-auth-oidc-client';
 import { authConfig } from './auth/auth.config';
 
 export const appConfig: ApplicationConfig = {
 	providers: [
-		provideHttpClient(withInterceptors([authInterceptor()])),
+		provideHttpClient(withInterceptors([authInterceptor()])), // this will manage adding token to every request
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(routes),
 		provideAnimationsAsync(),
-		provideHttpClient(),
 		provideAuth(authConfig),
 	],
 };

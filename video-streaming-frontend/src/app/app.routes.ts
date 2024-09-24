@@ -15,6 +15,7 @@ import { SavedVideosComponent } from './pages/saved-videos/saved-videos.componen
 import { AutoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
 import { ChannelComponent } from './pages/channel/channel.component';
 import { ChannelCustomizationComponent } from './pages/channel-customization/channel-customization.component';
+import { AuthorizationGuard } from './auth/authorization-guard.service';
 
 export const routes: Routes = [
 	{
@@ -57,6 +58,7 @@ export const routes: Routes = [
 	{
 		path: 'profile',
 		component: ProfileComponent,
+		canActivate: [AuthorizationGuard],
 		children: [
 			{
 				path: '',

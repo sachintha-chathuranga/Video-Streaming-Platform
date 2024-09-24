@@ -16,20 +16,26 @@ export class UserService {
 			this.user = JSON.parse(localUser);
 		}
 	}
-	private _url: string = environment.apiUrl;
+	private apiEndpoint: string = environment.apiEndpoint;
 
-	getUser(): UserDto | null  {
+	getUser(): UserDto | null {
 		return this.user;
 	}
-	setUser(user:UserDto){
-		this.user=user;
-		sessionStorage.setItem('user', JSON.stringify(user))
+	setUser(user: UserDto) {
+		this.user = user;
+		sessionStorage.setItem('user', JSON.stringify(user));
 	}
 	removeUser() {
 		sessionStorage.removeItem('user');
 		this.user = null;
 	}
-
+	getUserVideos():Observable<VideoDto[]>{
+		return (
+			this.httpClient
+				.get<VideoDto[]>(this.apiEndpoint + '/videos/get-all')
+				.pipe(catchError(this.errorHandler))
+		);
+	}
 	subscribeToUser(channelId: void): Observable<String> {
 		return this.httpClient.put<String>(
 			`http://localhost:8081/api/users/subscribe/${channelId}`,
@@ -47,6 +53,35 @@ export class UserService {
 	getUserId() {
 		throw new Error('Method not implemented.');
 	}
+	updateUser(userData: UserDto): Observable<UserDto> {
+		return this.httpClient
+		.put<UserDto>(this.apiEndpoint + '/users/update', userData)
+		.pipe(catchError(this.errorHandler));
+	}
+	registerUser(userData: any, token: any) {
+		console.log(userData);
+		let newUser: UserDto = {
+			firstName: userData?.given_name,
+			lastName: userData?.family_name,
+			email: userData?.email,
+			sub: userData?.sub,
+		};
+		const headers = new HttpHeaders({
+			Authorization: `Bearer ${token}`,
+		});
+		this.httpClient
+		.post<UserDto>(this.apiEndpoint + '/users/signUp', newUser, { headers })
+		.subscribe((data) => {
+			this.user = data;
+			sessionStorage.setItem('user', JSON.stringify(data));
+		});
+	}
+	
+	errorHandler(error: HttpErrorResponse) {
+		return throwError(() => error);
+	}
+}
+
 // 	http.post('/api/upload', myData, {
 //   reportProgress: true,
 //   observe: 'events',
@@ -60,33 +95,3 @@ export class UserService {
 //       break;
 //   }
 // });
-	updateUser(userData:UserDto): Observable<UserDto>{
-			return (this.httpClient
-			.put<UserDto>(this._url + '/users/update', userData)
-			.pipe(catchError(this.errorHandler)));
-	}
-	registerUser(userData: any, token: any) {
-		console.log(userData);
-		let newUser: UserDto = {
-			firstName: userData?.given_name,
-			lastName: userData?.family_name,
-			email: userData?.email,
-			sub: userData?.sub,
-		};
-		const headers = new HttpHeaders({
-			Authorization: `Bearer ${token}`,
-		});
-		this.user = newUser;
-		sessionStorage.setItem('user', JSON.stringify(newUser));
-		this.httpClient
-			.post<UserDto>(this._url + '/users/signUp', newUser, { headers })
-			.subscribe((data) => {
-				this.user = data;
-				sessionStorage.setItem('user', JSON.stringify(data));
-			});
-	}
-
-	errorHandler(error: HttpErrorResponse) {
-		return throwError(() => error);
-	}
-}
