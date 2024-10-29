@@ -1,6 +1,6 @@
 <mat-card
   class="example-card"
-  [ngClass]="{ small: cardSize == 'small', meadium: cardSize == 'meadium' }"
+  [ngClass]="{ small: cardSize == 'small', meadium: cardSize == 'meadium', large: cardSize == 'larger' }"
 >
   <div *ngIf="isLoading; else image" class="skeleton skeleton-img"></div>
   <ng-template #image>
@@ -17,7 +17,8 @@
     [ngClass]="{
       loading: isLoading,
       small: cardSize == 'small',
-      meadium: cardSize == 'meadium'
+      meadium: cardSize == 'meadium',
+      large: cardSize == 'larger'
     }"
   >
     <div

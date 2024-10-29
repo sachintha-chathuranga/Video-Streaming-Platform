@@ -42,7 +42,7 @@ export class SavedVideosComponent {
     private snackBar: MatSnackBar
   ) {}
   ngOnInit(): void {
-    this.videoService.getAllVideos().subscribe({
+    this.videoService.getAllVideos("").subscribe({
       next: (data: VideoDto[]) => {
         this.videoList = data;
       },

@@ -42,7 +42,7 @@ export class VideoService {
 		//   'http://localhost:8080/api/videos/' + videoId
 		// );
 
-		return this.getAllVideos().pipe(
+		return this.getAllVideos('').pipe(
 			map((videos) => videos.find((video) => video.id === parseInt(videoId)))
 		);
 	}
@@ -55,17 +55,46 @@ export class VideoService {
 	}
 
 	saveVideo(videoMetaData: VideoDto): Observable<VideoDto> {
-		return this.httpClient.put<VideoDto>(
-			`${this.apiEndpoint}/videos/update-details`,
-			videoMetaData
-		).pipe(catchError(this.errorHandler));;
+		return this.httpClient
+			.put<VideoDto>(`${this.apiEndpoint}/videos/update-details`, videoMetaData)
+			.pipe(catchError(this.errorHandler));
 	}
 
-	getAllVideos(): Observable<VideoDto[]> {
+	// getAllVideos(): Observable<VideoDto[]> {
+	// 	return (
+	// 		this.httpClient
+	// 			// .get<VideoDto[]>(this.apiEndpoint)
+	// 			.get<VideoDto[]>(this.apiEndpoint + '/videos/get-all')
+	// 			.pipe(catchError(this.errorHandler))
+	// 	);
+	// }
+	getAllVideos(
+		tagName: string,
+	): Observable<VideoDto[]> {
 		return (
 			this.httpClient
 				// .get<VideoDto[]>(this.apiEndpoint)
-				.get<VideoDto[]>(this.apiEndpoint + '/videos/get-all')
+				.get<VideoDto[]>(
+					this.apiEndpoint +
+						'/videos/get-all' +
+						`?tagName=${tagName}`
+				)
+				.pipe(catchError(this.errorHandler))
+		);
+	}
+	searchVideos(
+		searchQuery: string,
+		date: string,
+		duration: string,
+		sortBy: string
+	): Observable<VideoDto[]> {
+		return (
+			this.httpClient
+				.get<VideoDto[]>(
+					this.apiEndpoint +
+						'/videos/search' +
+						`?searchQuery=${searchQuery}&date=${date}&duration=${duration}&sortBy=${sortBy}`
+				)
 				.pipe(catchError(this.errorHandler))
 		);
 	}

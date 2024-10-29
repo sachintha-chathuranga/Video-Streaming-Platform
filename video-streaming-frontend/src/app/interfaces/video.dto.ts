@@ -6,7 +6,7 @@ export interface VideoDto {
   id: number;
   description: string;
   title: string;
-  channel: Channel;
+  channel?: Channel;
   videoUrl?: string;
   videoStatus?: string;
   thumbnailUrl?: string;

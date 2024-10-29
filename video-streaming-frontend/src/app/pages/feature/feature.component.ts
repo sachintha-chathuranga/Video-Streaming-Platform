@@ -11,8 +11,8 @@ import { ErrorService } from '../../services/error.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { SliderToolbarComponent } from '../../components/slider-toolbar/slider-toolbar.component';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 @Component({
   selector: 'app-feature',
   standalone: true,
@@ -33,11 +33,14 @@ export class FeatureComponent implements OnInit, OnDestroy {
   errorObject!: ErrorDto;
   isLoading: boolean = false;
   private timeoutId: any;
+  searchQuery: string = '';
+  tagName: string = "";
 
   constructor(
     private videoService: VideoService,
     private snackBar: MatSnackBar,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +49,7 @@ export class FeatureComponent implements OnInit, OnDestroy {
   fetchData() {
     this.isLoading = true;
     // this.timeoutId = setTimeout(() => {
-    this.videoService.getAllVideos().subscribe({
+    this.videoService.getAllVideos(this.tagName).subscribe({
       next: (data: VideoDto[]) => {
         this.featuredVideos = data;
       },
@@ -60,11 +63,6 @@ export class FeatureComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       complete: () => {
-        // this.snackBar.open('Video data retrieval completed', '', {
-        //   duration: 3000,
-        //   horizontalPosition: 'right',
-        //   verticalPosition: 'top',
-        // });
         this.isLoading = false;
       },
     });
@@ -75,5 +73,9 @@ export class FeatureComponent implements OnInit, OnDestroy {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
+  }
+  setCategory(category: string){
+    this.tagName = category;
+    this.fetchData();
   }
 }

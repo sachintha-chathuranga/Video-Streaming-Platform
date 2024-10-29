@@ -72,7 +72,7 @@ export class VideoComponent implements OnInit {
           console.log(data);
         }
       });
-    this.videoService.getAllVideos().subscribe({
+    this.videoService.getAllVideos("").subscribe({
       next: (data: VideoDto[]) => {
         this.videoList = data;
       },

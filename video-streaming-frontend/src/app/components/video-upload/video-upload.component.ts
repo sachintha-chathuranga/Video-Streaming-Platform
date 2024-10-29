@@ -91,7 +91,9 @@ export class VideoUploadComponent {
           next: (data: VideoDto) => {
             this.isLoading = false;
             this.dialog.closeAll();
-            this.openDialog(data.id,data.title,data.channel, data.videoUrl);
+            if(data.channel){
+              this.openDialog(data.id,data.title,data.channel, data.videoUrl);
+            }
           },
           error: (error: HttpErrorResponse) => {
             this.errorObject = this.errorService.generateError(error);

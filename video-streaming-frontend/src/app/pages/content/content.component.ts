@@ -44,30 +44,28 @@ export class ContentComponent implements AfterViewInit, OnInit {
 		'comments',
 		'likes',
 	];
-	dataSource =new MatTableDataSource<VideoDto>();
+	dataSource = new MatTableDataSource<VideoDto>();
 	selection = new SelectionModel<VideoDto>(true, []);
 
 	@ViewChild(MatPaginator)
 	paginator!: MatPaginator;
 	@ViewChild(MatSort)
 	sort!: MatSort;
-  constructor(private userService: UserService){
-
-    this.userService.getUserVideos().subscribe({
-      next: (data: VideoDto[]) => {
-		  this.dataSource.data = data;
-        console.log(data);
-      },
-      error: (error: HttpErrorResponse) => {
-        console.log(error.message);
-      },
-    });
-  }
-  ngOnInit(): void {
-  }
+	constructor(private userService: UserService) {
+		this.userService.getUserVideos().subscribe({
+			next: (data: VideoDto[]) => {
+				this.dataSource.data = data;
+				console.log(data);
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error.message);
+			},
+		});
+	}
+	ngOnInit(): void {}
 	applyFilter(event: Event) {
 		const filterValue = (event.target as HTMLInputElement).value;
-		if(this.dataSource){
+		if (this.dataSource) {
 			this.dataSource.filter = filterValue.trim().toLowerCase();
 		}
 	}
@@ -81,7 +79,9 @@ export class ContentComponent implements AfterViewInit, OnInit {
 		const selectedRows = this.selection.selected;
 		// Remove selected rows from the data source
 		if (this.dataSource) {
-			this.dataSource.data = this.dataSource?.data.filter((row) => !this.selection.isSelected(row));
+			this.dataSource.data = this.dataSource?.data.filter(
+				(row) => !this.selection.isSelected(row)
+			);
 			this.selection.clear();
 		}
 	}
@@ -93,7 +93,6 @@ export class ContentComponent implements AfterViewInit, OnInit {
 			return;
 		}
 		if (this.dataSource) {
-			
 			this.selection.select(...this.dataSource.data);
 		}
 	}
@@ -132,5 +131,3 @@ export class ContentComponent implements AfterViewInit, OnInit {
 		});
 	}
 }
-
-

@@ -1,4 +1,4 @@
-<slider-toolbar mode="chips"></slider-toolbar>
+<slider-toolbar mode="chips" (onChangeCategory)="setCategory($event)"></slider-toolbar>
 <ng-container
   *ngIf="isLoading; then loadingTemplate; else contentTemplate"
 ></ng-container>
