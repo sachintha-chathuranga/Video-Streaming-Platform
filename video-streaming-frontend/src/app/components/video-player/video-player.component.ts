@@ -14,55 +14,53 @@ import { VgStreamingModule } from '@videogular/ngx-videogular/streaming';
 import { QualitySelectorComponent } from '../quality-selector/quality-selector.component';
 
 @Component({
-  selector: 'app-video-player',
-  standalone: true,
-  imports: [
-    VgCoreModule,
-    VgControlsModule,
-    VgStreamingModule,
-    VgOverlayPlayModule,
-    VgBufferingModule,
-    CommonModule,
-    QualitySelectorComponent
-  ],
-  templateUrl: './video-player.component.html',
-  styleUrl: './video-player.component.css',
+	selector: 'app-video-player',
+	standalone: true,
+	imports: [
+		VgCoreModule,
+		VgControlsModule,
+		VgStreamingModule,
+		VgOverlayPlayModule,
+		VgBufferingModule,
+		CommonModule,
+		QualitySelectorComponent,
+	],
+	templateUrl: './video-player.component.html',
+	styleUrl: './video-player.component.css',
 })
-export class VideoPlayerComponent implements OnInit{
-  @Input()
-  videoSource!: string;
-  // videoSource = '';
-  hlsBitrates: BitrateOptions[] = [];
+export class VideoPlayerComponent implements OnInit {
+	@Input()
+	videoSource!: string;
+	// videoSource ='https://ap-south-app-bucket.s3.ap-south-1.amazonaws.com/Video/411b8316-e55a-498e-9d0c-08839ee832cc.mp4';
+	hlsBitrates: BitrateOptions[] = [];
 
-  constructor(private vgApi: VgApiService, private http: HttpClient) {
-    console.log("Player Renderd!")
-  }
+	constructor(private vgApi: VgApiService, private http: HttpClient) {
+		console.log('Player Renderd!');
+	}
 
-  ngOnInit(): void {
-    console.log("Player Rendered!");
-  }
+	ngOnInit(): void {
+		console.log('Player Rendered!');
+	}
 
-  onPlayerReady(api: VgApiService) {
-    this.vgApi = api;
+	onPlayerReady(api: VgApiService) {
+		this.vgApi = api;
 
-    this.vgApi.getDefaultMedia().subscriptions.abort.subscribe(() => {
-      // Set the video to the beginning
-      console.log('Abord Loading!');
-    });
-    this.vgApi.getDefaultMedia().subscriptions.pause.subscribe((e) => {
-      // Set the video to the beginning
-      console.log(this.hlsBitrates)
-      console.log('Pause!');
-      this.vgApi.getDefaultMedia()
-    });
-    this.vgApi.getDefaultMedia().subscriptions.play.subscribe((e) => {
-      // Set the video to the beginning
-      console.log('Play!');
-    
-    });
-    this.vgApi.getDefaultMedia().subscriptions.progress.subscribe((e) => {
-      // Set the video to the beginning
-    
-    });
-  }
+		this.vgApi.getDefaultMedia().subscriptions.abort.subscribe(() => {
+			// Set the video to the beginning
+			console.log('Abord Loading!');
+		});
+		this.vgApi.getDefaultMedia().subscriptions.pause.subscribe((e) => {
+			// Set the video to the beginning
+			console.log(this.hlsBitrates);
+			console.log('Pause!');
+			this.vgApi.getDefaultMedia();
+		});
+		this.vgApi.getDefaultMedia().subscriptions.play.subscribe((e) => {
+			// Set the video to the beginning
+			console.log('Play!');
+		});
+		this.vgApi.getDefaultMedia().subscriptions.progress.subscribe((e) => {
+			// Set the video to the beginning
+		});
+	}
 }

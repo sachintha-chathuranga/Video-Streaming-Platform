@@ -1,61 +1,31 @@
 <div class="comment-header">
-  <h3>695 Comments</h3>
-  <div class="sort-menu">
-    <span [matMenuTriggerFor]="menu" class="sort-btn">
-      <mat-icon >sort</mat-icon>
-      <p>Sort by</p>
-    </span>
-    <mat-menu #menu="matMenu" class="custom-menu">
-      <button mat-menu-item>
-        <mat-icon>dialpad</mat-icon>
-        <span>Redial</span>
-      </button>
-      <button mat-menu-item disabled>
-        <mat-icon>voicemail</mat-icon>
-        <span>Check voice mail</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>notifications_off</mat-icon>
-        <span>Disable alerts</span>
-      </button>
-    </mat-menu>
-  </div>
+	<h3>{{ commentsDto.length }} Comments</h3>
+	<div class="sort-menu">
+		<span [matMenuTriggerFor]="menu" class="sort-btn">
+			<mat-icon>sort</mat-icon>
+			<p>Sort by</p>
+		</span>
+		<mat-menu #menu="matMenu" class="custom-menu">
+			<button mat-menu-item  >
+				<span>Newest first</span>
+			</button>
+			<button mat-menu-item>
+				<span>Top comments</span>
+			</button>
+		</mat-menu>
+	</div>
 </div>
-<form
-  class="example-form"
-  fxLayout="row"
-  fxLayoutGap="17px"
-  [formGroup]="commentsForm"
->
-  <div mat-card-avatar class="example-header-image"></div>
-  <div fxFlex>
-    <div class="text-container">
-      <textarea
-        matInput
-        [formControl]="comment"
-        rows="1"
-        placeholder="Add a comment..."
-        (input)="autoGrow($event)"
-        (focus)="onFocus()"
-      >
-      </textarea>
-    </div>
-    <div fxLayout="row" fxLayoutAlign="end" *ngIf="isFocus">
-      <div class="form-btns">
-        <button class="cancel-btn" (click)="onCancel()">Cancel</button>
-        <button
-          class="comment-btn"
-          [disabled]="!comment.value"
-          (click)="postComment()"
-        >
-          Comment
-        </button>
-      </div>
-    </div>
-  </div>
-</form>
+<div fxLayout="row" fxLayoutGap="17px">
+	<div
+		mat-card-avatar
+		class="example-header-image"
+		[ngStyle]="{
+			'background-image': logginUser.pictureUrl || 'url(\'/assets/no-person.png\')'
+		}"
+	></div>
+	<app-comment-input fxFlex submitName="Comment" [autofocus]="false" defaltInputValue="" (onSubmit)="postComment($event)"></app-comment-input>
+</div>
 
-<!-- <div class="view-comments" *ngFor="let comment of commentsDto">
-  
-</div> -->
-<app-comment-card></app-comment-card>
+<div class="view-comments" *ngFor="let comment of commentsDto">
+	<app-comment-card [comment]="comment" [logginUser]="logginUser" (onDelete)="deleteComment($event)" (onUpdate)="saveComment($event)"></app-comment-card>
+</div>

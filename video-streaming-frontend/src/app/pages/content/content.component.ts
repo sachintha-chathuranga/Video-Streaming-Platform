@@ -52,17 +52,19 @@ export class ContentComponent implements AfterViewInit, OnInit {
 	@ViewChild(MatSort)
 	sort!: MatSort;
 	constructor(private userService: UserService) {
-		this.userService.getUserVideos().subscribe({
-			next: (data: VideoDto[]) => {
-				this.dataSource.data = data;
-				console.log(data);
-			},
-			error: (error: HttpErrorResponse) => {
-				console.log(error.message);
-			},
-		});
+	
 	}
-	ngOnInit(): void {}
+	ngOnInit(): void {
+			this.userService.getUserVideos().subscribe({
+				next: (data: VideoDto[]) => {
+					this.dataSource.data = data;
+					console.log(data);
+				},
+				error: (error: HttpErrorResponse) => {
+					console.log(error.message);
+				},
+			});
+	}
 	applyFilter(event: Event) {
 		const filterValue = (event.target as HTMLInputElement).value;
 		if (this.dataSource) {

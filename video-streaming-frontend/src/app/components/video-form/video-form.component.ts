@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ChangeDetectionStrategy, Component, Inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { VideoDto } from '../../interfaces/video.dto';
 import { VideoService } from '../../services/video.service';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { merge } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -62,6 +62,7 @@ export class VideoFormComponent {
 	isLoading = false;
 	uploadProgress = 0;
 	imageUrl!: string | ArrayBuffer | null | undefined;
+	readonly dialog = inject(MatDialog);
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
@@ -134,6 +135,7 @@ export class VideoFormComponent {
 				console.log(data);
 				this.isLoading = false;
 				this.snackBar.open('Video Metadata Updated successfully', 'OK');
+				this.dialog.closeAll();
 			},
 			error: (error: HttpErrorResponse) => {
 				// this.errorObject = this.errorService.generateError(error);

@@ -4,4 +4,6 @@ export interface Channel {
 	description: string;
 	bannerImage: string;
 	channelImage: string;
+	subscribersCount?: number;
+	isUserSubscribe?: boolean;
 }

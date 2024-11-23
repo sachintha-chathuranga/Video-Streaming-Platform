@@ -13,6 +13,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { SliderToolbarComponent } from '../../components/slider-toolbar/slider-toolbar.component';
 import { ActivatedRoute, Route, Router } from '@angular/router';
+import { CardMenuItem } from '../../interfaces/cardMenuItem.dto';
 @Component({
   selector: 'app-feature',
   standalone: true,
@@ -35,7 +36,11 @@ export class FeatureComponent implements OnInit, OnDestroy {
   private timeoutId: any;
   searchQuery: string = '';
   tagName: string = "";
-
+  cardMenuItems: CardMenuItem[]=[{
+    name: "Save video",
+    icon: "save",
+    isDisable: false
+  }]
   constructor(
     private videoService: VideoService,
     private snackBar: MatSnackBar,

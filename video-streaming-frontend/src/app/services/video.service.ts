@@ -13,11 +13,15 @@ export class VideoService {
 
 	constructor(private httpClient: HttpClient) {}
 
-	disLikeVideo(videoId: string): Observable<VideoDto> {
-		throw new Error('Method not implemented.');
-	}
 	likeVideo(videoId: string): Observable<VideoDto> {
-		throw new Error('Method not implemented.');
+		return this.httpClient
+			.put<VideoDto>(`${this.apiEndpoint}/videos/${videoId}/toggle-like`,null)
+			.pipe(catchError(this.errorHandler));
+	}
+	disLikeVideo(videoId: string): Observable<VideoDto> {
+		return this.httpClient
+			.put<VideoDto>(`${this.apiEndpoint}/videos/${videoId}/toggle-dislike`, null)
+			.pipe(catchError(this.errorHandler));
 	}
 	getVideo(videoId: string): Observable<VideoDto> {
 		throw new Error('Method not implemented.');
@@ -37,14 +41,10 @@ export class VideoService {
 		});
 	}
 
-	getVideoById(videoId: string): Observable<VideoDto | undefined> {
-		// return this.httpClient.get<VideoDto>(
-		//   'http://localhost:8080/api/videos/' + videoId
-		// );
-
-		return this.getAllVideos('').pipe(
-			map((videos) => videos.find((video) => video.id === parseInt(videoId)))
-		);
+	getVideoById(videoId: number): Observable<VideoDto> {
+		return this.httpClient
+			.get<VideoDto>(`${this.apiEndpoint }/videos/get-video/${videoId}`)
+			.pipe(catchError(this.errorHandler));
 	}
 	uploadVideo(file: File): Observable<VideoDto> {
 		const formData = new FormData();
@@ -60,20 +60,11 @@ export class VideoService {
 			.pipe(catchError(this.errorHandler));
 	}
 
-	// getAllVideos(): Observable<VideoDto[]> {
-	// 	return (
-	// 		this.httpClient
-	// 			// .get<VideoDto[]>(this.apiEndpoint)
-	// 			.get<VideoDto[]>(this.apiEndpoint + '/videos/get-all')
-	// 			.pipe(catchError(this.errorHandler))
-	// 	);
-	// }
 	getAllVideos(
 		tagName: string,
 	): Observable<VideoDto[]> {
 		return (
 			this.httpClient
-				// .get<VideoDto[]>(this.apiEndpoint)
 				.get<VideoDto[]>(
 					this.apiEndpoint +
 						'/videos/get-all' +

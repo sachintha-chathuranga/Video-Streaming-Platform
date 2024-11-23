@@ -1,17 +1,19 @@
 import { Channel } from './channel.dto';
 import { CommentDto } from './comment.dto';
 import { UserDto } from './user.dto';
+import { UserLikeStatus } from './videoLikeStatus.dto';
 
 export interface VideoDto {
-  id: number;
-  description: string;
-  title: string;
-  channel?: Channel;
-  videoUrl?: string;
-  videoStatus?: string;
-  thumbnailUrl?: string;
-  tags?: string[];
-  likesCount?: number;
-  dislikesCount?: number;
-  viewsCount?: number;
+	id: number;
+	description: string;
+	title: string;
+	channel?: Channel;
+	videoUrl?: string;
+	videoStatus?: string;
+	thumbnailUrl?: string;
+	tags?: string[];
+	likesCount?: number;
+	dislikesCount?: number;
+	viewsCount?: number;
+	userLikeStatus?: UserLikeStatus;
 }

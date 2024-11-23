@@ -5,7 +5,7 @@
     <vg-scrub-bar-buffering-time vgFor="my-video"></vg-scrub-bar-buffering-time>
     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
   </vg-scrub-bar>
-  <vg-controls [vgAutohide]="true">
+  <vg-controls [vgAutohide]="true" [hidden]="!videoSource">
     <vg-play-pause></vg-play-pause>
 
     <vg-time-display

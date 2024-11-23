@@ -7,4 +7,5 @@ export interface CommentDto {
   user: UserDto;
   likeCount: number;
   dislikeCount: number;
+  lifeTime: string;
 }

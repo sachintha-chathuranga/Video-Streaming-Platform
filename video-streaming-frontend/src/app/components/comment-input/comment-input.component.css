@@ -1,0 +1,44 @@
+.example-form {
+  width: 98%;
+}
+.text-container {
+  border-bottom: 1px solid #949494;
+  margin-bottom: 10px;
+}
+textarea {
+  resize: none;
+  overflow: hidden; /* Hide the scrollbar */
+  height: auto;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0;
+  line-height: 20px;
+}
+.form-btns button {
+  padding: 11px 18px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.cancel-btn {
+  background-color: transparent;
+}
+.cancel-btn:hover {
+  background-color: #e7e7e7;
+}
+.comment-btn{
+  background-color: #065fd4;
+  margin-left: 10px;
+  color: white ;
+}
+.comment-btn:hover{
+  background-color:  #0454bd;
+}
+.comment-btn:disabled{
+  background-color: #ededed;
+  cursor: auto !important;
+  color: black;
+}

@@ -1,0 +1,21 @@
+<h3 mat-dialog-title>Report Comment</h3>
+<mat-dialog-content class="mat-typography">
+	<h4>What's going on?</h4>
+	<p>We'll check for all Community Guidelines, so don't worry about making the perfect choice.</p>
+
+	<mat-radio-group
+		aria-labelledby="example-radio-group-label"
+		class="example-radio-group"
+		[(ngModel)]="selectedReason"
+	>
+		@for (reason of reasons; track reason) {
+		<mat-radio-button class="example-radio-button" [value]="reason">
+			{{ reason }}
+		</mat-radio-button>
+		}
+	</mat-radio-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+	<button mat-button mat-dialog-close>Cancel</button>
+	<button mat-button [mat-dialog-close]="true" cdkFocusInitial>Report</button>
+</mat-dialog-actions>
