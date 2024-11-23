@@ -9,17 +9,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
+import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.mapper.ChannelMapper;
 import com.fourbit.sachintha.mapper.UserMapper;
 import com.fourbit.sachintha.mapper.VideoHistoryMapper;
+import com.fourbit.sachintha.mapper.VideoMapper;
 import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoHistory;
 import com.fourbit.sachintha.repository.UserRepository;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
+import com.fourbit.sachintha.repository.VideoRepository;
 import com.fourbit.sachintha.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final CommonService commonService;
 	private final VideoHistoryRepository videoHistoryRepository;
+	private final VideoRepository videoRepository;
 
 	@Value("${auth0.userInfoEndpoint}")
 	private String userInfoEndpoint;
@@ -163,7 +167,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String subscribe(Long channelId) {
+	public ChannelDto subscribe(Long channelId) {
 		User subscriber = commonService.getRequestedUser();
 		Channel channel = commonService.findChannelById(channelId);
 		List<Channel> channels = subscriber.getSubscriptions();
@@ -171,7 +175,7 @@ public class UserServiceImpl implements UserService {
 			channels.add(channel);
 			userRepository.save(subscriber);
 		}
-		return "Channel Subscribe Successfully!";
+		return ChannelMapper.mapTochannelDto2(channel, subscriber);
 	}
 
 	@Override
@@ -184,13 +188,53 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String unsubscribe(Long channelId) {
+	public ChannelDto unsubscribe(Long channelId) {
 		User subscriber = commonService.getRequestedUser();
 		Channel channel = commonService.findChannelById(channelId);
 		List<Channel> channels = subscriber.getSubscriptions();
 		channels.remove(channel);
 		userRepository.save(subscriber);
-		return "Channel Unsubscribe Successfully!";
+		return ChannelMapper.mapTochannelDto2(channel, subscriber);
+	}
+
+	@Override
+	public boolean saveVideo(Long videoId) {
+		User user = commonService.getRequestedUser();
+		Video video = commonService.findVideoById(videoId);
+		List<Video> playlist = user.getSaveVideos();
+		if (!playlist.contains(video)) {
+			playlist.add(video);
+			userRepository.save(user);
+		}
+		return true;
+	}
+
+	@Override
+	public List<VideoDto> getSaveVideos(String searchQuery) {
+		User user = commonService.getRequestedUser();
+		List<Video> playList = userRepository.findSavedVideosBySearchQuery(user.getId(), searchQuery);
+		List<VideoDto> list = playList.stream().map(video -> VideoMapper.mapToVideoDto(video)).toList();
+		return list;
+	}
+
+	@Override
+	public void deleteSaveVideos() {
+		User user = commonService.getRequestedUser();
+		List<Video> playlist = user.getSaveVideos();
+		if (!playlist.isEmpty()) {
+			playlist.clear();
+			userRepository.save(user);
+		}
+
+	}
+
+	@Override
+	public void deleteSaveVideo(Long videoId) {
+		User user = commonService.getRequestedUser();
+		Video video = commonService.findVideoById(videoId);
+		List<Video> playlist = user.getSaveVideos();
+		playlist.remove(video);
+		userRepository.save(user);
 	}
 
 }

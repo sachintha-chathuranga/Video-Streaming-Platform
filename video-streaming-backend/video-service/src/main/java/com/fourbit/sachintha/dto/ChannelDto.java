@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChannelDto {
-   private Long id;
-   private String name;
-   private String description;
-   private String bannerImage;
-   private String channelImage;
-   private Long subscribersCount = Long.valueOf(0);
+	private Long id;
+	private String name;
+	private String description;
+	private String bannerImage;
+	private String channelImage;
+	private Long subscribersCount = Long.valueOf(0);
+	private Boolean isUserSubscribe;
 }

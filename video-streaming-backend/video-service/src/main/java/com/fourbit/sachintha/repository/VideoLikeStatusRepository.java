@@ -8,6 +8,6 @@ import com.fourbit.sachintha.model.VideoLikeStatus;
 
 public interface VideoLikeStatusRepository extends JpaRepository<VideoLikeStatus, Long> {
 
-	@Query("SELECT vls FROM VideoHistory vls WHERE vls.user.id = :userId AND vls.video.id = :videoId")
+	@Query("SELECT vls FROM VideoLikeStatus vls WHERE vls.user.id = :userId AND vls.video.id = :videoId")
 	VideoLikeStatus findByUserIdAndVideoId(@Param("userId") Long userId, @Param("videoId") Long videoId);
 }

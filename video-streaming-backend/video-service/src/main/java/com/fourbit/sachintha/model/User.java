@@ -46,6 +46,10 @@ public class User {
 	@JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "channelId"))
 	private List<Channel> subscriptions = new ArrayList<>();
 
+	@ManyToMany
+	@JoinTable(name = "user_playlist", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
+	private List<Video> saveVideos = new ArrayList<>();
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<VideoHistory> videoHistories;
 

@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentDto {
-  private Long id;
-  private String text;
-  private UserDto user;
-  private Integer likeCount = 0;
-  private Integer dislikeCount = 0;
+	private Long id;
+	private String text;
+	private UserDto user;
+	private Integer likeCount = 0;
+	private Integer dislikeCount = 0;
+	private String lifeTime;
 }

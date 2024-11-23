@@ -20,60 +20,50 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Service
 @RequiredArgsConstructor
 public class AwsS3Service implements FileService {
-  @Value("${aws.bucket.name}")
-  private String awsBucketName;
-  @Value("${spring.cloud.aws.s3.region}")
-  private String awsBucketRegion;
+	@Value("${aws.bucket.name}")
+	private String awsBucketName;
+	@Value("${spring.cloud.aws.s3.region}")
+	private String awsBucketRegion;
 
-  private final S3Client awsS3Client;
+	private final S3Client awsS3Client;
 
-  @Override
-  public String uploadFile(MultipartFile file, String category) {
-    // create unique name for file
-    var fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-    var key = category + "/" + UUID.randomUUID().toString() + '.' + fileExtension;
+	@Override
+	public String uploadFile(MultipartFile file, String category) {
+		// create unique name for file
+		var fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+		var key = category + "/" + UUID.randomUUID().toString() + '.' + fileExtension;
 
-    try {
-      // upload to AWS S3 bucket
-      PutObjectRequest putOb = PutObjectRequest.builder()
-          .bucket(awsBucketName)
-          .key(key)
-          .contentType(file.getContentType())
-          .contentLength(file.getSize())
-          .build();
-      awsS3Client.putObject(putOb, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+		try {
+			// upload to AWS S3 bucket
+			PutObjectRequest putObj = PutObjectRequest.builder().bucket(awsBucketName).key(key)
+					.contentType(file.getContentType()).contentLength(file.getSize()).build();
+			awsS3Client.putObject(putObj, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-      // set the public access to the file
-      PutObjectAclRequest aclRequest = PutObjectAclRequest.builder()
-          .bucket(awsBucketName)
-          .key(key)
-          .acl(ObjectCannedACL.PUBLIC_READ)
-          .build();
-      awsS3Client.putObjectAcl(aclRequest);
-    } catch (Exception e) {
-      System.out.println("Error : " + e.getMessage());
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-    }
+			// set the public access to the file
+			PutObjectAclRequest aclRequest = PutObjectAclRequest.builder().bucket(awsBucketName).key(key)
+					.acl(ObjectCannedACL.PUBLIC_READ).build();
+			awsS3Client.putObjectAcl(aclRequest);
+		} catch (Exception e) {
+			System.out.println("Error : " + e.getMessage());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
 
-    // get url of the uploaded file
-    return getUrl(awsBucketRegion, awsBucketName, key);
-  }
+		// get url of the uploaded file
+		return getUrl(awsBucketRegion, awsBucketName, key);
+	}
 
-  private String getUrl(String region, String bucketName, String key) {
-    return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
-  }
+	private String getUrl(String region, String bucketName, String key) {
+		return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
+	}
 
-  @Override
-  public void deleteFile(String key) {
-    try {
-      DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-           .bucket(awsBucketName)
-           .key(key)
-           .build();
-      awsS3Client.deleteObject(deleteRequest);
-    } catch (Exception e) {
-      System.out.println("Error : " + e.getMessage());
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-    }
-  }
+	@Override
+	public void deleteFile(String key) {
+		try {
+			DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder().bucket(awsBucketName).key(key).build();
+			awsS3Client.deleteObject(deleteRequest);
+		} catch (Exception e) {
+			System.out.println("Error : " + e.getMessage());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+	}
 }

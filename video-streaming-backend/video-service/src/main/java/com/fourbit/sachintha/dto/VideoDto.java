@@ -1,5 +1,6 @@
 package com.fourbit.sachintha.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class VideoDto {
 	private Long likesCount = Long.valueOf(0);
 	private Long dislikesCount = Long.valueOf(0);
 	private Long viewsCount = Long.valueOf(0);
-	// private List<CommentDto> comments = new ArrayList<>();
+	private LocalDateTime createdTime;
+	private Float duration;
+	private UserLikeStatus userLikeStatus;
 
 }

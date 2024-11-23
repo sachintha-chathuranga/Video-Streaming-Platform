@@ -1,7 +1,10 @@
 package com.fourbit.sachintha.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -50,8 +54,20 @@ public class Video {
 	@Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
 	private Long viewsCount = Long.valueOf(0);
 
+	@Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+	private Long likesCount = Long.valueOf(0);
+
+	@ManyToMany(mappedBy = "saveVideos") // this field not create in table
+	private List<User> saveUsers = new ArrayList<>();
+
+	@CreationTimestamp
+	@Column(updatable = false) // Ensure it's only set at creation
+	private LocalDateTime createdTime;
+
+	private Float duration;
+
 	public Video(Long id, String description, String title, Channel channel, String videoUrl, VideoStatus videoStatus,
-			String thumbnailUrl, Long viewsCount) {
+			String thumbnailUrl, Long viewsCount, Long likesCount, LocalDateTime createdTime, Float duration) {
 		this.id = id;
 		this.description = description;
 		this.title = title;
@@ -60,6 +76,9 @@ public class Video {
 		this.videoStatus = videoStatus;
 		this.thumbnailUrl = thumbnailUrl;
 		this.viewsCount = viewsCount;
+		this.likesCount = likesCount;
+		this.createdTime = createdTime;
+		this.duration = duration;
 	}
 
 	public List<VideoLikeStatus> getLikes() {

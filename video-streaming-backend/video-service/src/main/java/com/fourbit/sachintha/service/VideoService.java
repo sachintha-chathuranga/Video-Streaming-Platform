@@ -3,23 +3,29 @@ package com.fourbit.sachintha.service;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.dto.VideoDto;
 
 public interface VideoService {
-  VideoDto uploadVideo(MultipartFile file);
+	VideoDto uploadVideo(MultipartFile file);
 
-  VideoDto updateVideoMetaData(VideoDto videoDto);
+	VideoDto updateVideoMetaData(VideoDto videoDto);
 
-  String uploadThumbnail(MultipartFile file, Long videoId);
+	String uploadThumbnail(MultipartFile file, Long videoId);
 
-  List<VideoDto> getVideos();
+	List<VideoDto> getVideos(String tagName);
 
-  VideoDto getVideoById(Long id);
+	List<VideoDto> searchVideos(String searchQuery, String date, String duration, String sortBy);
 
-  String deleteVideo(Long id);
+	VideoDto getVideoById(Long id);
 
-  String addLikeToVideo(Long videoId);
+	String deleteVideo(Long id);
 
-  String addDislikeToVideo(Long videoId);
+	LikeDislikeResponse addLikeToVideo(Long videoId);
+
+	LikeDislikeResponse addDislikeToVideo(Long videoId);
+
+	List<VideoDto> getVideosByChannelId();
 
 }
