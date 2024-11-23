@@ -57,9 +57,11 @@ export class SaveVideoDetailsComponent {
     private matSnackBar: MatSnackBar
   ) {
     this.videoId = this.activatedRoute.snapshot.params['videoId'];
-    this.videoService.getVideo(this.videoId).subscribe((data) => {
-      this.videoUrl = data.videoUrl;
-      this.thumbnailUrl = data.thumbnailUrl;
+    this.videoService.getVideo(this.videoId).subscribe((data: VideoDto) => {
+      if(data.videoUrl && data.thumbnailUrl){
+        this.videoUrl = data.videoUrl;
+        this.thumbnailUrl = data.thumbnailUrl;
+      }
     });
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
@@ -110,7 +112,6 @@ export class SaveVideoDetailsComponent {
       id: parseInt(this.videoId),
       title: this.saveVideoDetailsForm.get('title')?.value,
       description: this.saveVideoDetailsForm.get('description')?.value,
-      userId: 1,
       tags: this.tags,
       videoStatus: this.saveVideoDetailsForm.get('videoStatus')?.value,
       videoUrl: this.videoUrl,

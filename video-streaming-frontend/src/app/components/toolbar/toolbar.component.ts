@@ -1,18 +1,11 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  ElementRef,
-  inject,
-  Input,
-  NgModule,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, inject, Input, NgModule, ViewChild } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { VideoUploadComponent } from '../video-upload/video-upload.component';
 import { MatInput, MatInputModule } from '@angular/material/input';
@@ -38,7 +31,7 @@ import { MatDivider } from '@angular/material/divider';
 		FormsModule,
 		MatTooltipModule,
 		MatMenuModule,
-		MatDivider
+		MatDivider,
 	],
 	templateUrl: './toolbar.component.html',
 	styleUrl: './toolbar.component.css',
@@ -61,15 +54,24 @@ export class ToolbarComponent {
 	constructor(
 		private oidcSecurityService: OidcSecurityService,
 		private router: Router,
-		private userService: UserService
+		private userService: UserService,
+		private activatedRoute: ActivatedRoute
 	) {}
 
 	ngOnInit(): void {
 		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
 			this.isAuthenticated = isAuthenticated;
 		});
+		this.activatedRoute.queryParams.subscribe((params) => {
+			this.value = params['search_query'];
+		});
 	}
-	navigate(link:string) {
+	search() {
+		if (this.value) {
+			this.router.navigate(['/results'], { queryParams: { search_query: this.value } });
+		}
+	}
+	navigate(link: string) {
 		this.router.navigate([link]);
 	}
 	openSearchBox() {

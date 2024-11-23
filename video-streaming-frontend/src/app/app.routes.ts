@@ -12,10 +12,11 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 import { VideoComponent } from './pages/video/video.component';
 import { WatchComponent } from './pages/watch/watch.component';
 import { SavedVideosComponent } from './pages/saved-videos/saved-videos.component';
-import { AutoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
+import { AutoLoginPartialRoutesGuard, autoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
 import { ChannelComponent } from './pages/channel/channel.component';
 import { ChannelCustomizationComponent } from './pages/channel-customization/channel-customization.component';
 import { AuthorizationGuard } from './auth/authorization-guard.service';
+import { SearchResultsComponent } from './components/search-results/search-results.component';
 
 export const routes: Routes = [
 	{
@@ -30,18 +31,25 @@ export const routes: Routes = [
 			{
 				path: 'subscriptions',
 				component: SubscriptionsComponent,
+				canActivate: [autoLoginPartialRoutesGuard],
 			},
 			{
 				path: 'history',
 				component: HistoryComponent,
+				canActivate: [autoLoginPartialRoutesGuard],
 			},
 			{
 				path: 'saved-videos',
 				component: SavedVideosComponent,
+				canActivate: [autoLoginPartialRoutesGuard],
 			},
 			{
 				path: 'channel',
 				component: ChannelComponent,
+			},
+			{
+				path: 'results',
+				component: SearchResultsComponent,
 			},
 		],
 	},

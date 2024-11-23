@@ -1,32 +1,56 @@
 package com.fourbit.sachintha.exception;
 
-import java.time.LocalDateTime;
+import java.nio.file.AccessDeniedException;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-  @ExceptionHandler(CustomException.class)
-  public ResponseEntity<ErrorResponse> handleCustomException(final CustomException e, WebRequest request) {
-    ErrorResponse errorResponse = new ErrorResponse(
-        LocalDateTime.now(),
-        e.getStatus().value(),
-        e.getMessage(),
-        request.getDescription(false));
-    return new ResponseEntity<>(errorResponse, e.getStatus());
-  }
+	private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
-    ErrorResponse errorResponse = new ErrorResponse(
-        LocalDateTime.now(),
-        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        ex.getMessage(),
-        request.getDescription(false));
-    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+	@ExceptionHandler(CustomException.class)
+	public ProblemDetail handleCustomException(final CustomException e, WebRequest request) {
+		ProblemDetail errorDetail = null;
+		logger.error(e.getMessage());
+		errorDetail = ProblemDetail.forStatusAndDetail(e.getStatus(), e.getMessage());
+		errorDetail.setProperty("description", request.getDescription(true));
+		return errorDetail;
+	}
+
+	// For any Exception
+	@ExceptionHandler(Exception.class)
+	public ProblemDetail handleGlobalException(Exception e, WebRequest request) {
+		ProblemDetail errorDetail = null;
+		logger.error(e.getMessage());
+		if (e instanceof BadCredentialsException) {
+			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), e.getMessage());
+			errorDetail.setProperty("description", "The username or password is incorrect");
+
+			return errorDetail;
+		}
+
+		if (e instanceof AccountStatusException) {
+			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), e.getMessage());
+			errorDetail.setProperty("description", "The account is locked");
+		}
+
+		if (e instanceof AccessDeniedException) {
+			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), e.getMessage());
+			errorDetail.setProperty("description", "You are not authorized to access this resource");
+		}
+
+		if (errorDetail == null) {
+			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), e.getMessage());
+			errorDetail.setProperty("description", "Unknown internal server error.");
+		}
+		return errorDetail;
+	}
 }

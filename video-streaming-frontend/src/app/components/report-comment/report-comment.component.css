@@ -1,0 +1,17 @@
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  align-items: flex-start;
+}
+.mat-typography h4{
+   font-size: 16px;
+   font-weight: 600;
+}
+h3{
+   font-size: 25px !important;
+}
+
+.example-radio-button {
+  margin: 5px;
+}

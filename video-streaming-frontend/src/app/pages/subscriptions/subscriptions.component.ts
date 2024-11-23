@@ -51,7 +51,7 @@ export class SubscriptionsComponent {
   fetchData() {
     this.isLoading = true;
     // this.timeoutId = setTimeout(() => {
-    this.videoService.getAllVideos().subscribe({
+    this.videoService.getAllVideos("").subscribe({
       next: (data: VideoDto[]) => {
         this.subcribeVideos = data;
       },

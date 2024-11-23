@@ -16,7 +16,7 @@
 					<mat-icon>arrow_back</mat-icon>
 				</button>
 				<div class="search-box">
-					<input #inputField type="text" [(ngModel)]="value" placeholder="Search" />
+					<input #inputField type="text" [(ngModel)]="value" placeholder="Search" (keyup.enter)="search()"/>
 					@if (value) {
 					<mat-icon>close</mat-icon>
 					<button
@@ -27,7 +27,7 @@
 					></button>
 					}
 				</div>
-				<div class="search-btn" matTooltip="Search">
+				<div class="search-btn" matTooltip="Search" (click)="search()">
 					<mat-icon>search</mat-icon>
 				</div>
 			</div>

@@ -1,10 +1,5 @@
 import { Component, Input } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonModule } from '@angular/common';
@@ -19,86 +14,109 @@ import { CommentService } from '../../services/comment.service';
 import { UserService } from '../../services/user.service';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { CommentCardComponent } from '../comment-card/comment-card.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UserDto } from '../../interfaces/user.dto';
+import { CommentInputComponent } from '../comment-input/comment-input.component';
 
 @Component({
-  selector: 'app-comment',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FlexLayoutModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatCardModule,
-    MatDividerModule,
-    MatMenuModule,
-    CommentCardComponent,
-  ],
-  templateUrl: './comment.component.html',
-  styleUrl: './comment.component.css',
+	selector: 'app-comment',
+	standalone: true,
+	imports: [
+		CommonModule,
+		FlexLayoutModule,
+		MatIconModule,
+		MatCardModule,
+		MatMenuModule,
+		CommentCardComponent,
+		CommentInputComponent,
+	],
+	templateUrl: './comment.component.html',
+	styleUrl: './comment.component.css',
 })
 export class CommentComponent {
-  @Input()
-  videoId: string = '';
-  commentsForm: FormGroup;
-  comment: FormControl;
-  commentsDto: CommentDto[] = [];
-  isFocus: boolean = false;
-  constructor(
-    private userService: UserService,
-    private commentService: CommentService,
-    private matSnackBar: MatSnackBar,
-    private fb: FormBuilder
-  ) {
-    this.commentsForm = this.fb.group({
-      comment: [''],
-    });
-    this.comment = this.commentsForm.get('comment') as FormControl;
-  }
-  onFocus() {
-    this.isFocus = true;
-  }
+	@Input()
+	videoId: string = '';
+	commentsDto: CommentDto[] = [];
+	logginUser!: UserDto;
 
-  onCancel() {
-    this.isFocus = false;
-    this.comment.reset();
-  }
+	constructor(
+		private userService: UserService,
+		private commentService: CommentService,
+		private matSnackBar: MatSnackBar
+	) {}
 
-  ngOnInit(): void {
-    // this.getComments();
-  }
+	ngOnInit(): void {
+		this.logginUser = this.userService.getUser();
+		this.getComments();
+	}
 
-  postComment() {
-    if (this.comment.value) {
-      // Handle posting the comment here
-      console.log('Comment posted:', this.comment.value);
+	postComment(comment: string) {
+		if (comment) {
+			this.commentService.postComment(comment, this.videoId).subscribe({
+				next: (data) => {
+					this.matSnackBar.open('Comment Posted Successfully', 'OK');
+					this.commentsDto = [data, ...this.commentsDto];
+				},
+				error: (error: HttpErrorResponse) => {
+					console.log(error.error.detail);
+				},
+			});
+		}
+	}
+	saveComment(comment: CommentDto) {
+		this.commentService.updateComment(comment, this.videoId).subscribe({
+			next: (data: CommentDto) => {
+				if (data.text == comment.text) {
+					this.matSnackBar.open('Comment Updated Successfully', '', {
+						verticalPosition: 'bottom',
+						horizontalPosition: 'left',
+						duration: 2000,
+					});
+					this.commentsDto = this.commentsDto.map((obj) => (obj.id == data.id ? data : obj));
+				} else {
+					this.matSnackBar.open('Comment doesn\'t update' , '', {
+						verticalPosition: 'bottom',
+						horizontalPosition: 'left',
+						duration: 2000,
+					});
+				}
+				console.log(data);
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error.error.detail);
+			},
+		});
+	}
 
-      const commentDto = {
-        commentText: this.comment,
-        authorId: this.userService.getUserId(),
-      };
+	deleteComment(commentId: number) {
+		this.commentService.deleteComment(commentId, this.videoId).subscribe({
+			next: (data: Boolean) => {
+				if (data) {
+					this.matSnackBar.open('Comment Deleted', '', {
+						verticalPosition: 'bottom',
+						horizontalPosition: 'left',
+						duration: 2000,
+					});
+					this.commentsDto = this.commentsDto.filter((obj) => obj.id != commentId);
+				} else {
+					this.matSnackBar.open('Your not allow to Delete this comment', '', {
+						verticalPosition: 'bottom',
+						horizontalPosition: 'left',
+						duration: 2000,
+					});
+				}
+				console.log(data);
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error.error.detail);
+			},
+		});
+	}
 
-      this.commentService
-        .postComment(commentDto, this.videoId)
-        .subscribe(() => {
-          this.matSnackBar.open('Comment Posted Successfully', 'OK');
-          this.comment.reset();
-          this.isFocus = false;
-          this.getComments();
-        });
-    }
-  }
-  autoGrow(event: Event): void {
-    const textArea = event.target as HTMLTextAreaElement;
-    textArea.style.height = 'auto';
-    textArea.style.height = textArea.scrollHeight + 'px';
-  }
-  getComments() {
-    this.commentService.getAllComments(this.videoId).subscribe((data) => {
-      this.commentsDto = data;
-    });
-  }
+	getComments() {
+		this.commentService.getAllComments(this.videoId).subscribe((data) => {
+			console.log(data);
+			this.commentsDto = data;
+		});
+	}
 }

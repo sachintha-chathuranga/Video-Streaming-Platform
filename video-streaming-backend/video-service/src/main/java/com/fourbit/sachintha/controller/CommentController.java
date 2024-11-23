@@ -24,13 +24,13 @@ public class CommentController {
 	private final CommentService commentService;
 
 	@PostMapping
-	public ResponseEntity<CommentDto> addComment(@PathVariable Long videoId, @RequestBody CommentDto commentDto) {
-		return ResponseEntity.ok(commentService.addCommentToVideo(videoId, commentDto));
+	public ResponseEntity<CommentDto> addComment(@PathVariable Long videoId, @RequestBody String text) {
+		return ResponseEntity.ok(commentService.addCommentToVideo(videoId, text));
 	}
 
 	@PutMapping("/{commentId}")
-	public ResponseEntity<CommentDto> updateComment(@PathVariable Long commentId, @RequestBody CommentDto commentDto) {
-		return ResponseEntity.ok(commentService.updateComment(commentId, commentDto));
+	public ResponseEntity<CommentDto> updateComment(@PathVariable Long commentId, @RequestBody String text) {
+		return ResponseEntity.ok(commentService.updateComment(commentId, text));
 	}
 
 	@GetMapping
@@ -39,9 +39,8 @@ public class CommentController {
 	}
 
 	@DeleteMapping("/{commentId}")
-	public ResponseEntity<String> delteComment(@PathVariable Long commentId) {
-		commentService.removeComment(commentId);
-		return ResponseEntity.ok("Comment Remove Successfully!");
+	public ResponseEntity<Boolean> delteComment(@PathVariable Long commentId) {
+		return ResponseEntity.ok(commentService.removeComment(commentId));
 	}
 
 	@PutMapping("/{commentId}/add-like")

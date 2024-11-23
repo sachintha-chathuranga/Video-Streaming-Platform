@@ -1,5 +1,9 @@
 package com.fourbit.sachintha.model;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,12 +14,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "comments")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
@@ -35,18 +41,14 @@ public class Comment {
 	private User user; // this will create user_id field in comments table
 
 	@Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-	private Integer likeCount = 0;
+	private Integer likeCount;
 
 	@Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-	private Integer dislikeCount = 0;
+	private Integer dislikeCount;
 
-	public Comment(Long id, String text, User user, Integer likeCount, Integer dislikeCount) {
-		this.id = id;
-		this.text = text;
-		this.user = user;
-		this.likeCount = likeCount;
-		this.dislikeCount = dislikeCount;
-	}
+	@CreatedDate
+	@Column(nullable = false)
+	private LocalDateTime createdDate;
 
 	public void incrementLikeCount() {
 		this.likeCount += 1;

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
+import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.service.UserService;
 
@@ -92,9 +93,8 @@ public class UserController {
 	}
 
 	@PutMapping("/subscribe/{channelId}")
-	public ResponseEntity<String> subscribe(@PathVariable Long channelId) {
-		String message = userService.subscribe(channelId);
-		return ResponseEntity.ok(message);
+	public ResponseEntity<ChannelDto> subscribe(@PathVariable Long channelId) {
+		return ResponseEntity.ok(userService.subscribe(channelId));
 	}
 
 	@GetMapping("/subscribe")
@@ -104,9 +104,32 @@ public class UserController {
 	}
 
 	@PutMapping("/unsubscribe/{channelId}")
-	public ResponseEntity<String> unsubscribe(@PathVariable Long channelId) {
-		String message = userService.unsubscribe(channelId);
-		return ResponseEntity.ok(message);
+	public ResponseEntity<ChannelDto> unsubscribe(@PathVariable Long channelId) {
+		return ResponseEntity.ok(userService.unsubscribe(channelId));
+	}
+
+	@PutMapping("/save-videos")
+	public ResponseEntity<Boolean> saveVideoToPlaylist(@RequestBody Long videoId) {
+		userService.saveVideo(videoId);
+		return ResponseEntity.ok(true);
+	}
+
+	@GetMapping("/save-videos")
+	public ResponseEntity<List<VideoDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
+		List<VideoDto> playlist = userService.getSaveVideos(searchQuery);
+		return ResponseEntity.ok(playlist);
+	}
+
+	@DeleteMapping("/save-videos")
+	public ResponseEntity<Boolean> deletePlaylist() {
+		userService.deleteSaveVideos();
+		return ResponseEntity.ok(true);
+	}
+
+	@DeleteMapping("/save-videos/{videoId}")
+	public ResponseEntity<Boolean> deletePlaylist(@PathVariable(name = "videoId") Long videoId) {
+		userService.deleteSaveVideo(videoId);
+		return ResponseEntity.ok(true);
 	}
 
 }

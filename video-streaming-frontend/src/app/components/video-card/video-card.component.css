@@ -4,11 +4,7 @@
   border-radius: 0;
   cursor: pointer;
 }
-.example-card.meadium {
-  display: flex;
-  flex-direction: row;
-}
-.example-card.small {
+.example-card.meadium, .example-card.small, .example-card.large {
   display: flex;
   flex-direction: row;
 }
@@ -29,6 +25,11 @@
   min-width: 168px;
   border-radius: 10px;
 }
+.example-card.large .img{
+  width: 460px;
+  min-width: 460px;
+  border-radius: 20px;
+}
 .example-card .img img {
   width: 100%;
   object-fit: cover;
@@ -46,7 +47,7 @@ mat-card-header.small {
   min-width: 0;
 }
 
-mat-card-header.meadium {
+mat-card-header.meadium, mat-card-header.large {
   padding: 0;
   width: 100%;
   min-width: 0;

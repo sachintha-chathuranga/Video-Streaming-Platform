@@ -15,10 +15,6 @@ public class CustomException extends RuntimeException {
 		return this.status;
 	}
 
-	public void eption() {
-
-	}
-
 	public CustomException() {
 		super();
 	}

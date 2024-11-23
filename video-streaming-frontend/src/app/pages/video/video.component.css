@@ -37,7 +37,7 @@ mat-card-header {
   margin-top: 12px;
 }
 .example-header-image {
-  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
+
   background-size: cover;
   margin: 0;
 }
@@ -89,7 +89,12 @@ mat-card-subtitle.skeleton {
 }
 .subscribe-button {
   padding: 0 18px;
-  min-width: 98px;
+  min-width: 100px;
+}
+.unsubscribe-button {
+  padding: 0 18px;
+  min-width: 120px;
+  background-color: black !important;
 }
 .actions {
   margin-top: 12px;

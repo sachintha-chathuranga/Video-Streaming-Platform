@@ -1,48 +1,84 @@
 <div fxLayout="row" fxLayoutGap="17px">
-  <div fxFlex="none" matCardAvatar class="commentor-img"></div>
-  <div fxFlex="100%" class="comment-content" fxLayout="column">
-    <div class="comment-header">
-      <a matCardTitle routerLink="">sachintha</a>
-      <p matCardSubtitle>1 month ago</p>
-    </div>
-    <div class="comment-body">
-      <p [ngClass]="{ expanded: isExpanded }" class="paragraph">
-        thiis is my first comment after longe time . so dont think about it . kd
-        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
-        thiis is my first comment after longe time . so dont think about it sdf
-        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
-        thiis is my first comment after longe time . so dont think about it sdf
-        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
-        thiis is my first comment after longe time . so dont think about it sdf
-        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
-        thiis is my first comment after longe time . so dont think about it . kd
-        j djfk jk jkdjf kj kdjs kjkdfjkdsjflj lsdkjf jdsk jds jkd sfjsk fjd d
-      </p>
-      <span class="more-btn" (click)="toggleExpand()">
-        {{ isExpanded ? "Show less" : "Read more" }}
-      </span>
-    </div>
-    <div
-      class="comment-actions"
-      fxLayout="row"
-      fxLayoutGap="5px"
-      fxLayoutAlign="start center"
-    >
-      <div fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button>
-          <mat-icon>thumb_up_off_alt</mat-icon>
-        </button>
-        <span>5</span>
-      </div>
-      <button mat-icon-button>
-        <mat-icon>thumb_down_off_alt</mat-icon>
-      </button>
-      <button mat-button>Reply</button>
-    </div>
-  </div>
-  <div class="comment-options">
-    <button mat-icon-button>
-      <mat-icon>more_vert</mat-icon>
-    </button>
-  </div>
+	<div
+		fxFlex="none"
+		matCardAvatar
+		class="commentor-img"
+		[ngStyle]="{
+			'background-image': comment.user.pictureUrl || 'url(\'/assets/no-person.png\')'
+		}"
+	></div>
+	<div
+		fxFlex="100%"
+		class="comment-content"
+		fxLayout="column"
+		[ngClass]="{ hideOthers: showInputField }"
+	>
+		<div class="comment-header">
+			<a matCardTitle routerLink="">{{ comment.user.firstName }}</a>
+			<p matCardSubtitle>{{ comment.lifeTime }}</p>
+		</div>
+		<div class="comment-body">
+			<p [ngClass]="{ expanded: isExpanded }" class="paragraph">
+				{{ comment.text }}
+			</p>
+			<span class="more-btn" (click)="toggleExpand()">
+				{{ isExpanded ? 'Show less' : 'Read more' }}
+			</span>
+		</div>
+
+		<div class="comment-actions" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
+			<div fxLayout="row" fxLayoutAlign="start center">
+				<button mat-icon-button>
+					<mat-icon>thumb_up_off_alt</mat-icon>
+				</button>
+				<span>{{ comment.likeCount }}</span>
+			</div>
+			<button mat-icon-button>
+				<mat-icon>thumb_down_off_alt</mat-icon>
+			</button>
+			<button mat-button>Reply</button>
+		</div>
+	</div>
+
+	<app-comment-input
+		*ngIf="showInputField"
+		fxFlex
+		submitName="Save"
+		[defaltInputValue]="comment.text"
+		(onSubmit)="saveComment($event)"
+		[autofocus]="true"
+		(cancel)="handleCancel()"
+	></app-comment-input>
+
+	<div class="comment-options" [ngClass]="{ hideOthers: showInputField }">
+		<button mat-icon-button>
+			<mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
+		</button>
+		<mat-menu #menu="matMenu" class="custom-menu">
+			<button
+				mat-menu-item
+				*ngFor="let item of cardMenuItems"
+				[disabled]="item.isDisable"
+				(click)="handleMenuClick(item.name)"
+				[ngClass]="{
+					hideReport: comment.user.id == logginUser.id && item.name == 'Report',
+					hideOthers: comment.user.id !== logginUser.id && item.name !== 'Report'
+				}"
+			>
+				<mat-icon class="material-icons-outlined">{{ item.icon }}</mat-icon>
+				<span>{{ item.name }}</span>
+			</button>
+		</mat-menu>
+	</div>
 </div>
+
+<ng-template #dialogTemplate>
+	<h3 mat-dialog-title>Delete comment</h3>
+	<mat-dialog-content>
+		<p>Delete your comment permanently?</p>
+	</mat-dialog-content>
+	<mat-dialog-actions align="end">
+		<button mat-button mat-dialog-close>Cancel</button>
+		<button mat-button mat-dialog-close (click)="deleteComment()">Delete</button>
+	</mat-dialog-actions>
+</ng-template>

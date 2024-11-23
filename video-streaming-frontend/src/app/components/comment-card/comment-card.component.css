@@ -1,5 +1,4 @@
 .commentor-img {
-  background-image: url("https://yt3.ggpht.com/ytc/AAUvwnjuYQrnTYr-sXVEBvCAmtT4nxF-3yhh5KnP0W6xmQ=s176-c-k-c0x00ffffff-no-rj");
   background-size: cover;
 }
 .comment-content {
@@ -61,4 +60,14 @@
    margin-left: -9px;
    color: gray;
    font-size: 13px;
+}
+.hideReport{
+  display: none;
+}
+.hideOthers{
+  display: none !important;
+}
+h3{
+   font-size: 16px !important;
+   font-weight: 500;
 }
