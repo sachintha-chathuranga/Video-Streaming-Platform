@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild, inject } from '@angular/core';
+import {
+	AfterViewInit,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	Output,
+	TemplateRef,
+	ViewChild,
+	inject,
+} from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -17,6 +27,7 @@ import { CommentService } from '../../services/comment.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommentInputComponent } from '../comment-input/comment-input.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
 	selector: 'app-comment-card',
@@ -31,7 +42,7 @@ import { CommentInputComponent } from '../comment-input/comment-input.component'
 		MatFormFieldModule,
 		MatInputModule,
 		CommentInputComponent,
-		MatDialogModule
+		MatDialogModule,
 	],
 	templateUrl: './comment-card.component.html',
 	styleUrl: './comment-card.component.css',
@@ -39,6 +50,8 @@ import { CommentInputComponent } from '../comment-input/comment-input.component'
 export class CommentCardComponent {
 	@Input()
 	comment!: CommentDto;
+	@Input()
+	videoId!: string;
 	isExpanded = false;
 	@Input()
 	logginUser!: UserDto;
@@ -66,9 +79,48 @@ export class CommentCardComponent {
 	showInputField: boolean = false;
 	@ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
 
-	constructor(private dialog: MatDialog) {}
+	constructor(
+		private dialog: MatDialog,
+		private commentService: CommentService,
+		private matSnackBar: MatSnackBar
+	) {}
 	toggleExpand() {
 		this.isExpanded = !this.isExpanded;
+	}
+	toggleLike() {
+		this.commentService.toggleLike(this.comment.id, this.videoId).subscribe({
+			next: (data: CommentDto) => {
+				this.matSnackBar.open('Comment Liked Successfully', '', {
+					verticalPosition: 'bottom',
+					horizontalPosition: 'left',
+					duration: 2000,
+				});
+
+				this.comment.likesCount = data.likesCount;
+				this.comment.dislikesCount = data.dislikesCount;
+				this.comment.userLikeStatus = data.userLikeStatus;
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error.error.detail);
+			},
+		});
+	}
+	toggledisLike() {
+		this.commentService.toggledisLike(this.comment.id, this.videoId).subscribe({
+			next: (data: CommentDto) => {
+				this.matSnackBar.open('Comment disliked Successfully', '', {
+					verticalPosition: 'bottom',
+					horizontalPosition: 'left',
+					duration: 2000,
+				});
+				this.comment.likesCount = data.likesCount;
+				this.comment.dislikesCount = data.dislikesCount;
+				this.comment.userLikeStatus = data.userLikeStatus;
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error.error.detail);
+			},
+		});
 	}
 	saveComment(comment: string) {
 		this.showInputField = false;
@@ -94,7 +146,7 @@ export class CommentCardComponent {
 				break;
 		}
 	}
-	openConfirmationDialog(){
+	openConfirmationDialog() {
 		this.dialog.open(this.dialogTemplate);
 	}
 	deleteComment() {

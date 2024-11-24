@@ -17,6 +17,8 @@ import { CommentCardComponent } from '../comment-card/comment-card.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserDto } from '../../interfaces/user.dto';
 import { CommentInputComponent } from '../comment-input/comment-input.component';
+import { PaginatedResponse } from '../../interfaces/pagination.dto';
+import { MatOption } from '@angular/material/core';
 
 @Component({
 	selector: 'app-comment',
@@ -29,6 +31,7 @@ import { CommentInputComponent } from '../comment-input/comment-input.component'
 		MatMenuModule,
 		CommentCardComponent,
 		CommentInputComponent,
+		MatOption
 	],
 	templateUrl: './comment.component.html',
 	styleUrl: './comment.component.css',
@@ -37,8 +40,10 @@ export class CommentComponent {
 	@Input()
 	videoId: string = '';
 	commentsDto: CommentDto[] = [];
+	totalComments!: number;
 	logginUser!: UserDto;
-
+	page: number=0;
+	selectedFilter: string= "createdDate";
 	constructor(
 		private userService: UserService,
 		private commentService: CommentService,
@@ -47,15 +52,23 @@ export class CommentComponent {
 
 	ngOnInit(): void {
 		this.logginUser = this.userService.getUser();
-		this.getComments();
+		this.getComments('createdDate');
 	}
-
+	sortCommentBy(sortBy: string) {
+		this.selectedFilter = sortBy;
+		this.getComments(sortBy);
+	}
 	postComment(comment: string) {
 		if (comment) {
 			this.commentService.postComment(comment, this.videoId).subscribe({
 				next: (data) => {
-					this.matSnackBar.open('Comment Posted Successfully', 'OK');
+					this.matSnackBar.open('Comment Created Successfully', '', {
+						verticalPosition: 'bottom',
+						horizontalPosition: 'left',
+						duration: 2000,
+					});
 					this.commentsDto = [data, ...this.commentsDto];
+					this.totalComments+=1;
 				},
 				error: (error: HttpErrorResponse) => {
 					console.log(error.error.detail);
@@ -74,7 +87,7 @@ export class CommentComponent {
 					});
 					this.commentsDto = this.commentsDto.map((obj) => (obj.id == data.id ? data : obj));
 				} else {
-					this.matSnackBar.open('Comment doesn\'t update' , '', {
+					this.matSnackBar.open("Comment doesn't update", '', {
 						verticalPosition: 'bottom',
 						horizontalPosition: 'left',
 						duration: 2000,
@@ -97,6 +110,7 @@ export class CommentComponent {
 						horizontalPosition: 'left',
 						duration: 2000,
 					});
+					this.totalComments -= 1;
 					this.commentsDto = this.commentsDto.filter((obj) => obj.id != commentId);
 				} else {
 					this.matSnackBar.open('Your not allow to Delete this comment', '', {
@@ -113,10 +127,15 @@ export class CommentComponent {
 		});
 	}
 
-	getComments() {
-		this.commentService.getAllComments(this.videoId).subscribe((data) => {
-			console.log(data);
-			this.commentsDto = data;
+	getComments(sortBy:string) {
+		this.commentService.getAllComments(this.videoId,this.page,sortBy).subscribe({
+			next: (response: PaginatedResponse<CommentDto>) => {
+				this.commentsDto = response.content;
+				this.totalComments = response.totalElements;
+			},
+			error: (response: HttpErrorResponse) => {
+				console.log(response.error);
+			},
 		});
 	}
 }

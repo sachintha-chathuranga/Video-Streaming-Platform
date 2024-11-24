@@ -1,7 +1,6 @@
 package com.fourbit.sachintha.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourbit.sachintha.dto.CommentDto;
+import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.service.CommentService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,12 @@ public class CommentController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<CommentDto>> getComments(@PathVariable Long videoId) {
-		return ResponseEntity.ok(commentService.getCommentsByVideoId(videoId));
+	public ResponseEntity<Page<CommentDto>> getComments(@PathVariable Long videoId,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "createdDate") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		;
+		return ResponseEntity.ok(commentService.getCommentsByVideoId(videoId, page, size, sortBy, sortDirection));
 	}
 
 	@DeleteMapping("/{commentId}")
@@ -44,26 +49,14 @@ public class CommentController {
 	}
 
 	@PutMapping("/{commentId}/add-like")
-	public ResponseEntity<String> addLike(@PathVariable Long commentId) {
-		commentService.addLikeToComment(commentId);
-		return ResponseEntity.ok("like added");
-	}
+	public ResponseEntity<LikeDislikeResponse> addLike(@PathVariable Long commentId) {
 
-	@PutMapping("/{commentId}/remove-like")
-	public ResponseEntity<String> removeLike(@PathVariable Long commentId) {
-		commentService.removeLikeFromComment(commentId);
-		return ResponseEntity.ok("like removed");
+		return ResponseEntity.ok(commentService.addLikeToComment(commentId));
 	}
 
 	@PutMapping("/{commentId}/add-dislike")
-	public ResponseEntity<String> addDislike(@PathVariable Long commentId) {
-		commentService.addDisLikeToComment(commentId);
-		return ResponseEntity.ok("dilike added");
+	public ResponseEntity<LikeDislikeResponse> addDislike(@PathVariable Long commentId) {
+		return ResponseEntity.ok(commentService.addDisLikeToComment(commentId));
 	}
 
-	@PutMapping("/{commentId}/remove-dislike")
-	public ResponseEntity<String> removeDislike(@PathVariable Long commentId) {
-		commentService.removeDisLikeFromComment(commentId);
-		return ResponseEntity.ok("dislike remove");
-	}
 }

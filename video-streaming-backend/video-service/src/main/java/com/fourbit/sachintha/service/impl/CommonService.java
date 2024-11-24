@@ -2,9 +2,7 @@ package com.fourbit.sachintha.service.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -57,10 +55,6 @@ public class CommonService {
 	public Comment findCommentById(Long id) {
 		return commentRepository.findById(id)
 				.orElseThrow(() -> new CustomException("Comment does not exists!", HttpStatus.NOT_FOUND));
-	}
-
-	public List<Comment> findCommentByVideoId(Long videoId) {
-		return commentRepository.findByVideoId(videoId, Sort.by(Sort.Order.desc("createdDate")));
 	}
 
 	public String getObjectKeyFromUrl(String s3Url) {

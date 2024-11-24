@@ -11,7 +11,8 @@ public class CommentDto {
 	private Long id;
 	private String text;
 	private UserDto user;
-	private Integer likeCount = 0;
-	private Integer dislikeCount = 0;
+	private Long likesCount = Long.valueOf(0);
+	private Long dislikesCount = Long.valueOf(0);
 	private String lifeTime;
+	private UserLikeStatus userLikeStatus;
 }
