@@ -25,6 +25,7 @@ public class VideoDto {
 	private Long likesCount = Long.valueOf(0);
 	private Long dislikesCount = Long.valueOf(0);
 	private Long viewsCount = Long.valueOf(0);
+	private Long commentsCount = Long.valueOf(0);
 	private LocalDateTime createdTime;
 	private Float duration;
 	private UserLikeStatus userLikeStatus;

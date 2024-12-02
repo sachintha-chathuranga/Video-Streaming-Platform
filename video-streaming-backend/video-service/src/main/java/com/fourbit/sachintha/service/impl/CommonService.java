@@ -57,6 +57,10 @@ public class CommonService {
 				.orElseThrow(() -> new CustomException("Comment does not exists!", HttpStatus.NOT_FOUND));
 	}
 
+	public String genarateUrl(String region, String bucketName, String key) {
+		return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
+	}
+
 	public String getObjectKeyFromUrl(String s3Url) {
 		try {
 			if (s3Url == null) {

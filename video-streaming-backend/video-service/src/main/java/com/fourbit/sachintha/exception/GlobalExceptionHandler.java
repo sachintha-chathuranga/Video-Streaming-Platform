@@ -1,13 +1,18 @@
 package com.fourbit.sachintha.exception;
 
 import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -45,6 +50,24 @@ public class GlobalExceptionHandler {
 		if (e instanceof AccessDeniedException) {
 			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), e.getMessage());
 			errorDetail.setProperty("description", "You are not authorized to access this resource");
+		}
+
+		if (e instanceof MethodArgumentNotValidException) {
+			errorDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+			MethodArgumentNotValidException ex = (MethodArgumentNotValidException) e;
+			errorDetail.setTitle("Validation Error");
+			Map<String, String> errors = new HashMap<>();
+			ex.getBindingResult().getFieldErrors()
+					.forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+
+			errorDetail.setProperty("errors", errors);
+		}
+		if (e instanceof DataIntegrityViolationException) {
+			errorDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+			DataIntegrityViolationException ex = (DataIntegrityViolationException) e;
+			errorDetail.setTitle("Data Error");
+			errorDetail.setDetail("A database constraint was violated: " + ex.getMostSpecificCause().getMessage());
+			return errorDetail;
 		}
 
 		if (errorDetail == null) {

@@ -38,11 +38,11 @@ public interface UserService {
 
 	ChannelDto unsubscribe(Long channelId);
 
-	boolean saveVideo(Long videoId);
+	boolean addVideoToPlaylist(Long videoId);
 
-	List<VideoDto> getSaveVideos(String searchQuery);
+	List<VideoDto> getVideoPlaylist(String searchQuery);
 
-	void deleteSaveVideos();
+	void deletePlaylist();
 
-	void deleteSaveVideo(Long videoId);
+	void removeVideoFromPlaylist(Long videoId);
 }

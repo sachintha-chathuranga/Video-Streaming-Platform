@@ -34,19 +34,19 @@ public class User {
 	private String about;
 	private String sub;
 
+	// this will create new field in table name as channel_id
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "channelId", referencedColumnName = "id") // this will create new field in table name as
-																	// channel_id
+	@JoinColumn(name = "channelId", referencedColumnName = "id")
 	private Channel channel;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>(); // this field doesn't create in User table
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "channelId"))
 	private List<Channel> subscriptions = new ArrayList<>();
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "user_playlist", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
 	private List<Video> saveVideos = new ArrayList<>();
 

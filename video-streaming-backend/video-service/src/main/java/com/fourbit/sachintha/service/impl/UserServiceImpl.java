@@ -2,6 +2,8 @@ package com.fourbit.sachintha.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,6 @@ import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoHistory;
 import com.fourbit.sachintha.repository.UserRepository;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
-import com.fourbit.sachintha.repository.VideoRepository;
 import com.fourbit.sachintha.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,26 +35,33 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final CommonService commonService;
 	private final VideoHistoryRepository videoHistoryRepository;
-	private final VideoRepository videoRepository;
-
 	@Value("${auth0.userInfoEndpoint}")
 	private String userInfoEndpoint;
+	private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Override
 	public UserDto signUp(UserDto user) {
 
 		try {
-			User isUser = userRepository.findBySub(user.getSub());
-			if (isUser == null) {
+			User existingUser = userRepository.findBySub(user.getSub());
+			if (existingUser == null) {
 				User newUser = new User();
 				newUser.setFirstName(user.getFirstName());
 				newUser.setLastName(user.getLastName());
 				newUser.setEmail(user.getEmail());
 				newUser.setSub(user.getSub());
+				newUser.setPictureUrl(user.getPictureUrl());
+				logger.info("Start to Create New Channel");
+				Channel newChannel = new Channel();
+				newChannel.setName(newUser.getFullName());
+				newChannel.setChannelImage(newUser.getPictureUrl());
+				newChannel.setUser(newUser);
+				newUser.setChannel(newChannel);
 				userRepository.save(newUser);
+				logger.info("Channel Created");
 				return UserMapper.mapToUserDto(newUser);
 			}
-			return UserMapper.mapToUserDto(isUser);
+			return UserMapper.mapToUserDto(existingUser);
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage(), HttpStatus.FORBIDDEN);
 		}
@@ -198,7 +206,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean saveVideo(Long videoId) {
+	public boolean addVideoToPlaylist(Long videoId) {
 		User user = commonService.getRequestedUser();
 		Video video = commonService.findVideoById(videoId);
 		List<Video> playlist = user.getSaveVideos();
@@ -210,7 +218,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<VideoDto> getSaveVideos(String searchQuery) {
+	public List<VideoDto> getVideoPlaylist(String searchQuery) {
 		User user = commonService.getRequestedUser();
 		List<Video> playList = userRepository.findSavedVideosBySearchQuery(user.getId(), searchQuery);
 		List<VideoDto> list = playList.stream().map(video -> VideoMapper.mapToVideoDto(video)).toList();
@@ -218,7 +226,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteSaveVideos() {
+	public void deletePlaylist() {
 		User user = commonService.getRequestedUser();
 		List<Video> playlist = user.getSaveVideos();
 		if (!playlist.isEmpty()) {
@@ -229,7 +237,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteSaveVideo(Long videoId) {
+	public void removeVideoFromPlaylist(Long videoId) {
 		User user = commonService.getRequestedUser();
 		Video video = commonService.findVideoById(videoId);
 		List<Video> playlist = user.getSaveVideos();

@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoUpdateMetaData;
 import com.fourbit.sachintha.mapper.VideoMapper;
 import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.Tag;
@@ -17,8 +18,6 @@ import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoLikeStatus;
 import com.fourbit.sachintha.model.VideoStatus;
-import com.fourbit.sachintha.repository.TagRepository;
-import com.fourbit.sachintha.repository.UserRepository;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.repository.VideoLikeStatusRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
@@ -33,78 +32,78 @@ public class VideoServiceImpl implements VideoService {
 	private final VideoRepository videoRepository;
 	private final CommonService commonService;
 	private final VideoHistoryRepository historyRepository;
-	private final UserRepository userRepository;
 	private final VideoLikeStatusRepository videoLikeStatusRepository;
-	private final TagRepository tagRepository;
 	private final Logger logger = LoggerFactory.getLogger(VideoServiceImpl.class);
 
 	@Override
 	public VideoDto uploadVideo(MultipartFile file) {
+		logger.info("Invoke Video Upload function");
 		String videoUrl = awsS3Service.uploadFile(file, "Video");
-		System.out.println(videoUrl);
 //		String videoUrl = "https://video-data-app-bucket.s3.ap-south-1.amazonaws.com/Video/input_1726051378153/input.m3u8";
+		logger.info("Video Upload Successfully! ");
+		logger.info("Video Url: " + videoUrl);
 		User user = commonService.getRequestedUser();
 		Channel userChannel = user.getChannel();
-		if (userChannel == null) {
-			System.out.println("Channel not exist!");
-			userChannel = new Channel();
-			userChannel.setName(user.getFullName());
-			userChannel.setChannelImage(user.getPictureUrl());
-			userChannel.setUser(user);
-			user.setChannel(userChannel);
-			userRepository.save(user);
-		}
-		var video = new Video();
+		logger.info("Start to Create New Video");
+		Video video = new Video();
 		video.setVideoUrl(videoUrl);
 		video.setChannel(userChannel);
 		video.setTitle(file.getOriginalFilename());
-		video.setVideoStatus(VideoStatus.UNLISTED);
+		video.setVideoStatus(VideoStatus.PRIVATE);
 		videoRepository.save(video);
-		System.out.println(video.getId());
+		logger.info("Video Cerated Successfully");
 		return VideoMapper.mapToVideoDto(video);
 	}
 
 	@Override
-	public VideoDto updateVideoMetaData(VideoDto videoDto) {
-		Video video;
-		try {
+	public VideoDto updateVideoMetaData(VideoUpdateMetaData videoDto) {
+		Video video = commonService.findVideoById(videoDto.getId());
 
-			video = commonService.findVideoById(videoDto.getId());
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-
-			throw e;
-			// TODO: handle exception
-		}
-		if (videoDto.getDescription() != null) {
+		if (videoDto.getDescription() != null && !videoDto.getDescription().isBlank()) {
+			logger.info("update description");
 			video.setDescription(videoDto.getDescription());
 		}
-		if (videoDto.getTitle() != null) {
+		if (videoDto.getTitle() != null && !videoDto.getTitle().isBlank()) {
+			logger.info("update title");
 			video.setTitle(videoDto.getTitle());
 		}
 		if (videoDto.getTags() != null) {
-			List<String> tags = videoDto.getTags();
-			List<Tag> newTags = tags.stream().map(tag -> {
+			logger.info("update tags");
 
+			video.getTags().clear();
+			List<String> tags = videoDto.getTags();
+			tags.stream().map(tag -> {
 				Tag newTag = new Tag();
 				newTag.setName(tag);
 				newTag.setVideo(video);
-				tagRepository.save(newTag);
+				video.addTag(newTag);
 				return newTag;
 			}).toList();
-			video.setTags(newTags);
 		}
 		if (videoDto.getVideoStatus() != null) {
-			video.setVideoStatus(videoDto.getVideoStatus());
+			logger.info("update video status");
+			video.setVideoStatus(VideoStatus.valueOf(videoDto.getVideoStatus()));
 		}
+		logger.info("Start to saving");
 		videoRepository.save(video);
+		logger.info("All done");
 		return VideoMapper.mapToVideoDto(video);
 	}
 
 	@Override
 	public String uploadThumbnail(MultipartFile file, Long videoId) {
+		logger.info("Invoke uploadThumbnail function");
 		Video video = this.commonService.findVideoById(videoId);
+		String existingImage = video.getThumbnailUrl();
+		if (existingImage != null && !existingImage.isBlank()) {
+			logger.info("Start to deleting image from S3..");
+			awsS3Service.deleteFile(existingImage);
+			logger.info("deleted successfully");
+		}
 		String thumbnailUrl = awsS3Service.uploadFile(file, "Thumbnail");
+//		String thumbnailUrl = "/assets/5.jpg";
+		logger.info("Thumbail Upload successfully");
+		logger.info("Thumbnail Url: " + thumbnailUrl);
 		video.setThumbnailUrl(thumbnailUrl);
 		videoRepository.save(video);
 		return thumbnailUrl;
@@ -113,12 +112,10 @@ public class VideoServiceImpl implements VideoService {
 	@Override
 	public List<VideoDto> getVideos(String tagName) {
 		List<Video> videos;
-		System.out.println(tagName);
 		if (tagName == null || tagName.equalsIgnoreCase("All") || tagName.isEmpty()) {
-			System.out.println("This work");
-			videos = videoRepository.findAll();
+			videos = videoRepository.findByVideoStatus(VideoStatus.PUBLIC);
 		} else {
-			videos = videoRepository.findVideosByTagName(tagName);
+			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, tagName);
 		}
 		List<VideoDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoDto(video)).toList();
 		return videoList;
@@ -152,10 +149,9 @@ public class VideoServiceImpl implements VideoService {
 	@Override
 	public String deleteVideo(Long id) {
 		Video video = commonService.findVideoById(id);
-		String key = commonService.getObjectKeyFromUrl(video.getVideoUrl());
-		if (key != null) {
-			awsS3Service.deleteFile(key);
-		}
+
+		awsS3Service.deleteFile(video.getVideoUrl());
+
 		// Delete all associated video history records
 		historyRepository.deleteByVideoId(video.getId());
 		videoRepository.deleteById(id);

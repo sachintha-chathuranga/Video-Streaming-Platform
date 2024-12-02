@@ -110,25 +110,25 @@ public class UserController {
 
 	@PutMapping("/save-videos")
 	public ResponseEntity<Boolean> saveVideoToPlaylist(@RequestBody Long videoId) {
-		userService.saveVideo(videoId);
+		userService.addVideoToPlaylist(videoId);
 		return ResponseEntity.ok(true);
 	}
 
 	@GetMapping("/save-videos")
 	public ResponseEntity<List<VideoDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
-		List<VideoDto> playlist = userService.getSaveVideos(searchQuery);
+		List<VideoDto> playlist = userService.getVideoPlaylist(searchQuery);
 		return ResponseEntity.ok(playlist);
 	}
 
 	@DeleteMapping("/save-videos")
 	public ResponseEntity<Boolean> deletePlaylist() {
-		userService.deleteSaveVideos();
+		userService.deletePlaylist();
 		return ResponseEntity.ok(true);
 	}
 
 	@DeleteMapping("/save-videos/{videoId}")
 	public ResponseEntity<Boolean> deletePlaylist(@PathVariable(name = "videoId") Long videoId) {
-		userService.deleteSaveVideo(videoId);
+		userService.removeVideoFromPlaylist(videoId);
 		return ResponseEntity.ok(true);
 	}
 
