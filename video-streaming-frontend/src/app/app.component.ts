@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { Component } from '@angular/core';
-import { UserService } from './services/user.service';
+import { UserService } from './core/services/user.service';
 
 @Component({
 	selector: 'app-root',
@@ -21,10 +21,10 @@ export class AppComponent {
 
 	ngOnInit() {
 		let localUser = this.userService.getUser();
-		console.log(localUser);
+		console.log('App Component Render');
 
 		this.oidcSecurityService.checkAuth().subscribe((loginResponse: LoginResponse) => {
-			const { isAuthenticated, userData, accessToken, idToken, configId } = loginResponse;
+			const { isAuthenticated, userData, accessToken } = loginResponse;
 			console.log('Auth : ' + isAuthenticated);
 			if (isAuthenticated) {
 				if (!localUser) {

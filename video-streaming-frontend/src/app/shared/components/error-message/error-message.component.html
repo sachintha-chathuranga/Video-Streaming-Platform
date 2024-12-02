@@ -1,0 +1,16 @@
+<div class="error-message-container">
+  <div class="image-container">
+    <img [ngSrc]="errorObject.errorIcon" alt="Error icon" fill priority/>
+  </div>
+  <div class="messages-div">
+    <h2>{{errorObject.errorTitle}}</h2>
+    <p>{{errorObject.errorMessage}}</p>
+  </div>
+  <button
+    mat-stroked-button
+    color="primary"
+    (click)="retryFetch()"
+  >
+    Retry
+  </button>
+</div>
