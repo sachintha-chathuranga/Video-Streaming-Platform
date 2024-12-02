@@ -19,9 +19,6 @@ textarea {
 	position: sticky;
 	top: -35px;
 }
-.video-container{
-
-}
 
 .video-container app-video-player {
 	width: 100%;
