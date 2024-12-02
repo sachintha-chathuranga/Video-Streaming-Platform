@@ -1,4 +1,4 @@
-<vg-player *ngIf="videoSource" (onPlayerReady)="onPlayerReady($event)">
+<vg-player *ngIf="videoSource" (onPlayerReady)="onPlayerReady($event)" [ngStyle]="{'border-radius': borderRadius}" >
   <vg-buffering></vg-buffering>
 
   <vg-scrub-bar vgFor="my-video" [vgSlider]="true">

@@ -1,0 +1,28 @@
+<ngx-file-drop
+	(onFileDrop)="dropped($event)"
+	(onFileOver)="fileOver($event)"
+	(onFileLeave)="fileLeave($event)"
+	dropZoneClassName="ngx-file-drop"
+	contentClassName="ngx-file-content"
+	[accept]="allowedExtentions"
+	[disabled]="isLoading"
+	[multiple]="false"
+>
+	<ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+		<div class="ngx-file-content">
+			<div class="image-container">
+				<mat-icon class="mat-icon-large">upload</mat-icon>
+			</div>
+			<h4>Drag and drop {{ fileType }} files to upload</h4>
+			<p>Your {{ fileType }}s will be private until you publish them.</p>
+			<button
+				mat-raised-button
+				(click)="openFileSelector()"
+				style="margin-top: 20px"
+				[disabled]="isLoading"
+			>
+				Select {{ fileType }}
+			</button>
+		</div>
+	</ng-template>
+</ngx-file-drop>

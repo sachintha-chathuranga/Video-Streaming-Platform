@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { VideoUploadComponent } from '../video-upload/video-upload.component';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserService } from '../../services/user.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDivider } from '@angular/material/divider';
+import { VideoUploadStepperComponent } from '../video-upload-stepper/video-upload-stepper.component';
 
 @Component({
 	selector: 'app-toolbar',
@@ -96,10 +96,10 @@ export class ToolbarComponent {
 		this.openDialog();
 	}
 	openDialog() {
-		const dialogRef = this.dialog.open(VideoUploadComponent, {
+		const dialogRef = this.dialog.open(VideoUploadStepperComponent, {
 			width: '80%',
 			maxWidth: '900px',
-			height: '590px',
+			maxHeight: '550px',
 			disableClose: true,
 		});
 

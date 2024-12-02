@@ -31,7 +31,7 @@ import { CardMenuItem } from '../../interfaces/cardMenuItem.dto';
 })
 export class FeatureComponent implements OnInit, OnDestroy {
   featuredVideos: Array<VideoDto> = [];
-  errorObject!: ErrorDto;
+  errorObject!: ErrorDto | null;
   isLoading: boolean = false;
   private timeoutId: any;
   searchQuery: string = '';
@@ -56,6 +56,7 @@ export class FeatureComponent implements OnInit, OnDestroy {
     // this.timeoutId = setTimeout(() => {
     this.videoService.getAllVideos(this.tagName).subscribe({
       next: (data: VideoDto[]) => {
+        this.errorObject = null;
         this.featuredVideos = data;
       },
       error: (error: HttpErrorResponse) => {

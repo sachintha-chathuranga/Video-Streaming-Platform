@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { CommentDto } from '../interfaces/comment.dto';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { PaginatedResponse } from '../interfaces/pagination.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -12,9 +13,14 @@ export class CommentService {
 	private apiEndpoint: string = environment.apiEndpoint;
 	constructor(private httpClient: HttpClient) {}
 
-	getAllComments(videoId: string): Observable<CommentDto[]> {
+	getAllComments(videoId: string, page:number, sortBy: string): Observable<PaginatedResponse<CommentDto>> {
+		let params = new HttpParams()
+			.set('page', page)
+			.set('size', 10)
+			.set('sortBy', sortBy)
+			.set('sortDirection', 'desc');
 		return this.httpClient
-			.get<CommentDto[]>(`${this.apiEndpoint}/videos/${videoId}/comments`)
+			.get<PaginatedResponse<CommentDto>>(`${this.apiEndpoint}/videos/${videoId}/comments`,{params})
 			.pipe(catchError(this.errorHandler));
 	}
 	postComment(
@@ -39,6 +45,25 @@ export class CommentService {
 	): Observable<Boolean> {
 		return this.httpClient
 			.delete<Boolean>(`${this.apiEndpoint}/videos/${videoId}/comments/${commentId}`)
+			.pipe(catchError(this.errorHandler));
+	}
+	toggleLike(
+		commentId: number,
+		videoId: string
+	): Observable<CommentDto> {
+		return this.httpClient
+			.put<CommentDto>(`${this.apiEndpoint}/videos/${videoId}/comments/${commentId}/add-like`, "")
+			.pipe(catchError(this.errorHandler));
+	}
+	toggledisLike(
+		commentId: number,
+		videoId: string
+	): Observable<CommentDto> {
+		return this.httpClient
+			.put<CommentDto>(
+				`${this.apiEndpoint}/videos/${videoId}/comments/${commentId}/add-dislike`,
+				''
+			)
 			.pipe(catchError(this.errorHandler));
 	}
 	errorHandler(error: HttpErrorResponse) {

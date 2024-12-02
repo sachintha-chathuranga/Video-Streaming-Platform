@@ -1,3 +1,16 @@
+td {
+	font-size: 13px;
+	text-align: center;
+	padding: 0 10px !important;
+}
+tr td:first-child{
+	text-align: start;
+}
+th{
+	padding: 0 10px !important;
+}
+
+
 .main-title {
 	margin-top: 10px;
 	font-weight: 500;
@@ -6,81 +19,131 @@
 	margin-bottom: 20px;
 }
 .hidden-layer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: rgba(202, 210, 214, 0.63);
-  align-items: center;
-  padding: 10px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	background-color: rgba(202, 210, 214, 0.63);
+	align-items: center;
+	padding: 10px;
 }
 .hidden-layer .left-col {
-  margin-left: 15px;
+	margin-left: 15px;
 }
-.mat-icon {
-  font-size: 25px;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
+.hidden-layer .right-col {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+.close-icon {
+	font-size: 20px;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 table {
-  width: 100%;
+	width: 100%;
 }
 .mat-mdc-form-field {
-  font-size: 14px;
-  width: 100%;
+	font-size: 14px;
+	width: 100%;
 }
 .video-content {
-  padding: 10px 0;
-  display: flex;
+	padding: 10px 0;
+	display: flex;
 }
 .video-cell {
-  width: 120px;
-  height: 68px;
-  position: relative;
+	width: 120px;
+	height: 68px;
+	position: relative;
 }
 .video-cell img {
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
+	cursor: pointer;
 }
 .video-details {
-  margin-left: 10px;
-  flex: 1;
-  overflow: hidden;
+	margin-left: 10px;
+	flex: 1;
+	overflow: hidden;
+}
+.video-menu {
+	position: relative;
+	top: -7px;
+}
+.video-menu .menu-icon {
+	font-size: 20px;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+.video-menu .menu-btn {
+	width: 30px;
+	height: 30px;
 }
 .video-details h3 {
-  padding-top: 5px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-family: "Roboto", "Noto", sans-serif;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  font-size: 13px;
-  line-height: 20px;
-  width: 100%;
-  cursor: pointer;
-  display: inline-block;
+	cursor: pointer;
+	padding-top: 5px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-family: 'Roboto', 'Noto', sans-serif;
+	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	font-size: 13px;
+	line-height: 20px;
+	width: 100%;
+	display: inline-block;
 }
 .video-details .description {
-  font-family: "Roboto", "Noto", sans-serif;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  letter-spacing: 0.011em;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--theme-font-shadow);
-  overflow: hidden;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  margin-top: var(--ytcp-video-list-cell-second-row-margin-top);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  height: 32px;
+	font-family: 'Roboto', 'Noto', sans-serif;
+	font-weight: 400;
+	cursor: default;
+	-webkit-font-smoothing: antialiased;
+	letter-spacing: 0.011em;
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--theme-font-shadow);
+	overflow: hidden;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	margin-top: var(--ytcp-video-list-cell-second-row-margin-top);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	height: 32px;
+}
+.coustom-th ::ng-deep .mat-sort-header-container {
+	justify-content: center;
+}
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+	background-color: #ffffff !important;
+}
+
+.mat-elevation-z8 {
+	box-shadow: none !important;
+	border: 2px solid #8080804f !important;
+}
+.mat-mdc-header-cell {
+    border-bottom: 2px solid #8080804f ;
+	}
+.mat-mdc-cell {
+    border-bottom-color: #8080804f;
+	}
+.status-cel {
+	display: flex;
+	align-items: center;
+	justify-content: end;
+}
+.status-cel mat-icon {
+	font-size: 20px;
+}
+mat-paginator {
+	border-top: 1px solid #8080804f ;
 }

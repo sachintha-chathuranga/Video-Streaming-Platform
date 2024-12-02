@@ -27,3 +27,6 @@
 .view-comments {
   padding-top: 5px;
 }
+.activeFilter{
+  background-color: #dfdfdf;
+}

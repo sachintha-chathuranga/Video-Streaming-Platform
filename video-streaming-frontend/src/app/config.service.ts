@@ -17,4 +17,23 @@ export class ConfigService {
 		'mpeg4',
 		'wmv',
 	];
+	readonly SUPPORTED_IMAGE_FORMATS = [
+		'jpeg',
+		'jpg',
+		'png',
+	];
+	public convertToExtentions(array:string[]){
+		return array.map( ext =>{
+			return '.'+ext;
+		}).toString();
+	}
+	public isArraysEqual(arr1:string[], arr2:string[]) {
+    // Check if lengths are the same
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+    
+    // Check if every element is equal
+    return arr1.every((value, index) => value === arr2[index]);
+}
 }

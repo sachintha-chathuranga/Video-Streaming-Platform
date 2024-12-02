@@ -1,23 +1,22 @@
 package com.fourbit.sachintha.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.fourbit.sachintha.dto.CommentDto;
+import com.fourbit.sachintha.dto.LikeDislikeResponse;
 
 public interface CommentService {
 	CommentDto addCommentToVideo(Long videoId, String text);
 
-	List<CommentDto> getCommentsByVideoId(Long videoId);
+	Page<CommentDto> getCommentsByVideoId(Long videoId, String page, String size, String sortField,
+			String sortDirection);
 
 	Boolean removeComment(Long commentId);
 
 	CommentDto updateComment(Long commentId, String text);
 
-	void addLikeToComment(Long commentId);
+	LikeDislikeResponse addLikeToComment(Long commentId);
 
-	void removeLikeFromComment(Long commentId);
+	LikeDislikeResponse addDisLikeToComment(Long commentId);
 
-	void addDisLikeToComment(Long commentId);
-
-	void removeDisLikeFromComment(Long commentId);
 }

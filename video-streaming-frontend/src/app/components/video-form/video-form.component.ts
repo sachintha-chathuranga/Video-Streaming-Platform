@@ -1,24 +1,33 @@
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ChangeDetectionStrategy, Component, Inject, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import {
+	FormControl,
+	FormGroup,
+	FormsModule,
+	ReactiveFormsModule,
+	Validators,
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+
+import { CommonModule, IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage } from '@angular/common';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
-import { VideoPlayerComponent } from '../video-player/video-player.component';
-import { VideoDto } from '../../interfaces/video.dto';
+import { VideoDto, VideoUpdateData } from '../../interfaces/video.dto';
 import { VideoService } from '../../services/video.service';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { merge } from 'rxjs';
+import { VideoPlayerComponent } from '../video-player/video-player.component';
+
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ConfigService } from '../../config.service';
+import { FileMetaDataComponent } from '../file-meta-data/file-meta-data.component';
+import { VideoUpdateDialogComponent } from '../video-update-dialog/video-update-dialog.component';
+import { VideoUploadStepperComponent } from '../video-upload-stepper/video-upload-stepper.component';
 
 @Component({
 	selector: 'app-video-form',
@@ -26,7 +35,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 	imports: [
 		CommonModule,
 		FlexLayoutModule,
-		VideoPlayerComponent,
 		MatFormFieldModule,
 		MatInputModule,
 		MatSelectModule,
@@ -35,46 +43,90 @@ import { HttpErrorResponse } from '@angular/common/http';
 		ReactiveFormsModule,
 		MatButtonModule,
 		MatSnackBarModule,
-		MatDialogModule,
-		ReactiveFormsModule,
+		// MatDialogModule,
+		MatProgressBarModule,
+		NgOptimizedImage,
+		FormsModule,
+		FileMetaDataComponent,
+		VideoPlayerComponent,
 	],
+	providers: [
+		{
+			provide: IMAGE_LOADER,
+			useValue: (config: ImageLoaderConfig) => {
+				return `${config.src}`;
+			},
+		},
+	],
+	// Call the function and add the result to the `providers` array:
 	templateUrl: './video-form.component.html',
 	styleUrl: './video-form.component.css',
 })
 export class VideoFormComponent {
+	@Input()
+	isNew: boolean = false;
+	@Input()
+	video!: VideoDto;
+	@Output()
+	videoChange = new EventEmitter<VideoDto>();
+	@Output()
+	onLoadChange = new EventEmitter<boolean>();
+	@Output()
+	hasAnyChanges = new EventEmitter<boolean>();
+
+	@ViewChild('fileInput') fileInput!: ElementRef;
+	@ViewChild('textArea') textArea!: ElementRef;
+
 	videoDetails: FormGroup;
-	title: FormControl = new FormControl('', [Validators.required]);
-	description: FormControl = new FormControl('', [Validators.required]);
-	videoStatus: FormControl = new FormControl('');
+	title: FormControl = new FormControl('', [Validators.required, Validators.maxLength(100)]);
+	description: FormControl = new FormControl('', [
+		Validators.required,
+		Validators.maxLength(2500),
+	]);
+	videoStatus: FormControl = new FormControl('PRIVATE', [Validators.required]);
+	tags: FormControl = new FormControl([]);
 	errorMessage = {
 		title: '',
 		description: '',
 	};
-	selectedFile!: File;
-	selectedFileName: string = '';
-	videoId = '';
+	selectedFile: File | null = null;
 	readonly addOnBlur = true;
 	readonly separatorKeysCodes = [ENTER, COMMA] as const;
-	tags: string[] = [];
-	isFileSelect: boolean = false;
-	videoUrl!: string;
-	thumbnailUrl!: string;
-	isLoading = false;
 	uploadProgress = 0;
-	imageUrl!: string | ArrayBuffer | null | undefined;
-	readonly dialog = inject(MatDialog);
+	imageUrl?: string;
+	allowedImageExtensions: string[];
+	imageExtensions: string;
 
 	constructor(
-		private activatedRoute: ActivatedRoute,
 		private videoService: VideoService,
 		private snackBar: MatSnackBar,
-		@Inject(MAT_DIALOG_DATA) public videoData: any
+		private config: ConfigService,
+		private updateDialogRef: MatDialogRef<VideoUpdateDialogComponent>,
+		private uploadDialogRef: MatDialogRef<VideoUploadStepperComponent>
 	) {
+		this.allowedImageExtensions = config.SUPPORTED_IMAGE_FORMATS;
+		this.imageExtensions = config.convertToExtentions(this.allowedImageExtensions);
 		this.videoDetails = new FormGroup({
 			title: this.title,
 			description: this.description,
 			videoStatus: this.videoStatus,
+			tags: this.tags,
 		});
+	}
+	ngOnInit(): void {
+		this.setVideoDetails();
+	}
+	onInputChange(): void {
+		if (
+			this.videoDetails.get('title')?.value != this.video.title ||
+			this.videoDetails.get('description')?.value != this.video.description ||
+			this.videoDetails.get('videoStatus')?.value != this.video.videoStatus ||
+			!this.config.isArraysEqual(this.videoDetails.get('tags')?.value, this.video.tags)
+		) {
+			this.hasAnyChanges.emit(true);
+		} else {
+			this.hasAnyChanges.emit(false);
+		}
 	}
 	updateErrorMessage(controlName: string): void {
 		const control = this.videoDetails.get(controlName);
@@ -87,112 +139,152 @@ export class VideoFormComponent {
 			this.errorMessage = { title: '', description: '' };
 		}
 	}
-	ngOnInit(): void {
-		this.getVideoDetails();
-	}
 
-	getVideoDetails(): void {
-		this.videoId = this.videoData.videoId;
-		this.videoUrl = this.videoData.videoUrl;
-		this.thumbnailUrl = this.videoData.thumbnailUrl;
+	setVideoDetails(): void {
 		this.videoDetails.setValue({
-			title: this.videoData.title,
-			description: this.videoData.title,
-			videoStatus: '',
+			title: this.video.title,
+			description: this.video.description,
+			videoStatus: this.video.videoStatus,
+			tags: [...this.video.tags],
 		});
+		this.imageUrl = this.video.thumbnailUrl;
 	}
-
-	onFileChange($event: Event) {
-		// @ts-ignore
-		this.selectedFile = $event.target?.files[0];
-		this.selectedFileName = this.selectedFile.name;
-		this.isFileSelect = true;
-		const reader = new FileReader();
-		reader.onload = (e) => (this.imageUrl = e.target?.result);
-		reader.readAsDataURL(this.selectedFile);
+	resetAll(): void {
+		this.videoDetails.get('title')?.reset(this.video.title);
+		this.videoDetails.get('description')?.reset(this.video.description);
+		this.videoDetails.get('videoStatus')?.reset(this.video.videoStatus);
+		this.videoDetails.get('tags')?.reset([...this.video.tags]);
+		this.removeFile();
+	}
+	onFileChange(event: Event) {
+		console.log('file Change');
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			const file = input.files[0];
+			const fileExtension = file.name.split('.').pop()?.toLowerCase();
+			if (fileExtension && this.allowedImageExtensions.includes(fileExtension)) {
+				this.selectedFile = file;
+				this.imageUrl = URL.createObjectURL(file);
+				this.hasAnyChanges.emit(true);
+			} else {
+				this.snackBar.open('Unsuported File format!', 'OK');
+			}
+		} else {
+			console.log('No file selected.');
+		}
+	}
+	removeFile() {
+		this.fileInput.nativeElement.value = '';
+		this.selectedFile = null;
+		this.imageUrl = this.video.thumbnailUrl;
+		this.hasAnyChanges.emit(false);
 	}
 	uploadThumbnail() {
-		console.log(this.videoId);
-		this.videoService.uploadThumbnail(this.selectedFile, this.videoId).subscribe((data) => {
-			console.log(data);
-			this.snackBar.open('Thumbnail Upload Successfull', 'OK');
-		});
+		if (this.selectedFile) {
+			this.onLoadChange.emit(true);
+			this.videoService.uploadThumbnail(this.selectedFile, this.video?.id).subscribe({
+				next: (data: string) => {
+					this.video.thumbnailUrl = data;
+					this.snackBar.open('Thumbnail Upload Successfull', 'OK');
+					this.removeFile();
+					this.onLoadChange.emit(false);
+					if (this.isNew) {
+						this.updateDialogRef.close();
+					}
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.snackBar.open(errorResponse.error.title, 'OK');
+					console.log(errorResponse.error);
+					this.onLoadChange.emit(false);
+				},
+			});
+		}
 	}
 	saveVideo() {
-		// Call the video service to make a http call to our backend
-
-		const videoMetaData: VideoDto = {
-			id: Number(this.videoId),
-			title: this.videoDetails.get('title')?.value,
-			channel: this.videoData.channel,
-			description: this.videoDetails.get('description')?.value,
-			tags: this.tags,
-			videoStatus: this.videoDetails.get('videoStatus')?.value,
-			thumbnailUrl: this.thumbnailUrl,
-		};
-		this.videoService.saveVideo(videoMetaData).subscribe({
-			next: (data: VideoDto) => {
-				console.log(data);
-				this.isLoading = false;
-				this.snackBar.open('Video Metadata Updated successfully', 'OK');
-				this.dialog.closeAll();
-			},
-			error: (error: HttpErrorResponse) => {
-				// this.errorObject = this.errorService.generateError(error);
-				this.isLoading = false;
-			},
-		});
-
-		if (this.videoDetails.status == 'VALID') {
-			this.isLoading = true;
-			this.uploadProgress = 0;
-			const interval = setInterval(() => {
-				if (this.uploadProgress < 100) {
-					this.uploadProgress += 10;
-				} else {
-					clearInterval(interval);
-					this.isLoading = false;
+		if (this.videoDetails.dirty) {
+			if (this.videoDetails.status == 'VALID') {
+				console.log('Save to db');
+				this.onLoadChange.emit(true);
+				const videoMetaData: VideoUpdateData = {
+					id: this.video.id,
+				};
+				if (this.video.title != this.videoDetails.get('title')?.value) {
+					console.log('Add title to request');
+					console.log('Title lenght: ' + this.videoDetails.get('title')?.value.length);
+					videoMetaData.title = this.videoDetails.get('title')?.value;
 				}
-			}, 200);
-		} else {
-			this.markAllAsTouched();
-		}
-	}
+				if (this.video.description != this.videoDetails.get('description')?.value) {
+					console.log('Add description to request');
+					console.log(
+						'Description lenght: ' + this.videoDetails.get('description')?.value.length
+					);
+					videoMetaData.description = this.videoDetails.get('description')?.value;
+				}
+				if (this.video.videoStatus != this.videoDetails.get('videoStatus')?.value) {
+					console.log('Add videoStatus to request');
+					videoMetaData.videoStatus = this.videoDetails.get('videoStatus')?.value;
+				}
+				if (!this.config.isArraysEqual(this.video.tags, this.videoDetails.get('tags')?.value)) {
+					console.log('Add tags to request');
+					videoMetaData.tags = this.videoDetails.get('tags')?.value;
+				}
 
+				this.videoService.saveVideo(videoMetaData).subscribe({
+					next: (data: VideoDto) => {
+						this.video = data;
+						this.setVideoDetails();
+						this.videoChange.emit(this.video);
+						this.snackBar.open('Video Metadata Updated successfully', 'OK');
+						if (!this.selectedFile) {
+							this.onLoadChange.emit(false);
+							if (this.isNew) {
+								this.updateDialogRef.close();
+							}
+						} else {
+							this.removeFile();
+						}
+					},
+					error: (errorResponse: HttpErrorResponse) => {
+						this.snackBar.open(errorResponse.error.title, 'OK');
+						console.log(errorResponse.error);
+						this.onLoadChange.emit(false);
+					},
+				});
+			} else {
+				this.markAllAsTouched();
+			}
+		}
+		this.uploadThumbnail();
+	}
+	closeDialogBox() {
+		this.removeFile();
+		this.updateDialogRef.close(this.video);
+	}
 	add(event: MatChipInputEvent): void {
 		const value = (event.value || '').trim();
-
 		// Add our tag
 		if (value) {
-			this.tags.push(value);
+			const tags = this.videoDetails.get('tags')?.value;
+			tags.push(value);
+			this.videoDetails.get('tags')?.setValue(tags);
 		}
-
 		// Clear the input value
 		event.chipInput!.clear();
 	}
 
 	remove(tag: string): void {
-		const index = this.tags.indexOf(tag);
+		const tags = this.videoDetails.get('tags')?.value || [];
+		const index = tags.indexOf(tag);
+
 		if (index >= 0) {
-			this.tags.splice(index, 1);
+			tags.splice(index, 1);
+			this.videoDetails.get('tags')?.setValue(tags);
 		}
 	}
-
-	edit(tag: string, event: MatChipEditedEvent) {
-		const value = event.value.trim();
-
-		// Remove tag if it no longer has a name
-		if (!value) {
-			this.remove(tag);
-			return;
-		}
-
-		// Edit existing tag
-
-		const index = this.tags.indexOf(tag);
-		if (index >= 0) {
-			this.tags[index] = value;
-		}
+	ngAfterViewInit() {
+		const textArea = this.textArea.nativeElement;
+		textArea.style.height = 'auto';
+		textArea.style.height = textArea.scrollHeight + 'px';
 	}
 	autoGrow(event: Event): void {
 		const textArea = event.target as HTMLTextAreaElement;

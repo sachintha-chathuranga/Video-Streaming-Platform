@@ -18,8 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoUpdateMetaData;
 import com.fourbit.sachintha.service.VideoService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -45,7 +47,7 @@ public class VideoController {
 
 	@PutMapping("/update-details")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<VideoDto> updateVideoDetails(@RequestBody VideoDto videoDto) {
+	public ResponseEntity<VideoDto> updateVideoDetails(@Valid @RequestBody VideoUpdateMetaData videoDto) {
 		VideoDto savedVideo = videoService.updateVideoMetaData(videoDto);
 		return ResponseEntity.ok(savedVideo);
 	}

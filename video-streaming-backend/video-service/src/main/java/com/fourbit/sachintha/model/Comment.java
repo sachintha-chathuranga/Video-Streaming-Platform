@@ -1,6 +1,8 @@
 package com.fourbit.sachintha.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
@@ -11,17 +13,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "comments")
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
@@ -38,37 +40,25 @@ public class Comment {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
-	private User user; // this will create user_id field in comments table
+	private User user;
 
-	@Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-	private Integer likeCount;
+	@ManyToMany
+	@JoinTable(name = "user_like_comments", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<User> likes = new ArrayList<>();
 
-	@Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-	private Integer dislikeCount;
+	@ManyToMany
+	@JoinTable(name = "user_dislike_comments", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<User> dislikes = new ArrayList<>();
 
 	@CreatedDate
 	@Column(nullable = false)
 	private LocalDateTime createdDate;
 
-	public void incrementLikeCount() {
-		this.likeCount += 1;
+	public Long getLikesCount() {
+		return Long.valueOf(this.likes.size());
 	}
 
-	public void decrementLikeCount() {
-		if (this.likeCount <= 0) {
-			return;
-		}
-		this.likeCount -= 1;
-	}
-
-	public void incrementDislikeCount() {
-		this.dislikeCount += 1;
-	}
-
-	public void decrementDislikeCount() {
-		if (this.dislikeCount <= 0) {
-			return;
-		}
-		this.dislikeCount -= 1;
+	public Long getDislikesCount() {
+		return Long.valueOf(this.dislikes.size());
 	}
 }
