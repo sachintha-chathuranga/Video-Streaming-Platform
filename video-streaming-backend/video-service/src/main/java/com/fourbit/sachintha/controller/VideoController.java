@@ -69,13 +69,9 @@ public class VideoController {
 	}
 
 	@GetMapping("/get-video/{id}")
-	public ResponseEntity<VideoDto> getVideoById(@PathVariable Long id) {
-		return ResponseEntity.ok(videoService.getVideoById(id));
-	}
-
-	@GetMapping("/channel-videos")
-	public ResponseEntity<List<VideoDto>> getVideosByChannelId() {
-		return ResponseEntity.ok(videoService.getVideosByChannelId());
+	public ResponseEntity<VideoDto> getVideoById(@PathVariable Long id,
+			@RequestParam(defaultValue = "false") Boolean isAuth) {
+		return ResponseEntity.ok(videoService.getVideoById(isAuth, id));
 	}
 
 	@DeleteMapping("/{id}/delete")

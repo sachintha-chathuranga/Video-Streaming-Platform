@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -50,8 +51,16 @@ public class Video {
 	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Tag> tags = new ArrayList<>();
 
-	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
-	private List<VideoLikeStatus> likeUsers = new ArrayList<>();
+//	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
+//	private List<VideoLikeStatus> likeUsers = new ArrayList<>();
+
+	@ManyToMany
+	@JoinTable(name = "video_likes", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<User> likes = new ArrayList<>();
+
+	@ManyToMany
+	@JoinTable(name = "video_dislikes", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<User> dislikes = new ArrayList<>();
 
 	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
@@ -80,14 +89,6 @@ public class Video {
 		this.viewsCount = viewsCount;
 		this.createdTime = createdTime;
 		this.duration = duration;
-	}
-
-	public List<VideoLikeStatus> getLikes() {
-		return this.likeUsers.stream().filter(data -> data.getLikeStatus()).toList();
-	}
-
-	public List<VideoLikeStatus> getDisLikes() {
-		return this.likeUsers.stream().filter(data -> !data.getLikeStatus()).toList();
 	}
 
 	public void addTag(Tag tag) {

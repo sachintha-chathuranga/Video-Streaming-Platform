@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 	private final AwsS3Service awsS3Service;
 	private final UserRepository userRepository;
-	private final CommonService commonService;
+	private final DBService dBService;
 	private final VideoHistoryRepository videoHistoryRepository;
 	@Value("${auth0.userInfoEndpoint}")
 	private String userInfoEndpoint;
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto updateUser(UserDto userDto) {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		if (userDto.getFirstName() != null) {
 			user.setFirstName(userDto.getFirstName());
 		}
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String uploadProfilePicture(MultipartFile file) {
-		User user = this.commonService.getRequestedUser();
+		User user = this.dBService.getRequestedUser();
 		// String photoUrl = awsS3Service.uploadFile(file, "profile_photoes");
 		String photoUrl = "djfskf";
 		user.setPictureUrl(photoUrl);
@@ -109,14 +109,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto getUserById(Long id) {
-		User user = commonService.findUserById(id);
+		User user = dBService.findUserById(id);
 		return UserMapper.mapToUserDto(user);
 	}
 
 	@Override
 	public String deleteUser(Long id) {
-		User user = commonService.findUserById(id);
-		String key = commonService.getObjectKeyFromUrl(user.getPictureUrl());
+		User user = dBService.findUserById(id);
+		String key = dBService.getObjectKeyFromUrl(user.getPictureUrl());
 		awsS3Service.deleteFile(key);
 		userRepository.deleteById(id);
 		return "User Delete Successfully!";
@@ -124,11 +124,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String updateVideoHistory(VideoHistoryDto videoHistoryDto) {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(),
 				videoHistoryDto.getVideoId());
 		if (videoHistory == null) {
-			Video video = commonService.findVideoById(videoHistoryDto.getVideoId());
+			Video video = dBService.findVideoById(videoHistoryDto.getVideoId());
 
 			// Save to user video history database
 			videoHistory = new VideoHistory();
@@ -147,14 +147,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String removeHistoryVideo(Long videoId) {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		videoHistoryRepository.deleteByUserAndVideo(user.getId(), videoId);
 		return "Video remove from history";
 	}
 
 	@Override
 	public List<VideoHistoryDto> getVideoHistory() {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		List<VideoHistory> videoHistories = videoHistoryRepository.findByUserIdOrderByWatchTimeDesc(user.getId());
 		// User user = commonService.findUserById(userId);
 		// List<VideoHistory> videoHistories = user.getVideoHistories();
@@ -169,15 +169,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String clearVideoHistory() {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		videoHistoryRepository.deleteByUserId(user.getId());
 		return "Video remove from history";
 	}
 
 	@Override
 	public ChannelDto subscribe(Long channelId) {
-		User subscriber = commonService.getRequestedUser();
-		Channel channel = commonService.findChannelById(channelId);
+		User subscriber = dBService.getRequestedUser();
+		Channel channel = dBService.findChannelById(channelId);
 		List<Channel> channels = subscriber.getSubscriptions();
 		if (!channels.contains(channel)) {
 			channels.add(channel);
@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<ChannelDto> getSubscribeChannels() {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		List<Channel> channels = user.getSubscriptions();
 		List<ChannelDto> channelDtos = channels.stream().map(channel -> ChannelMapper.mapTochannelDto(channel))
 				.toList();
@@ -197,8 +197,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ChannelDto unsubscribe(Long channelId) {
-		User subscriber = commonService.getRequestedUser();
-		Channel channel = commonService.findChannelById(channelId);
+		User subscriber = dBService.getRequestedUser();
+		Channel channel = dBService.findChannelById(channelId);
 		List<Channel> channels = subscriber.getSubscriptions();
 		channels.remove(channel);
 		userRepository.save(subscriber);
@@ -207,8 +207,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean addVideoToPlaylist(Long videoId) {
-		User user = commonService.getRequestedUser();
-		Video video = commonService.findVideoById(videoId);
+		User user = dBService.getRequestedUser();
+		Video video = dBService.findVideoById(videoId);
 		List<Video> playlist = user.getSaveVideos();
 		if (!playlist.contains(video)) {
 			playlist.add(video);
@@ -219,7 +219,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<VideoDto> getVideoPlaylist(String searchQuery) {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		List<Video> playList = userRepository.findSavedVideosBySearchQuery(user.getId(), searchQuery);
 		List<VideoDto> list = playList.stream().map(video -> VideoMapper.mapToVideoDto(video)).toList();
 		return list;
@@ -227,7 +227,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deletePlaylist() {
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		List<Video> playlist = user.getSaveVideos();
 		if (!playlist.isEmpty()) {
 			playlist.clear();
@@ -238,8 +238,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void removeVideoFromPlaylist(Long videoId) {
-		User user = commonService.getRequestedUser();
-		Video video = commonService.findVideoById(videoId);
+		User user = dBService.getRequestedUser();
+		Video video = dBService.findVideoById(videoId);
 		List<Video> playlist = user.getSaveVideos();
 		playlist.remove(video);
 		userRepository.save(user);

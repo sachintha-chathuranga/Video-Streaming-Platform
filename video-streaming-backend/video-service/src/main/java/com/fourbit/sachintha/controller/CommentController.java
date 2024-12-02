@@ -38,9 +38,11 @@ public class CommentController {
 	public ResponseEntity<Page<CommentDto>> getComments(@PathVariable Long videoId,
 			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
 			@RequestParam(defaultValue = "createdDate") String sortBy,
-			@RequestParam(defaultValue = "desc") String sortDirection) {
+			@RequestParam(defaultValue = "desc") String sortDirection,
+			@RequestParam(defaultValue = "false") Boolean isAuth) {
 		;
-		return ResponseEntity.ok(commentService.getCommentsByVideoId(videoId, page, size, sortBy, sortDirection));
+		return ResponseEntity
+				.ok(commentService.getCommentsByVideoId(isAuth, videoId, page, size, sortBy, sortDirection));
 	}
 
 	@DeleteMapping("/{commentId}")

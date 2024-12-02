@@ -32,7 +32,7 @@ public class AwsS3Service {
 	private String awsBucketRegion;
 
 	private final S3Client awsS3Client;
-	private final CommonService commonService;
+	private final DBService dBService;
 
 	public String uploadFile(MultipartFile file, String category) {
 		// create unique name for file
@@ -54,12 +54,12 @@ public class AwsS3Service {
 		}
 
 		// get url of the uploaded file
-		return commonService.genarateUrl(awsBucketRegion, awsBucketName, key);
+		return dBService.genarateUrl(awsBucketRegion, awsBucketName, key);
 	}
 
 	public void deleteFile(String s3Url) {
 		try {
-			String objectKey = commonService.getObjectKeyFromUrl(s3Url);
+			String objectKey = dBService.getObjectKeyFromUrl(s3Url);
 			DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder().bucket(awsBucketName).key(objectKey)
 					.build();
 			awsS3Client.deleteObject(deleteRequest);
@@ -71,7 +71,7 @@ public class AwsS3Service {
 
 	public void deleteFiles(List<String> fileUrls) {
 		List<ObjectIdentifier> objects = fileUrls.stream()
-				.map(s3Url -> ObjectIdentifier.builder().key(commonService.getObjectKeyFromUrl(s3Url)).build())
+				.map(s3Url -> ObjectIdentifier.builder().key(dBService.getObjectKeyFromUrl(s3Url)).build())
 				.collect(Collectors.toList());
 
 		Delete delete = Delete.builder().objects(objects).build();

@@ -9,7 +9,7 @@ public class VideoHistoryMapper {
 		Video video = videoHistory.getVideo();
 		VideoHistoryDto videoHistoryDto = new VideoHistoryDto(videoHistory.getId(), video.getId(),
 				videoHistory.getWatchTime(), videoHistory.getWatchDuration(), video.getTitle(), video.getThumbnailUrl(),
-				video.getLikes().size(), video.getDisLikes().size(), video.getViewsCount());
+				video.getLikes().size(), video.getDislikes().size(), video.getViewsCount());
 
 		return videoHistoryDto;
 	}

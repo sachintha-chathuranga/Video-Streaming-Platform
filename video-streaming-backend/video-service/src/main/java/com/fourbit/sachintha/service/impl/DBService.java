@@ -3,6 +3,8 @@ package com.fourbit.sachintha.service.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -22,13 +24,15 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CommonService {
+public class DBService {
 	private final VideoRepository videoRepository;
 	private final CommentRepository commentRepository;
 	private final UserRepository userRepository;
 	private final ChannelRepository channelRepository;
+	private final Logger logger = LoggerFactory.getLogger(DBService.class);
 
 	public User getRequestedUser() {
+		logger.info("Invoke getRequested User function");
 		String sub = ((Jwt) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getClaim("sub");
 		User user = userRepository.findBySub(sub);
 		if (user == null) {
@@ -76,4 +80,5 @@ public class CommonService {
 			return null;
 		}
 	}
+
 }

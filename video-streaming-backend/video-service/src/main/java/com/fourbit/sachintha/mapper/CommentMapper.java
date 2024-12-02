@@ -10,7 +10,20 @@ import com.fourbit.sachintha.model.User;
 
 public class CommentMapper {
 
-	public static CommentDto mapToCommentDto(Comment comment, User requestedUser) {
+	public static CommentDto mapToCommentDto(Comment comment) {
+		if (comment == null) {
+			return null;
+		}
+		Boolean isLike = false;
+		Boolean isDislike = false;
+		UserLikeStatus uls = UserLikeStatus.builder().isUserLike(isLike).isUserDislike(isDislike).build();
+		CommentDto commentDto = new CommentDto(comment.getId(), comment.getText(),
+				UserMapper.mapToUserDto(comment.getUser()), comment.getLikesCount(), comment.getDislikesCount(),
+				getTimeAgo(comment.getCreatedDate()), uls);
+		return commentDto;
+	}
+
+	public static CommentDto mapToCommentDto2(Comment comment, User requestedUser) {
 		if (comment == null) {
 			return null;
 		}

@@ -16,7 +16,6 @@ import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.Tag;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
-import com.fourbit.sachintha.model.VideoLikeStatus;
 import com.fourbit.sachintha.model.VideoStatus;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.repository.VideoLikeStatusRepository;
@@ -30,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class VideoServiceImpl implements VideoService {
 	private final AwsS3Service awsS3Service;
 	private final VideoRepository videoRepository;
-	private final CommonService commonService;
+	private final DBService dBService;
 	private final VideoHistoryRepository historyRepository;
 	private final VideoLikeStatusRepository videoLikeStatusRepository;
 	private final Logger logger = LoggerFactory.getLogger(VideoServiceImpl.class);
@@ -42,7 +41,7 @@ public class VideoServiceImpl implements VideoService {
 //		String videoUrl = "https://video-data-app-bucket.s3.ap-south-1.amazonaws.com/Video/input_1726051378153/input.m3u8";
 		logger.info("Video Upload Successfully! ");
 		logger.info("Video Url: " + videoUrl);
-		User user = commonService.getRequestedUser();
+		User user = dBService.getRequestedUser();
 		Channel userChannel = user.getChannel();
 		logger.info("Start to Create New Video");
 		Video video = new Video();
@@ -57,7 +56,7 @@ public class VideoServiceImpl implements VideoService {
 
 	@Override
 	public VideoDto updateVideoMetaData(VideoUpdateMetaData videoDto) {
-		Video video = commonService.findVideoById(videoDto.getId());
+		Video video = dBService.findVideoById(videoDto.getId());
 
 		if (videoDto.getDescription() != null && !videoDto.getDescription().isBlank()) {
 			logger.info("update description");
@@ -93,7 +92,7 @@ public class VideoServiceImpl implements VideoService {
 	@Override
 	public String uploadThumbnail(MultipartFile file, Long videoId) {
 		logger.info("Invoke uploadThumbnail function");
-		Video video = this.commonService.findVideoById(videoId);
+		Video video = this.dBService.findVideoById(videoId);
 		String existingImage = video.getThumbnailUrl();
 		if (existingImage != null && !existingImage.isBlank()) {
 			logger.info("Start to deleting image from S3..");
@@ -139,16 +138,22 @@ public class VideoServiceImpl implements VideoService {
 	}
 
 	@Override
-	public VideoDto getVideoById(Long id) {
-		logger.info(id.toString());
-		User user = commonService.getRequestedUser();
-		Video video = commonService.findVideoById(id);
-		return VideoMapper.mapToVideoDto2(video, user);
+	public VideoDto getVideoById(Boolean isAuthUser, Long id) {
+		logger.info("Invoke getVideoById funcion");
+		logger.info("Video Id: " + id.toString());
+		logger.info("IsAuthIn GetVideoById: " + isAuthUser);
+		Video video = dBService.findVideoById(id);
+		if (isAuthUser) {
+			User user = dBService.getRequestedUser();
+			return VideoMapper.mapToVideoDto2(video, user);
+		} else {
+			return VideoMapper.mapToVideoDto(video);
+		}
 	}
 
 	@Override
 	public String deleteVideo(Long id) {
-		Video video = commonService.findVideoById(id);
+		Video video = dBService.findVideoById(id);
 
 		awsS3Service.deleteFile(video.getVideoUrl());
 
@@ -160,28 +165,26 @@ public class VideoServiceImpl implements VideoService {
 
 	@Override
 	public LikeDislikeResponse addLikeToVideo(Long videoId) {
-		Video video = commonService.findVideoById(videoId);
-		User user = commonService.getRequestedUser();
+		Video video = dBService.findVideoById(videoId);
 
-		VideoLikeStatus videoLikeStatus = this.videoLikeStatusRepository.findByUserIdAndVideoId(user.getId(), videoId);
+		List<User> likes = video.getLikes();
+		List<User> dislikes = video.getDislikes();
 
-		if (videoLikeStatus == null) {
-			logger.info("Create new VideoLikeStatus");
-			videoLikeStatus = new VideoLikeStatus();
-			videoLikeStatus.setUser(user);
-			videoLikeStatus.setVideo(video);
-			videoLikeStatusRepository.save(videoLikeStatus);
-		} else {
-			logger.info("Update existing status");
-			if (videoLikeStatus.getLikeStatus()) {
-				logger.info("remove status from DB");
-				videoLikeStatusRepository.delete(videoLikeStatus);
-			} else {
-				logger.info("Change status to true");
-				videoLikeStatus.setLikeStatus(true);
-				videoLikeStatusRepository.save(videoLikeStatus);
+		User user = dBService.getRequestedUser();
+
+		if (!likes.contains(user)) {
+			if (dislikes.contains(user)) {
+				dislikes.remove(user);
+				logger.info("Remove user from dislike");
 			}
+			likes.add(user);
+			logger.info("Add user to like list");
+		} else {
+			likes.remove(user);
+			logger.info("Remove user from like list");
 		}
+
+		videoRepository.save(video);
 		VideoDto videoDto = VideoMapper.mapToVideoDto2(video, user);
 		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
 				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
@@ -189,42 +192,89 @@ public class VideoServiceImpl implements VideoService {
 
 	@Override
 	public LikeDislikeResponse addDislikeToVideo(Long videoId) {
-		Video video = commonService.findVideoById(videoId);
-		User user = commonService.getRequestedUser();
+		Video video = dBService.findVideoById(videoId);
 
-		VideoLikeStatus videoLikeStatus = this.videoLikeStatusRepository.findByUserIdAndVideoId(user.getId(), videoId);
-		if (videoLikeStatus == null) {
-			logger.info("Create new VideoLikeStatus and set to dislike");
-			videoLikeStatus = new VideoLikeStatus();
-			videoLikeStatus.setLikeStatus(false);
-			videoLikeStatus.setUser(user);
-			videoLikeStatus.setVideo(video);
-			videoLikeStatusRepository.save(videoLikeStatus);
-		} else {
-			logger.info("Update Exixting status");
-			if (videoLikeStatus.getLikeStatus()) {
-				logger.info("Set LikeStatus to False");
-				videoLikeStatus.setLikeStatus(false);
-				this.videoLikeStatusRepository.save(videoLikeStatus);
-			} else {
-				logger.info("Remove VideoLikeStatus from DB");
-				videoLikeStatusRepository.delete(videoLikeStatus);
+		List<User> likes = video.getLikes();
+		List<User> dislikes = video.getDislikes();
+
+		User user = dBService.getRequestedUser();
+
+		if (!dislikes.contains(user)) {
+			if (likes.contains(user)) {
+				likes.remove(user);
+				logger.info("Remove user from likes");
 			}
+			dislikes.add(user);
+			logger.info("Add user to dislike list");
+		} else {
+			dislikes.remove(user);
+			logger.info("Remove user from dislike list");
 		}
+
+		videoRepository.save(video);
 		VideoDto videoDto = VideoMapper.mapToVideoDto2(video, user);
 		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
 				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
 	}
 
-	@Override
-	public List<VideoDto> getVideosByChannelId() {
-		User user = commonService.getRequestedUser();
-		List<Video> videos;
-
-		videos = videoRepository.findVideosByChannelId(user.getChannel().getId());
-
-		List<VideoDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoDto(video)).toList();
-		return videoList;
-	}
+//	@Override
+//	public LikeDislikeResponse addLikeToVideo(Long videoId) {
+//		Video video = dBService.findVideoById(videoId);
+//		User user = dBService.getRequestedUser();
+//
+//		VideoLikeStatus videoLikeStatus = this.videoLikeStatusRepository.findByUserIdAndVideoId(user.getId(), videoId);
+//
+//		if (videoLikeStatus == null) {
+//			logger.info("Create new VideoLikeStatus");
+//			videoLikeStatus = new VideoLikeStatus();
+//			videoLikeStatus.setUser(user);
+//			videoLikeStatus.setVideo(video);
+//			videoLikeStatusRepository.save(videoLikeStatus);
+//		} else {
+//			logger.info("Update existing status");
+//			if (videoLikeStatus.getLikeStatus()) {
+//				logger.info("remove status from DB");
+//				videoLikeStatusRepository.delete(videoLikeStatus);
+//			} else {
+//				logger.info("Change status to true");
+//				videoLikeStatus.setLikeStatus(true);
+//				videoLikeStatusRepository.save(videoLikeStatus);
+//			}
+//		}
+//		VideoDto videoDto = VideoMapper.mapToVideoDto2(video, user);
+//		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
+//				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
+//	}
+//
+//	
+//	
+//	@Override
+//	public LikeDislikeResponse addDislikeToVideo(Long videoId) {
+//		Video video = dBService.findVideoById(videoId);
+//		User user = dBService.getRequestedUser();
+//
+//		VideoLikeStatus videoLikeStatus = this.videoLikeStatusRepository.findByUserIdAndVideoId(user.getId(), videoId);
+//		if (videoLikeStatus == null) {
+//			logger.info("Create new VideoLikeStatus and set to dislike");
+//			videoLikeStatus = new VideoLikeStatus();
+//			videoLikeStatus.setLikeStatus(false);
+//			videoLikeStatus.setUser(user);
+//			videoLikeStatus.setVideo(video);
+//			videoLikeStatusRepository.save(videoLikeStatus);
+//		} else {
+//			logger.info("Update Exixting status");
+//			if (videoLikeStatus.getLikeStatus()) {
+//				logger.info("Set LikeStatus to False");
+//				videoLikeStatus.setLikeStatus(false);
+//				this.videoLikeStatusRepository.save(videoLikeStatus);
+//			} else {
+//				logger.info("Remove VideoLikeStatus from DB");
+//				videoLikeStatusRepository.delete(videoLikeStatus);
+//			}
+//		}
+//		VideoDto videoDto = VideoMapper.mapToVideoDto2(video, user);
+//		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
+//				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
+//	}
 
 }

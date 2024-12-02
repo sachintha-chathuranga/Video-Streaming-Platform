@@ -8,7 +8,7 @@ import com.fourbit.sachintha.dto.LikeDislikeResponse;
 public interface CommentService {
 	CommentDto addCommentToVideo(Long videoId, String text);
 
-	Page<CommentDto> getCommentsByVideoId(Long videoId, String page, String size, String sortField,
+	Page<CommentDto> getCommentsByVideoId(Boolean isAuthUser, Long videoId, String page, String size, String sortField,
 			String sortDirection);
 
 	Boolean removeComment(Long commentId);

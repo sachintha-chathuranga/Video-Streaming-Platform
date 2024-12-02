@@ -19,14 +19,12 @@ public interface VideoService {
 
 	List<VideoDto> searchVideos(String searchQuery, String date, String duration, String sortBy);
 
-	VideoDto getVideoById(Long id);
+	VideoDto getVideoById(Boolean isAuthUser, Long id);
 
 	String deleteVideo(Long id);
 
 	LikeDislikeResponse addLikeToVideo(Long videoId);
 
 	LikeDislikeResponse addDislikeToVideo(Long videoId);
-
-	List<VideoDto> getVideosByChannelId();
 
 }
