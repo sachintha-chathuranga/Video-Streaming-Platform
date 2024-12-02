@@ -39,11 +39,15 @@ import { MatOption } from '@angular/material/core';
 export class CommentComponent {
 	@Input()
 	videoId: string = '';
+	@Input()
+	isAuth: boolean = false;
+
 	commentsDto: CommentDto[] = [];
 	totalComments!: number;
-	logginUser!: UserDto;
+	logginUser?: UserDto;
 	page: number=0;
 	selectedFilter: string= "createdDate";
+
 	constructor(
 		private userService: UserService,
 		private commentService: CommentService,
@@ -128,7 +132,7 @@ export class CommentComponent {
 	}
 
 	getComments(sortBy:string) {
-		this.commentService.getAllComments(this.videoId,this.page,sortBy).subscribe({
+		this.commentService.getAllComments(this.videoId,this.page,sortBy, this.isAuth).subscribe({
 			next: (response: PaginatedResponse<CommentDto>) => {
 				this.commentsDto = response.content;
 				this.totalComments = response.totalElements;

@@ -54,7 +54,7 @@ export class CommentCardComponent {
 	videoId!: string;
 	isExpanded = false;
 	@Input()
-	logginUser!: UserDto;
+	logginUser?: UserDto;
 	@Output()
 	onUpdate = new EventEmitter<CommentDto>();
 	@Output()

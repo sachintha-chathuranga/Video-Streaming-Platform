@@ -23,7 +23,7 @@
 		mat-card-avatar
 		class="example-header-image"
 		[ngStyle]="{
-			'background-image': logginUser.pictureUrl || 'url(\'/assets/no-person.png\')'
+			'background-image': logginUser?.pictureUrl || 'url(\'/assets/no-person.png\')'
 		}"
 	></div>
 	<app-comment-input

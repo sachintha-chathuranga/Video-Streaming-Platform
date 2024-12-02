@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { UserDto } from '../../interfaces/user.dto';
+import { AuthUser, UserDto, UserUpdateDto } from '../../interfaces/user.dto';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -69,11 +69,10 @@ export class UserFormComponent {
 		this.userDetails.reset(this.logginUser);
 	}
 	publishChanges() {
-		const updatedUser: UserDto = {
+		const updatedUser: UserUpdateDto = {
 			firstName: this.userDetails.get('firstName')?.value,
 			lastName: this.userDetails.get('lastName')?.value,
 			about: this.userDetails.get('about')?.value,
-			sub: this.logginUser?.sub,
 		};
 		if (this.userDetails.dirty) {
 			this.userService.updateUser(updatedUser).subscribe({

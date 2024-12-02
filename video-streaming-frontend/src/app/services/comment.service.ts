@@ -4,6 +4,7 @@ import { CommentDto } from '../interfaces/comment.dto';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { PaginatedResponse } from '../interfaces/pagination.dto';
+import { UserService } from './user.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -13,12 +14,15 @@ export class CommentService {
 	private apiEndpoint: string = environment.apiEndpoint;
 	constructor(private httpClient: HttpClient) {}
 
-	getAllComments(videoId: string, page:number, sortBy: string): Observable<PaginatedResponse<CommentDto>> {
+	getAllComments(videoId: string, page:number, sortBy: string, isAuth: boolean): Observable<PaginatedResponse<CommentDto>> {
+
 		let params = new HttpParams()
 			.set('page', page)
 			.set('size', 10)
 			.set('sortBy', sortBy)
-			.set('sortDirection', 'desc');
+			.set('sortDirection', 'desc')
+			.set('isAuth', isAuth);
+			
 		return this.httpClient
 			.get<PaginatedResponse<CommentDto>>(`${this.apiEndpoint}/videos/${videoId}/comments`,{params})
 			.pipe(catchError(this.errorHandler));

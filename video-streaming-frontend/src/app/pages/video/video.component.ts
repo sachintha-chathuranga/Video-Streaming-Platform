@@ -1,29 +1,26 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
-import { VideoDto } from '../../interfaces/video.dto';
-import { UserService } from '../../services/user.service';
-import { VideoService } from '../../services/video.service';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { CommentComponent } from '../../components/comment/comment.component';
-import { VideoPlayerComponent } from '../../components/video-player/video-player.component';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { ErrorService } from '../../services/error.service';
-import { ErrorDto } from '../../interfaces/error.dto';
-import { VideoCardComponent } from '../../components/video-card/video-card.component';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { UserLikeStatus } from '../../interfaces/videoLikeStatus.dto';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { CommentComponent } from '../../components/comment/comment.component';
+import { VideoCardComponent } from '../../components/video-card/video-card.component';
+import { VideoPlayerComponent } from '../../components/video-player/video-player.component';
 import { ConfigService } from '../../config.service';
 import { CardMenuItem } from '../../interfaces/cardMenuItem.dto';
 import { Channel } from '../../interfaces/channel.dto';
+import { ErrorDto } from '../../interfaces/error.dto';
+import { LikeDislikeResponse } from '../../interfaces/likeDislikeldto';
+import { VideoDto } from '../../interfaces/video.dto';
+import { ErrorService } from '../../services/error.service';
+import { UserService } from '../../services/user.service';
+import { VideoService } from '../../services/video.service';
 @Component({
 	selector: 'app-video',
 	standalone: true,
@@ -61,8 +58,10 @@ export class VideoComponent implements OnInit {
 			isDisable: false,
 		},
 	];
+	isAuthenticated: boolean = false;
 
 	constructor(
+		private oidcSecurityService: OidcSecurityService,
 		private activatedRoute: ActivatedRoute,
 		private videoService: VideoService,
 		private userService: UserService,
@@ -101,10 +100,13 @@ export class VideoComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
+			this.isAuthenticated = isAuthenticated;
+		});
 		this.activatedRoute.queryParams.subscribe((params) => {
 			this.videoId = params['v']; // Get the value of the 'v' query parameter
 		});
-		this.videoService.getVideoById(parseInt(this.videoId)).subscribe({
+		this.videoService.getVideoById(parseInt(this.videoId), this.isAuthenticated).subscribe({
 			next: (data: VideoDto) => {
 				if (data) {
 					this.video = data;
@@ -140,7 +142,7 @@ export class VideoComponent implements OnInit {
 	}
 	likeVideo() {
 		this.videoService.likeVideo(this.videoId).subscribe({
-			next: (data: VideoDto) => {
+			next: (data: LikeDislikeResponse) => {
 				if (this.video) {
 					this.video.likesCount = data.likesCount;
 					this.video.dislikesCount = data.dislikesCount;
@@ -155,7 +157,7 @@ export class VideoComponent implements OnInit {
 
 	dislikeVideo() {
 		this.videoService.disLikeVideo(this.videoId).subscribe({
-			next: (data: VideoDto) => {
+			next: (data: LikeDislikeResponse) => {
 				if (this.video) {
 					this.video.likesCount = data.likesCount;
 					this.video.dislikesCount = data.dislikesCount;
@@ -184,7 +186,7 @@ export class VideoComponent implements OnInit {
 		this.userService.unSubscribe(this.video?.channel?.id).subscribe({
 			next: (data: Channel) => {
 				if (this.video?.channel) {
-					console.log(data)
+					console.log(data);
 					this.video.channel = data;
 				}
 			},

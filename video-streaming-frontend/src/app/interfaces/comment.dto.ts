@@ -11,3 +11,4 @@ export interface CommentDto {
 	lifeTime: string;
 	userLikeStatus?: UserLikeStatus;
 }
+

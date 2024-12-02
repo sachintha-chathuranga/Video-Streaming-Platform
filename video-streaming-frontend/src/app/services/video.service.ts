@@ -1,9 +1,10 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { VideoDto, VideoUpdateData } from '../interfaces/video.dto';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { VideoDto, VideoUpdateData } from '../interfaces/video.dto';
+import { LikeDislikeResponse } from '../interfaces/likeDislikeldto';
 @Injectable({
 	providedIn: 'root',
 })
@@ -13,14 +14,14 @@ export class VideoService {
 
 	constructor(private httpClient: HttpClient) {}
 
-	likeVideo(videoId: string): Observable<VideoDto> {
+	likeVideo(videoId: string): Observable<LikeDislikeResponse> {
 		return this.httpClient
-			.put<VideoDto>(`${this.apiEndpoint}/videos/${videoId}/toggle-like`, null)
+			.put<LikeDislikeResponse>(`${this.apiEndpoint}/videos/${videoId}/toggle-like`, null)
 			.pipe(catchError(this.errorHandler));
 	}
-	disLikeVideo(videoId: string): Observable<VideoDto> {
+	disLikeVideo(videoId: string): Observable<LikeDislikeResponse> {
 		return this.httpClient
-			.put<VideoDto>(`${this.apiEndpoint}/videos/${videoId}/toggle-dislike`, null)
+			.put<LikeDislikeResponse>(`${this.apiEndpoint}/videos/${videoId}/toggle-dislike`, null)
 			.pipe(catchError(this.errorHandler));
 	}
 
@@ -35,9 +36,10 @@ export class VideoService {
 			.pipe(catchError(this.errorHandler));
 	}
 
-	getVideoById(videoId: number): Observable<VideoDto> {
+	getVideoById(videoId: number, isAuth: boolean): Observable<VideoDto> {
+		let params = new HttpParams().set('isAuth', isAuth);
 		return this.httpClient
-			.get<VideoDto>(`${this.apiEndpoint}/videos/get-video/${videoId}`)
+			.get<VideoDto>(`${this.apiEndpoint}/videos/get-video/${videoId}`, { params })
 			.pipe(catchError(this.errorHandler));
 	}
 	uploadVideo(file: File): Observable<VideoDto> {

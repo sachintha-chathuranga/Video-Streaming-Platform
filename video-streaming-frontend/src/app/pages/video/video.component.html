@@ -108,7 +108,7 @@
 				{{ isExpanded ? 'less' : '...more' }}
 			</span>
 		</div>
-		<app-comment [videoId]="videoId"></app-comment>
+		<app-comment [videoId]="videoId" [isAuth]="isAuthenticated"></app-comment>
 	</div>
 	<div class="related-videos-container" fxFlex="402px">
 		<div fxLayout="column" fxLayoutGap="10px">

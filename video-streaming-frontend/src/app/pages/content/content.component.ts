@@ -10,13 +10,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { VideoUpdateDialogComponent } from '../../components/video-update-dialog/video-update-dialog.component';
 import { VideoUploadStepperComponent } from '../../components/video-upload-stepper/video-upload-stepper.component';
+import { PaginatedResponse } from '../../interfaces/pagination.dto';
 import { VideoDto } from '../../interfaces/video.dto';
 import { ChannelService } from '../../services/channel.service';
 import { UserService } from '../../services/user.service';
@@ -54,12 +55,18 @@ export class ContentComponent implements AfterViewInit, OnInit {
 	@ViewChild(MatSort)
 	sort!: MatSort;
 
+	totalItems = 50;
+	pageSize = 10;
+	currentPage = 0;
+	sortField: string = 'createdTime';
+	sortDirection: string = 'desc';
+
 	readonly dialog = inject(MatDialog);
 	displayedColumns: string[] = [
 		'select',
 		'video',
 		'visibility',
-		'date',
+		'createdTime',
 		'views',
 		'comments',
 		'likes',
@@ -67,6 +74,7 @@ export class ContentComponent implements AfterViewInit, OnInit {
 	dataSource = new MatTableDataSource<VideoDto>();
 	selection = new SelectionModel<VideoDto>(true, []);
 	isLoading: boolean = false;
+	channelId!: number;
 
 	constructor(
 		private userService: UserService,
@@ -76,6 +84,10 @@ export class ContentComponent implements AfterViewInit, OnInit {
 	) {}
 
 	ngOnInit(): void {
+		const user = this.userService.getUser();
+		if (user) {
+			this.channelId = user.id;
+		}
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
 			.subscribe((result) => {
@@ -83,15 +95,15 @@ export class ContentComponent implements AfterViewInit, OnInit {
 					if (result.breakpoints[Breakpoints.XSmall]) {
 						this.displayedColumns = ['select', 'video'];
 					} else if (result.breakpoints[Breakpoints.Small]) {
-						this.displayedColumns = ['select', 'video', 'visibility', 'date', 'views'];
+						this.displayedColumns = ['select', 'video', 'visibility', 'createdTime', 'views'];
 					} else if (result.breakpoints[Breakpoints.Medium]) {
-						this.displayedColumns = ['select', 'video', 'visibility', 'date', 'views'];
+						this.displayedColumns = ['select', 'video', 'visibility', 'createdTime', 'views'];
 					} else if (result.breakpoints[Breakpoints.Large]) {
 						this.displayedColumns = [
 							'select',
 							'video',
 							'visibility',
-							'date',
+							'createdTime',
 							'views',
 							'comments',
 							'likes',
@@ -102,22 +114,45 @@ export class ContentComponent implements AfterViewInit, OnInit {
 		this.fetchVideos();
 		// this.openDialogTemp()
 	}
+
+	ngAfterViewInit() {
+		
+	}
+	onPageChange(event: PageEvent): void {
+		this.currentPage = event.pageIndex;
+		this.pageSize = event.pageSize;
+		this.fetchVideos();
+	}
+	onSortChange(event: Sort): void {
+		this.sortField = event.active;
+		this.sortDirection = event.direction;
+		this.fetchVideos();
+	}
 	openVideo(videoId: number) {
 		const url = this.router.createUrlTree(['/watch'], { queryParams: { v: videoId } }).toString();
 		window.open(url, '_blank');
 	}
 	fetchVideos() {
 		this.isLoading = true;
-		this.userService.getUserVideos().subscribe({
-			next: (data: VideoDto[]) => {
-				this.dataSource.data = data;
-				this.isLoading = false;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.isLoading = false;
-				console.log(error.message);
-			},
-		});
+		this.channelService
+			.getChannelVideos(
+				this.channelId,
+				this.currentPage,
+				this.pageSize,
+				this.sortField,
+				this.sortDirection
+			)
+			.subscribe({
+				next: (data: PaginatedResponse<VideoDto>) => {
+					this.dataSource.data = data.content;
+					this.isLoading = false;
+					this.paginator.length = data.totalElements;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.isLoading = false;
+					console.log(error.message);
+				},
+			});
 	}
 	applyFilter(event: Event) {
 		const filterValue = (event.target as HTMLInputElement).value;
@@ -158,13 +193,6 @@ export class ContentComponent implements AfterViewInit, OnInit {
 		}
 		if (this.dataSource) {
 			this.selection.select(...this.dataSource.data);
-		}
-	}
-
-	ngAfterViewInit() {
-		if (this.dataSource) {
-			this.dataSource.paginator = this.paginator;
-			this.dataSource.sort = this.sort;
 		}
 	}
 

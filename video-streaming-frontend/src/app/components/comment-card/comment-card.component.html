@@ -70,8 +70,8 @@
 				[disabled]="item.isDisable"
 				(click)="handleMenuClick(item.name)"
 				[ngClass]="{
-					hideReport: comment.user.id == logginUser.id && item.name == 'Report',
-					hideOthers: comment.user.id !== logginUser.id && item.name !== 'Report'
+					hideReport: comment.user.id == logginUser?.id && item.name == 'Report',
+					hideOthers: comment.user.id !== logginUser?.id && item.name !== 'Report'
 				}"
 			>
 				<mat-icon class="material-icons-outlined">{{ item.icon }}</mat-icon>

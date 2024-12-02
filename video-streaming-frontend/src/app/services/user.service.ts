@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-import { UserDto } from '../interfaces/user.dto';
+import { AuthUser, UserDto, UserUpdateDto } from '../interfaces/user.dto';
 import { VideoDto } from '../interfaces/video.dto';
 import { environment } from '../../environments/environment';
 import { Channel } from '../interfaces/channel.dto';
@@ -10,7 +10,7 @@ import { Channel } from '../interfaces/channel.dto';
 	providedIn: 'root',
 })
 export class UserService {
-	private user!: UserDto ;
+	private user!: UserDto;
 	constructor(private httpClient: HttpClient) {
 		let localUser = sessionStorage.getItem('user');
 		if (localUser) {
@@ -29,11 +29,7 @@ export class UserService {
 	removeUser() {
 		sessionStorage.removeItem('user');
 	}
-	getUserVideos(): Observable<VideoDto[]> {
-		return this.httpClient
-			.get<VideoDto[]>(this.apiEndpoint + '/videos/channel-videos')
-			.pipe(catchError(this.errorHandler));
-	}
+
 	
 	getUserDetails(videoId: string) {
 		console.log('get user');
@@ -52,14 +48,14 @@ export class UserService {
 	getUserId() {
 		return this.user?.id;
 	}
-	updateUser(userData: UserDto): Observable<UserDto> {
+	updateUser(userData: UserUpdateDto): Observable<UserDto> {
 		return this.httpClient
 			.put<UserDto>(this.apiEndpoint + '/users/update', userData)
 			.pipe(catchError(this.errorHandler));
 	}
 	registerUser(userData: any, token: any) {
 		console.log(userData);
-		let newUser: UserDto = {
+		let newUser: AuthUser = {
 			firstName: userData?.given_name,
 			lastName: userData?.family_name,
 			email: userData?.email,
