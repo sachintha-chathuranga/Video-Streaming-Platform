@@ -10,7 +10,7 @@ export class ErrorService {
   constructor() {}
 
   generateError(error: HttpErrorResponse) {
-    console.log(error.status);
+    console.log(error);
     switch (error.status) {
       case 0:
         this.errorObject = {
@@ -28,8 +28,8 @@ export class ErrorService {
         break;
       default:
         this.errorObject = {
-          errorTitle: 'Connect to the internet',
-          errorMessage: "You're offline. Check your connection.",
+          errorTitle: error.error.title,
+          errorMessage: error.error.description,
           errorIcon: 'assets/astroMan.png',
         };
         break;

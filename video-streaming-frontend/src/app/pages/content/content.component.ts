@@ -1,25 +1,29 @@
-import { Component, AfterViewInit, ViewChild, inject, OnInit } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { VideoFormComponent } from '../../components/video-form/video-form.component';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { UserService } from '../../services/user.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { CommonModule, IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
+import { VideoUpdateDialogComponent } from '../../components/video-update-dialog/video-update-dialog.component';
+import { VideoUploadStepperComponent } from '../../components/video-upload-stepper/video-upload-stepper.component';
 import { VideoDto } from '../../interfaces/video.dto';
-
+import { ChannelService } from '../../services/channel.service';
+import { UserService } from '../../services/user.service';
 @Component({
 	selector: 'app-content',
 	standalone: true,
 	imports: [
-		MatDialogModule,
 		MatButtonModule,
 		MatTableModule,
 		MatPaginatorModule,
@@ -29,41 +33,91 @@ import { VideoDto } from '../../interfaces/video.dto';
 		MatSortModule,
 		MatIconModule,
 		CommonModule,
+		MatTooltipModule,
+		MatMenuModule,
+		NgOptimizedImage,
+	],
+	providers: [
+		{
+			provide: IMAGE_LOADER,
+			useValue: (config: ImageLoaderConfig) => {
+				return `${config.src}`;
+			},
+		},
 	],
 	templateUrl: './content.component.html',
 	styleUrl: './content.component.css',
 })
 export class ContentComponent implements AfterViewInit, OnInit {
+	@ViewChild(MatPaginator)
+	paginator!: MatPaginator;
+	@ViewChild(MatSort)
+	sort!: MatSort;
+
 	readonly dialog = inject(MatDialog);
 	displayedColumns: string[] = [
 		'select',
 		'video',
 		'visibility',
-		// 'date',
+		'date',
 		'views',
 		'comments',
 		'likes',
 	];
 	dataSource = new MatTableDataSource<VideoDto>();
 	selection = new SelectionModel<VideoDto>(true, []);
+	isLoading: boolean = false;
 
-	@ViewChild(MatPaginator)
-	paginator!: MatPaginator;
-	@ViewChild(MatSort)
-	sort!: MatSort;
-	constructor(private userService: UserService) {
-	
-	}
+	constructor(
+		private userService: UserService,
+		private channelService: ChannelService,
+		private router: Router,
+		private breakpointObserver: BreakpointObserver
+	) {}
+
 	ngOnInit(): void {
-			this.userService.getUserVideos().subscribe({
-				next: (data: VideoDto[]) => {
-					this.dataSource.data = data;
-					console.log(data);
-				},
-				error: (error: HttpErrorResponse) => {
-					console.log(error.message);
-				},
+		this.breakpointObserver
+			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.subscribe((result) => {
+				if (result.matches) {
+					if (result.breakpoints[Breakpoints.XSmall]) {
+						this.displayedColumns = ['select', 'video'];
+					} else if (result.breakpoints[Breakpoints.Small]) {
+						this.displayedColumns = ['select', 'video', 'visibility', 'date', 'views'];
+					} else if (result.breakpoints[Breakpoints.Medium]) {
+						this.displayedColumns = ['select', 'video', 'visibility', 'date', 'views'];
+					} else if (result.breakpoints[Breakpoints.Large]) {
+						this.displayedColumns = [
+							'select',
+							'video',
+							'visibility',
+							'date',
+							'views',
+							'comments',
+							'likes',
+						];
+					}
+				}
 			});
+		this.fetchVideos();
+		// this.openDialogTemp()
+	}
+	openVideo(videoId: number) {
+		const url = this.router.createUrlTree(['/watch'], { queryParams: { v: videoId } }).toString();
+		window.open(url, '_blank');
+	}
+	fetchVideos() {
+		this.isLoading = true;
+		this.userService.getUserVideos().subscribe({
+			next: (data: VideoDto[]) => {
+				this.dataSource.data = data;
+				this.isLoading = false;
+			},
+			error: (error: HttpErrorResponse) => {
+				this.isLoading = false;
+				console.log(error.message);
+			},
+		});
 	}
 	applyFilter(event: Event) {
 		const filterValue = (event.target as HTMLInputElement).value;
@@ -77,14 +131,22 @@ export class ContentComponent implements AfterViewInit, OnInit {
 		const numRows = this.dataSource?.data.length;
 		return numSelected === numRows;
 	}
+
 	deleteSelected(): void {
-		const selectedRows = this.selection.selected;
-		// Remove selected rows from the data source
-		if (this.dataSource) {
-			this.dataSource.data = this.dataSource?.data.filter(
-				(row) => !this.selection.isSelected(row)
-			);
-			this.selection.clear();
+		const selectedRows: VideoDto[] = this.selection.selected;
+		const videoIds: number[] = selectedRows.map((video) => video.id);
+		if (selectedRows[0].channel) {
+			const channelId: number = selectedRows[0].channel?.id;
+			this.channelService.deleteChannelVideos(channelId, videoIds).subscribe({
+				next: (data) => {
+					if (this.dataSource && data) {
+						this.dataSource.data = this.dataSource?.data.filter(
+							(row) => !this.selection.isSelected(row)
+						);
+						this.selection.clear();
+					}
+				},
+			});
 		}
 	}
 
@@ -98,15 +160,6 @@ export class ContentComponent implements AfterViewInit, OnInit {
 			this.selection.select(...this.dataSource.data);
 		}
 	}
-	// /** The label for the checkbox on the passed row */
-	// checkboxLabel(row?: PeriodicElement): string {
-	//   if (!row) {
-	//     return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-	//   }
-	//   return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
-	//     row.position + 1
-	//   }`;
-	// }
 
 	ngAfterViewInit() {
 		if (this.dataSource) {
@@ -114,22 +167,41 @@ export class ContentComponent implements AfterViewInit, OnInit {
 			this.dataSource.sort = this.sort;
 		}
 	}
-	openDialog() {
-		const dialogRef = this.dialog.open(VideoFormComponent, {
+
+	openDialogTemp() {
+		const dialogRef = this.dialog.open(VideoUploadStepperComponent, {
 			width: '80%',
 			maxWidth: '900px',
-			height: '590px',
+			maxHeight: '550px',
 			disableClose: true,
-			data: {
-				videoId: '1',
-				videoUrl: '',
-				thumbnailUrl: '',
-				title: 'Video Title',
-			},
 		});
 
-		dialogRef.afterClosed().subscribe((result) => {
-			console.log(`Dialog result: ${result}`);
+		dialogRef.afterClosed().subscribe((result: VideoDto) => {
+			console.log(result);
+			this.updateVideoInDataSource(result);
 		});
+	}
+	openDialog(video: VideoDto) {
+		console.log(video);
+		const dialogRef = this.dialog.open(VideoUpdateDialogComponent, {
+			width: '80%',
+			maxWidth: '900px',
+			maxHeight: '550px',
+			disableClose: true,
+			data: video,
+		});
+
+		dialogRef.afterClosed().subscribe((result: VideoDto) => {
+			console.log(result);
+			this.updateVideoInDataSource(result);
+		});
+	}
+	updateVideoInDataSource(updatedVideo: VideoDto): void {
+		const currentData = this.dataSource.data; // Get current data
+		const index = currentData.findIndex((video) => video.id === updatedVideo.id);
+		if (index > -1) {
+			currentData[index] = updatedVideo; // Update the existing object
+			this.dataSource.data = [...currentData]; // Refresh dataSource
+		}
 	}
 }

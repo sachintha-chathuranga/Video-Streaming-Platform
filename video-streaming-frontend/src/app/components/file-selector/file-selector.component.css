@@ -1,5 +1,5 @@
 
-.ngx-file-drop {
+ngx-file-drop {
   border: 1px solid var(--theme-shadow-color);
   height: 100%;
   max-height: 425px;
@@ -8,6 +8,10 @@
   align-items: center;
   border-radius: 10px;
   flex-direction: row;
+}
+::ng-deep .ngx-file-drop{
+  padding: 40px;
+  width: 100% !important;
 }
 .ngx-file-content {
   display: flex;
@@ -23,6 +27,14 @@
   justify-content: center;
   color: var(--theme-shadow-color);
   margin-bottom: 30px;
+}
+.ngx-file-content h4{
+  font-weight: 500;
+  color: #155bc7d6;
+}
+.ngx-file-content p {
+  font-size: 15px;
+  color: #155bc7d6;
 }
 .mat-icon-large {
   font-size: 70px; 

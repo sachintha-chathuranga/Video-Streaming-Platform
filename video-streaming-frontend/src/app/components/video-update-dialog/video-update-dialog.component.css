@@ -1,0 +1,9 @@
+.mat-progress-bar {
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+}
+.dialogbox-title {
+	max-width: 500px;
+	max-height: 62px;
+}

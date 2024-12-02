@@ -11,9 +11,20 @@ export interface VideoDto {
 	videoUrl?: string;
 	videoStatus?: string;
 	thumbnailUrl?: string;
-	tags?: string[];
+	tags: string[];
 	likesCount?: number;
 	dislikesCount?: number;
 	viewsCount?: number;
+	commentsCount?: number;
 	userLikeStatus?: UserLikeStatus;
+	createdTime?: Date;
+}
+
+export interface VideoUpdateData {
+	id: number;
+	title?: string;
+	description?: string;
+	videoStatus?: string;
+	tags?: string[];
+	thumbnailUrl?: string;
 }

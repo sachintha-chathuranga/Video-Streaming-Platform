@@ -1,26 +1,17 @@
-import { Component, Output, ViewEncapsulation } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  MatChipEditedEvent,
-  MatChipInputEvent,
-  MatChipsModule,
-} from '@angular/material/chips';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
-import { UserService } from '../../services/user.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
 import { UserDto } from '../../interfaces/user.dto';
-import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from '../../services/user.service';
 
 @Component({
 	selector: 'app-user-form',
@@ -54,7 +45,6 @@ export class UserFormComponent {
 	selectedFileName: string = '';
 	videoId = '';
 	logginUser!: UserDto | null;
-
 	isLoading = false;
 	uploadProgress = 0;
 
@@ -74,28 +64,27 @@ export class UserFormComponent {
 			about: this.about,
 		});
 	}
-	
+
 	resetForm(): void {
 		this.userDetails.reset(this.logginUser);
 	}
-	publishChanges(){
-		const updatedUser: UserDto ={
+	publishChanges() {
+		const updatedUser: UserDto = {
 			firstName: this.userDetails.get('firstName')?.value,
 			lastName: this.userDetails.get('lastName')?.value,
 			about: this.userDetails.get('about')?.value,
-			sub: this.logginUser?.sub
-		}
+			sub: this.logginUser?.sub,
+		};
 		if (this.userDetails.dirty) {
 			this.userService.updateUser(updatedUser).subscribe({
-          next: (data: UserDto) => {
-				console.log(data)
-            this.logginUser=data;
-				this.userService.setUser(data);
-          },
-          error: (error: HttpErrorResponse) => {
-            console.log(error.message)
-          },
-        });
+				next: (data: UserDto) => {
+					this.logginUser = data;
+					this.userService.setUser(data);
+				},
+				error: (error: HttpErrorResponse) => {
+					console.log(error.message);
+				},
+			});
 		}
 	}
 	updateErrorMessage(controlName: string): void {

@@ -1,0 +1,24 @@
+<div class="dialog-header">
+	<h3 mat-dialog-title class="dialogbox-title text-overflow-1">{{ video.title }}</h3>
+	<mat-dialog-actions>
+		<span class="dialog-close-btn" mat-dialog-close (click)="onClose()">
+			<mat-icon>close</mat-icon>
+		</span>
+	</mat-dialog-actions>
+</div>
+<div class="mat-progress-bar">
+	<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+</div>
+<mat-dialog-content>
+	<app-video-form
+		[(video)]="video"
+		(onLoadChange)="setIsLoading($event)"
+		(hasAnyChanges)="onAnyChange($event)"
+	></app-video-form>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-raised-button [disabled]="!isAnyChange || isLoading" (click)="reset()">Reset</button>
+	<button mat-raised-button [disabled]="!isAnyChange || isLoading" (click)="saveChanges()">
+		Save
+	</button>
+</mat-dialog-actions>

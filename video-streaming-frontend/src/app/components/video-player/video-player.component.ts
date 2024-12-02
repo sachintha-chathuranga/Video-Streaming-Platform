@@ -4,10 +4,10 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import {
-  BitrateOptions,
-  IMediaElement,
-  VgApiService,
-  VgCoreModule,
+	BitrateOptions,
+	IMediaElement,
+	VgApiService,
+	VgCoreModule,
 } from '@videogular/ngx-videogular/core';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgStreamingModule } from '@videogular/ngx-videogular/streaming';
@@ -33,10 +33,9 @@ export class VideoPlayerComponent implements OnInit {
 	videoSource!: string;
 	// videoSource ='https://ap-south-app-bucket.s3.ap-south-1.amazonaws.com/Video/411b8316-e55a-498e-9d0c-08839ee832cc.mp4';
 	hlsBitrates: BitrateOptions[] = [];
-
-	constructor(private vgApi: VgApiService, private http: HttpClient) {
-		console.log('Player Renderd!');
-	}
+	@Input()
+	borderRadius!: string;
+	constructor(private vgApi: VgApiService, private http: HttpClient) {}
 
 	ngOnInit(): void {
 		console.log('Player Rendered!');
@@ -46,21 +45,16 @@ export class VideoPlayerComponent implements OnInit {
 		this.vgApi = api;
 
 		this.vgApi.getDefaultMedia().subscriptions.abort.subscribe(() => {
-			// Set the video to the beginning
 			console.log('Abord Loading!');
 		});
 		this.vgApi.getDefaultMedia().subscriptions.pause.subscribe((e) => {
-			// Set the video to the beginning
 			console.log(this.hlsBitrates);
 			console.log('Pause!');
 			this.vgApi.getDefaultMedia();
 		});
 		this.vgApi.getDefaultMedia().subscriptions.play.subscribe((e) => {
-			// Set the video to the beginning
 			console.log('Play!');
 		});
-		this.vgApi.getDefaultMedia().subscriptions.progress.subscribe((e) => {
-			// Set the video to the beginning
-		});
+		this.vgApi.getDefaultMedia().subscriptions.progress.subscribe((e) => {});
 	}
 }

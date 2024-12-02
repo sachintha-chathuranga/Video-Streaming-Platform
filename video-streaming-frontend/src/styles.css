@@ -20,6 +20,9 @@ a {
   text-decoration: none;
   color: var(--link-color);
 }
+.mat-mdc-dialog-container{
+  height: auto;
+}
 .dialogbox-title {
   font-weight: 500 !important;
   font-size: 21px !important;
@@ -50,7 +53,7 @@ a {
 .text-overflow-1, .text-overflow-2{
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
+  display: -webkit-box !important;
   -webkit-box-orient: vertical;
 }
 .text-overflow-1{
@@ -85,7 +88,11 @@ a {
   max-width: 300px !important;
 }
 
-
+img{
+	position: relative !important;
+	width: 100%;
+	object-fit: cover;
+}
 
 @media screen and (max-width: 600px) {
   .fxItem {

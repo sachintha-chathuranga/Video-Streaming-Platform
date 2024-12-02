@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { VideoDto } from '../interfaces/video.dto';
+import { VideoDto, VideoUpdateData } from '../interfaces/video.dto';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 @Injectable({
@@ -15,7 +15,7 @@ export class VideoService {
 
 	likeVideo(videoId: string): Observable<VideoDto> {
 		return this.httpClient
-			.put<VideoDto>(`${this.apiEndpoint}/videos/${videoId}/toggle-like`,null)
+			.put<VideoDto>(`${this.apiEndpoint}/videos/${videoId}/toggle-like`, null)
 			.pipe(catchError(this.errorHandler));
 	}
 	disLikeVideo(videoId: string): Observable<VideoDto> {
@@ -23,27 +23,21 @@ export class VideoService {
 			.put<VideoDto>(`${this.apiEndpoint}/videos/${videoId}/toggle-dislike`, null)
 			.pipe(catchError(this.errorHandler));
 	}
-	getVideo(videoId: string): Observable<VideoDto> {
-		throw new Error('Method not implemented.');
-	}
 
-	uploadThumbnail(file: File, videoId: string): Observable<string> {
+	uploadThumbnail(file: File, videoId: number): Observable<string> {
 		const formData = new FormData();
 		formData.append('file', file, file.name);
-		formData.append('videoId', videoId);
-
-		const headers = new HttpHeaders({
-			'security-token': 'mytoken',
-		});
-
-		return this.httpClient.post('http://localhost:8080/api/videos/upload-thumbnail', formData, {
-			responseType: 'text',
-		});
+		formData.append('videoId', videoId.toString());
+		return this.httpClient
+			.post('http://localhost:8080/api/videos/upload-thumbnail', formData, {
+				responseType: 'text',
+			})
+			.pipe(catchError(this.errorHandler));
 	}
 
 	getVideoById(videoId: number): Observable<VideoDto> {
 		return this.httpClient
-			.get<VideoDto>(`${this.apiEndpoint }/videos/get-video/${videoId}`)
+			.get<VideoDto>(`${this.apiEndpoint}/videos/get-video/${videoId}`)
 			.pipe(catchError(this.errorHandler));
 	}
 	uploadVideo(file: File): Observable<VideoDto> {
@@ -54,24 +48,16 @@ export class VideoService {
 			.pipe(catchError(this.errorHandler));
 	}
 
-	saveVideo(videoMetaData: VideoDto): Observable<VideoDto> {
+	saveVideo(videoMetaData: VideoUpdateData): Observable<VideoDto> {
 		return this.httpClient
 			.put<VideoDto>(`${this.apiEndpoint}/videos/update-details`, videoMetaData)
 			.pipe(catchError(this.errorHandler));
 	}
 
-	getAllVideos(
-		tagName: string,
-	): Observable<VideoDto[]> {
-		return (
-			this.httpClient
-				.get<VideoDto[]>(
-					this.apiEndpoint +
-						'/videos/get-all' +
-						`?tagName=${tagName}`
-				)
-				.pipe(catchError(this.errorHandler))
-		);
+	getAllVideos(tagName: string): Observable<VideoDto[]> {
+		return this.httpClient
+			.get<VideoDto[]>(this.apiEndpoint + '/videos/get-all' + `?tagName=${tagName}`)
+			.pipe(catchError(this.errorHandler));
 	}
 	searchVideos(
 		searchQuery: string,
@@ -79,15 +65,13 @@ export class VideoService {
 		duration: string,
 		sortBy: string
 	): Observable<VideoDto[]> {
-		return (
-			this.httpClient
-				.get<VideoDto[]>(
-					this.apiEndpoint +
-						'/videos/search' +
-						`?searchQuery=${searchQuery}&date=${date}&duration=${duration}&sortBy=${sortBy}`
-				)
-				.pipe(catchError(this.errorHandler))
-		);
+		return this.httpClient
+			.get<VideoDto[]>(
+				this.apiEndpoint +
+					'/videos/search' +
+					`?searchQuery=${searchQuery}&date=${date}&duration=${duration}&sortBy=${sortBy}`
+			)
+			.pipe(catchError(this.errorHandler));
 	}
 	errorHandler(error: HttpErrorResponse) {
 		// return throwError(() => new Error(error.message || 'Server Error'));
