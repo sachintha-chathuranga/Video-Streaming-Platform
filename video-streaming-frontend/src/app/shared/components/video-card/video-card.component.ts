@@ -67,7 +67,7 @@ export class VideoCardComponent {
 		}
 	}
 	removeVideo() {
-		this.userService.removeSavedVideo(this.video.id).subscribe({
+		this.userService.removeVideoFromUserPlalist(this.video.id).subscribe({
 			next: (data: boolean) => {
 				console.log('Remove Success!');
 				this.onDelete.emit(this.video.id);
@@ -79,7 +79,7 @@ export class VideoCardComponent {
 		});
 	}
 	saveVideo() {
-		this.userService.saveVideo(this.video.id).subscribe({
+		this.userService.saveVideoToUserPlalist(this.video.id).subscribe({
 			next: (data: boolean) => {
 				console.log('Save Success!');
 			},

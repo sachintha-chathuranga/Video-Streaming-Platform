@@ -53,9 +53,6 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<VideoHistory> videoHistories;
 
-//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//	private List<VideoLikeStatus> likeVideos = new ArrayList<>(); // this field doesn't create in User table
-
 	@ManyToMany(mappedBy = "likes", cascade = CascadeType.ALL)
 	private List<Video> likeVideos = new ArrayList<>();
 

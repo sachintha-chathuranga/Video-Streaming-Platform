@@ -31,14 +31,8 @@ public class UserController {
 
 	@PostMapping("/signUp")
 	public ResponseEntity<UserDto> signUp(@RequestBody UserDto user) {
-		UserDto userDto = userService.signUp(user);
-		return new ResponseEntity<>(userDto, HttpStatus.CREATED);
-	}
-
-	@PostMapping
-	public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
 		UserDto userDto = userService.createUser(user);
-		return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+		return new ResponseEntity<>(userDto, HttpStatus.OK);
 	}
 
 	@PutMapping("/update")
@@ -92,41 +86,31 @@ public class UserController {
 		return ResponseEntity.ok(message);
 	}
 
-	@PutMapping("/subscribe/{channelId}")
-	public ResponseEntity<ChannelDto> subscribe(@PathVariable Long channelId) {
-		return ResponseEntity.ok(userService.subscribe(channelId));
-	}
-
 	@GetMapping("/subscribe")
 	public ResponseEntity<List<ChannelDto>> getSubscriptions() {
-		List<ChannelDto> list = userService.getSubscribeChannels();
+		List<ChannelDto> list = userService.getUserSubscriptions();
 		return ResponseEntity.ok(list);
 	}
 
-	@PutMapping("/unsubscribe/{channelId}")
-	public ResponseEntity<ChannelDto> unsubscribe(@PathVariable Long channelId) {
-		return ResponseEntity.ok(userService.unsubscribe(channelId));
-	}
-
-	@PutMapping("/save-videos")
+	@PutMapping("/playlist")
 	public ResponseEntity<Boolean> saveVideoToPlaylist(@RequestBody Long videoId) {
 		userService.addVideoToPlaylist(videoId);
 		return ResponseEntity.ok(true);
 	}
 
-	@GetMapping("/save-videos")
+	@GetMapping("/playlist")
 	public ResponseEntity<List<VideoDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
 		List<VideoDto> playlist = userService.getVideoPlaylist(searchQuery);
 		return ResponseEntity.ok(playlist);
 	}
 
-	@DeleteMapping("/save-videos")
+	@DeleteMapping("/playlist")
 	public ResponseEntity<Boolean> deletePlaylist() {
 		userService.deletePlaylist();
 		return ResponseEntity.ok(true);
 	}
 
-	@DeleteMapping("/save-videos/{videoId}")
+	@DeleteMapping("/playlist/{videoId}")
 	public ResponseEntity<Boolean> deletePlaylist(@PathVariable(name = "videoId") Long videoId) {
 		userService.removeVideoFromPlaylist(videoId);
 		return ResponseEntity.ok(true);

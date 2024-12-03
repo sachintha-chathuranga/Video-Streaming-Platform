@@ -51,9 +51,6 @@ public class Video {
 	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Tag> tags = new ArrayList<>();
 
-//	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
-//	private List<VideoLikeStatus> likeUsers = new ArrayList<>();
-
 	@ManyToMany
 	@JoinTable(name = "video_likes", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private List<User> likes = new ArrayList<>();

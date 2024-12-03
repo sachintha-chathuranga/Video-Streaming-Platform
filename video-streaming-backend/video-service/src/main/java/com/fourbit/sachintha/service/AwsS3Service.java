@@ -1,5 +1,7 @@
-package com.fourbit.sachintha.service.impl;
+package com.fourbit.sachintha.service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,7 +34,26 @@ public class AwsS3Service {
 	private String awsBucketRegion;
 
 	private final S3Client awsS3Client;
-	private final DBService dBService;
+
+	public String genarateS3Url(String region, String bucketName, String key) {
+		return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
+	}
+
+	public String getObjectKeyFromUrl(String s3Url) {
+		try {
+			if (s3Url == null) {
+				return null;
+			}
+			URI uri = new URI(s3Url);
+			String path = uri.getPath();
+			if (path.startsWith("/")) {
+				path = path.substring(1); // Remove leading slash
+			}
+			return path;
+		} catch (URISyntaxException e) {
+			return null;
+		}
+	}
 
 	public String uploadFile(MultipartFile file, String category) {
 		// create unique name for file
@@ -54,12 +75,12 @@ public class AwsS3Service {
 		}
 
 		// get url of the uploaded file
-		return dBService.genarateUrl(awsBucketRegion, awsBucketName, key);
+		return this.genarateS3Url(awsBucketRegion, awsBucketName, key);
 	}
 
 	public void deleteFile(String s3Url) {
 		try {
-			String objectKey = dBService.getObjectKeyFromUrl(s3Url);
+			String objectKey = this.getObjectKeyFromUrl(s3Url);
 			DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder().bucket(awsBucketName).key(objectKey)
 					.build();
 			awsS3Client.deleteObject(deleteRequest);
@@ -71,7 +92,7 @@ public class AwsS3Service {
 
 	public void deleteFiles(List<String> fileUrls) {
 		List<ObjectIdentifier> objects = fileUrls.stream()
-				.map(s3Url -> ObjectIdentifier.builder().key(dBService.getObjectKeyFromUrl(s3Url)).build())
+				.map(s3Url -> ObjectIdentifier.builder().key(this.getObjectKeyFromUrl(s3Url)).build())
 				.collect(Collectors.toList());
 
 		Delete delete = Delete.builder().objects(objects).build();

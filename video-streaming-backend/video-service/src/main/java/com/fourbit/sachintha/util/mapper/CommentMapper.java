@@ -1,4 +1,4 @@
-package com.fourbit.sachintha.mapper;
+package com.fourbit.sachintha.util.mapper;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

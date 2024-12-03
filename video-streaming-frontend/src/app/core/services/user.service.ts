@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -35,25 +35,17 @@ export class UserService {
 	getUserDetails(videoId: string) {
 		console.log('get user');
 	}
-	subscribe(channelId?: number): Observable<Channel> {
-		return this.httpClient
-			.put<Channel>(`${this.apiEndpoint}/users/subscribe/${channelId}`, null)
-			.pipe(catchError(this.errorHandler));
-	}
-	unSubscribe(channelId?: number): Observable<Channel> {
-		return this.httpClient
-			.put<Channel>(`${this.apiEndpoint}/users/unsubscribe/${channelId}`, null)
-			.pipe(catchError(this.errorHandler));
-	}
 
 	getUserId() {
 		return this.user?.id;
 	}
+
 	updateUser(userData: UserUpdateDto): Observable<UserDto> {
 		return this.httpClient
 			.put<UserDto>(this.apiEndpoint + '/users/update', userData)
-			.pipe(catchError(this.errorHandler));
+			.pipe(catchError((error) => throwError(() => error)));
 	}
+
 	registerUser(userData: any, token: any) {
 		console.log(userData);
 		let newUser: AuthUserDto = {
@@ -73,31 +65,27 @@ export class UserService {
 			});
 	}
 
-	saveVideo(videoId: number): Observable<boolean> {
+	saveVideoToUserPlalist(videoId: number): Observable<boolean> {
 		return this.httpClient
-			.put<boolean>(`${this.apiEndpoint}/users/save-videos`, videoId)
-			.pipe(catchError(this.errorHandler));
+			.put<boolean>(`${this.apiEndpoint}/users/playlist`, videoId)
+			.pipe(catchError((error) => throwError(() => error)));
 	}
-	removeSavedVideo(videoId: number): Observable<boolean> {
+	removeVideoFromUserPlalist(videoId: number): Observable<boolean> {
 		return this.httpClient
-			.delete<boolean>(`${this.apiEndpoint}/users/save-videos/${videoId}`)
-			.pipe(catchError(this.errorHandler));
+			.delete<boolean>(`${this.apiEndpoint}/users/playlist/${videoId}`)
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 
 	getUserPlaylist(searchQuery: string): Observable<VideoDto[]> {
 		return this.httpClient
-			.get<VideoDto[]>(this.apiEndpoint + '/users/save-videos' + `?searchQuery=${searchQuery}`)
-			.pipe(catchError(this.errorHandler));
+			.get<VideoDto[]>(this.apiEndpoint + '/users/playlist' + `?searchQuery=${searchQuery}`)
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 
 	deletePlaylist(): Observable<boolean> {
 		return this.httpClient
-			.delete<boolean>(`${this.apiEndpoint}/users/save-videos`)
-			.pipe(catchError(this.errorHandler));
-	}
-
-	errorHandler(error: HttpErrorResponse) {
-		return throwError(() => error);
+			.delete<boolean>(`${this.apiEndpoint}/users/playlist`)
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 }
 

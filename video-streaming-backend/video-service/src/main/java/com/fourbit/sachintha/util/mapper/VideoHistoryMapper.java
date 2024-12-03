@@ -1,4 +1,4 @@
-package com.fourbit.sachintha.mapper;
+package com.fourbit.sachintha.util.mapper;
 
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.model.Video;

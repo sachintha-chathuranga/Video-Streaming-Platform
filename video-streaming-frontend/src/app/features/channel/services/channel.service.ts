@@ -4,6 +4,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PaginatedResponse } from '../../../core/models/pagination.dto';
 import { VideoDto } from '../../../core/models/video.dto';
+import { Channel } from '../models/channel.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -11,6 +12,17 @@ import { VideoDto } from '../../../core/models/video.dto';
 export class ChannelService {
 	private apiEndpoint: string = environment.apiEndpoint;
 	constructor(private httpClient: HttpClient) {}
+
+	subscribe(channelId?: number): Observable<Channel> {
+		return this.httpClient
+			.put<Channel>(`${this.apiEndpoint}/channels/subscribe/${channelId}`, null)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	unSubscribe(channelId?: number): Observable<Channel> {
+		return this.httpClient
+			.put<Channel>(`${this.apiEndpoint}/channels/unsubscribe/${channelId}`, null)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
 
 	getChannelVideos(
 		channelId: number,

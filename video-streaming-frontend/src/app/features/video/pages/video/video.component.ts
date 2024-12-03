@@ -21,6 +21,7 @@ import { VideoPlayerComponent } from '../../../../shared/components/video-player
 import { Channel } from '../../../channel/models/channel.dto';
 import { CommentComponent } from '../../components/comments/components/comment/comment.component';
 import { VideoService } from '../../services/video.service';
+import { ChannelService } from '../../../channel/services/channel.service';
 @Component({
 	selector: 'app-video',
 	standalone: true,
@@ -67,7 +68,8 @@ export class VideoComponent implements OnInit {
 		private userService: UserService,
 		private snackBar: MatSnackBar,
 		private errorService: ErrorService,
-		private config: ConfigService
+		private config: ConfigService,
+		private channelService: ChannelService
 	) {}
 	handleMenuClick(name: string) {
 		switch (name) {
@@ -84,7 +86,7 @@ export class VideoComponent implements OnInit {
 	}
 	saveVideo() {
 		if (this.video) {
-			this.userService.saveVideo(this.video.id).subscribe({
+			this.userService.saveVideoToUserPlalist(this.video.id).subscribe({
 				next: (data: boolean) => {
 					console.log('Save Success!');
 				},
@@ -170,7 +172,7 @@ export class VideoComponent implements OnInit {
 		});
 	}
 	subscribeChannel() {
-		this.userService.subscribe(this.video?.channel?.id).subscribe({
+		this.channelService.subscribe(this.video?.channel?.id).subscribe({
 			next: (data: Channel) => {
 				if (this.video?.channel) {
 					console.log(data);
@@ -183,7 +185,7 @@ export class VideoComponent implements OnInit {
 		});
 	}
 	unSubscribeChannel() {
-		this.userService.unSubscribe(this.video?.channel?.id).subscribe({
+		this.channelService.unSubscribe(this.video?.channel?.id).subscribe({
 			next: (data: Channel) => {
 				if (this.video?.channel) {
 					console.log(data);
