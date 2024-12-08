@@ -1,5 +1,6 @@
 package com.fourbit.sachintha.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoCardDto;
-import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.User;
@@ -133,27 +133,27 @@ public class UserService {
 	}
 
 	@Transactional
-	public String updateVideoHistory(VideoHistoryDto videoHistoryDto) {
+	public Boolean updateVideoHistory(Long videoId) {
 		User user = this.getRequestedUser();
-		VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(),
-				videoHistoryDto.getId());
+		VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), videoId);
+		LocalDateTime watchTime = LocalDateTime.now();
 		if (videoHistory == null) {
-			Video video = this.videoRepository.findById(videoHistoryDto.getId())
+			Video video = this.videoRepository.findById(videoId)
 					.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
 
 			// Save to user video history database
 			videoHistory = new VideoHistory();
 			videoHistory.setUser(user);
 			videoHistory.setVideo(video);
-			videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
+			videoHistory.setWatchTime(watchTime);
 			// increament video views count by one
 			video.setViewsCount(video.getViewsCount() + 1);
 		} else {
 			// update watch time
-			videoHistory.setWatchTime(videoHistoryDto.getWatchTime());
+			videoHistory.setWatchTime(watchTime);
 		}
 		videoHistoryRepository.save(videoHistory);
-		return "History Update successfully";
+		return true;
 	}
 
 	public String removeHistoryVideo(Long videoId) {

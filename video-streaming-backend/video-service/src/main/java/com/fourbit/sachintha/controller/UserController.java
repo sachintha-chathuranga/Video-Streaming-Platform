@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
 import com.fourbit.sachintha.dto.VideoCardDto;
-import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -65,9 +64,8 @@ public class UserController {
 	}
 
 	@PutMapping("/history")
-	public ResponseEntity<String> updateVideoHistory(@RequestBody VideoHistoryDto videoHistory) {
-		String message = userService.updateVideoHistory(videoHistory);
-		return ResponseEntity.ok(message);
+	public ResponseEntity<Boolean> updateVideoHistory(@RequestBody Long videoId) {
+		return ResponseEntity.ok(userService.updateVideoHistory(videoId));
 	}
 
 	@DeleteMapping("/history/{videoId}")
