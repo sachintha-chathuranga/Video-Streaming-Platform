@@ -14,6 +14,7 @@ import { VideoDto } from '../../core/models/video.dto';
 import { ErrorService } from '../../core/services/error.service';
 import { UserService } from '../../core/services/user.service';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
+import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 
 @Component({
 	selector: 'app-saved-videos',
@@ -33,7 +34,7 @@ import { VideoCardComponent } from '../../shared/components/video-card/video-car
 	styleUrl: './saved-videos.component.css',
 })
 export class SavedVideosComponent {
-	videoList?: Array<VideoDto> = [];
+	videoList?: Array<VideoCardDto> = [];
 	isLoading: boolean = false;
 	errorObject!: ErrorDto;
 	searchInput = '';
@@ -50,6 +51,10 @@ export class SavedVideosComponent {
 		private errorService: ErrorService,
 		private snackBar: MatSnackBar
 	) {}
+
+	ngOnInit(): void {
+		this.fetchData();
+	}
 	handleDelete(videoId: number) {
 		this.videoList = this.videoList?.filter((video) => video.id !== videoId);
 		console.log(this.videoList);
@@ -62,7 +67,7 @@ export class SavedVideosComponent {
 	fetchData() {
 		this.isLoading = true;
 		this.userService.getUserPlaylist(this.searchInput).subscribe({
-			next: (data: VideoDto[]) => {
+			next: (data: VideoCardDto[]) => {
 				this.videoList = data;
 			},
 			error: (error: HttpErrorResponse) => {
@@ -84,9 +89,7 @@ export class SavedVideosComponent {
 			},
 		});
 	}
-	ngOnInit(): void {
-		this.fetchData();
-	}
+
 	clearInput() {
 		this.searchInput = '';
 		this.fetchData();

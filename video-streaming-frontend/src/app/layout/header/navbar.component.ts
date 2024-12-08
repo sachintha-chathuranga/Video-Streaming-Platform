@@ -51,6 +51,7 @@ export class NavbarComponent {
 
 	isAuthenticated!: boolean;
 	readonly dialog = inject(MatDialog);
+
 	constructor(
 		private authService: AuthService,
 		private router: Router,
@@ -90,7 +91,6 @@ export class NavbarComponent {
 		this.userService.removeUser();
 	}
 	gotoVideoUpload() {
-		this.router.navigateByUrl('/profile/content');
 		this.openDialog();
 	}
 	openDialog() {
@@ -102,7 +102,7 @@ export class NavbarComponent {
 		});
 
 		dialogRef.afterClosed().subscribe((result) => {
-			console.log(`Dialog result: ${result}`);
+			this.router.navigate(['/profile/content'], { state: { data: result } });
 		});
 	}
 }

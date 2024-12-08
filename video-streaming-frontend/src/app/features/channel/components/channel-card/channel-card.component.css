@@ -5,8 +5,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #0000002e;
+  border: 1px solid #3a3a3a2e;
   border-radius: 10px;
+}
+.card-container.skeleton{
+  border-color: transparent;
+  height: 160px;
 }
 .card-container.window-view {
   width: 100%;
@@ -26,7 +30,7 @@
   height: 100px;
   overflow: hidden;
   border-radius: 50%;
-  background-color: black;
+  background-color: rgb(182, 182, 182);
 }
 .img-container img {
   width: 100%;
@@ -42,12 +46,19 @@
   color: #6f6f6f;
   line-height: 18px;
 }
-::ng-deep .card-btn {
-  background-color: black !important;
-  color: white !important;
+.details #dot{
+  margin: 0 5px;
 }
-::ng-deep .card-btn:hover {
-  background-color: rgb(29, 29, 29) !important;
+ .card-btn{
+
+   padding: 0 18px;
+ }
+.subscribe-button {
+	min-width: 100px;
+}
+.unsubscribe-button {
+	min-width: 120px;
+	background-color: black !important;
 }
 
 @media only screen and (max-width: 600px) {

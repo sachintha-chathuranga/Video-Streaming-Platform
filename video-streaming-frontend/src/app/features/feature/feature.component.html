@@ -1,4 +1,4 @@
-<slider-toolbar mode="chips" (onChangeCategory)="setCategory($event)"></slider-toolbar>
+<slider-toolbar [isLoading]="isLoading" mode="chips" [items]="categories" (onChangeCategory)="setCategory($event)"></slider-toolbar>
 <ng-container
   *ngIf="isLoading; then loadingTemplate; else contentTemplate"
 ></ng-container>
@@ -11,9 +11,9 @@
       fxFlex.lg="33.33%"
       fxFlex.lt-lg="50%"
       fxFlex.xs="100%"
-      *ngFor="let skelton of [1, 2, 3, 4, 5]"
+      *ngFor="let skelton of [1, 2, 3, 4, 5, 6]"
     >
-      <app-video-card [isLoading]="isLoading"></app-video-card>
+      <app-video-card cardSize="large" [isLoading]="isLoading"></app-video-card>
     </div>
   </div>
 </ng-template>

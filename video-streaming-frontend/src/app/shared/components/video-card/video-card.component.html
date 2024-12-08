@@ -1,64 +1,81 @@
 <mat-card
-  class="example-card"
-  [ngClass]="{ small: cardSize == 'small', meadium: cardSize == 'meadium', large: cardSize == 'larger' }"
+	class="example-card"
+	[ngClass]="{
+		small: cardSize == 'small',
+		meadium: cardSize == 'meadium',
+		large: cardSize == 'large',
+		loading: isLoading
+	}"
 >
-  <div *ngIf="isLoading; else image" class="skeleton skeleton-img"></div>
-  <ng-template #image>
-    <div class="img">
-      <img
-        mat-card-image
-        [src]="video && video.thumbnailUrl"
-        [ngClass]="{ skeleton: isLoading }"
-        (click)="openVideo()"
-      />
-    </div>
-  </ng-template>
-  <mat-card-header
-    [ngClass]="{
-      loading: isLoading,
-      small: cardSize == 'small',
-      meadium: cardSize == 'meadium',
-      large: cardSize == 'larger'
-    }"
-  >
-    <div
-      *ngIf="cardSize == 'large'"
-      mat-card-avatar
-      class="example-header-image"
-      [ngClass]="{ skeleton: isLoading }"
-    ></div>
-    <div class="details">
-      <mat-card-title [ngClass]="{ skeleton: isLoading }"
-        ><h3 class="text-overflow-2" *ngIf="video">
-          {{ video.title }}
-        </h3>
-      </mat-card-title>
-      <mat-card-subtitle class="channel-name">
-        <a> FourBit LK </a>
-      </mat-card-subtitle>
-      <mat-card-subtitle class="views">
-        <span id="views-count">
-          {{ video && video.viewsCount + " views" }}
-        </span>
-        <span id="dot">   •   </span>
-        <span *ngIf="cardSize !=='meadium'" >2 years ago</span>
-      </mat-card-subtitle>
-      <mat-card-subtitle
-        class="description"
-        *ngIf="cardSize == 'meadium'"
-        [ngClass]="{ skeleton: isLoading }"
-      >
-        <p>
-          {{ video && video.description }}
-        </p>
-      </mat-card-subtitle>
-    </div>
-    <mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
-    <mat-menu #menu="matMenu" class="custom-menu">
-      <button mat-menu-item *ngFor="let item of cardMenuItems" [disabled]="item.isDisable" (click)="handleMenuClick(item.name)" >
-        <mat-icon>{{item.icon}}</mat-icon>
-        <span>{{item.name}}</span>
-      </button>
-    </mat-menu>
-  </mat-card-header>
+	 <!-- Skeleton for Video Thumbnail -->
+	<div *ngIf="isLoading; else image" class="skeleton skeleton-img"></div>
+	<ng-template #image>
+		<div class="img">
+			<img
+				mat-card-image
+				[src]="video && video.thumbnailUrl"
+				[ngClass]="{ skeleton: isLoading }"
+				(click)="openVideo()"
+			/>
+		</div>
+	</ng-template>
+
+	<mat-card-header
+		[ngClass]="{
+			loading: isLoading,
+			small: cardSize == 'small',
+			meadium: cardSize == 'meadium',
+			large: cardSize == 'large'
+		}"
+	>
+		<div
+			*ngIf="cardSize == 'large'"
+			mat-card-avatar
+			class="example-header-image"
+			[ngStyle]="{
+				'background-image': isLoading ? 'none' : video && video.channelImage || 'url(\'/assets/no-person.png\')'
+			}"
+			[ngClass]="{ skeleton: isLoading }"
+		></div>
+
+		<div class="details">
+			<mat-card-title [ngClass]="{ skeleton: isLoading }">
+				<h3 class="text-overflow-2">
+					{{ video && video.title }}
+				</h3>
+			</mat-card-title>
+			<mat-card-subtitle [ngClass]="{ skeleton: isLoading }" class="channel-name">
+				<a>{{ video && video.channelName }}</a>
+			</mat-card-subtitle>
+			<mat-card-subtitle class="views" *ngIf="!isLoading">
+				<span id="views-count">
+					{{ video && video.viewsCount + ' views' }}
+				</span>
+				<span id="dot">•</span>
+				<span *ngIf="cardSize !== 'meadium'">{{ video && video.createdTime | lifetime }}</span>
+			</mat-card-subtitle>
+			<mat-card-subtitle
+				class="description"
+				*ngIf="cardSize == 'meadium'"
+				[ngClass]="{ skeleton: isLoading }"
+			>
+				<p>
+					{{ video && video.description }}
+				</p>
+			</mat-card-subtitle>
+		</div>
+		<mat-icon *ngIf="!isLoading" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+		<mat-menu #menu="matMenu" class="custom-menu">
+			<button
+				mat-menu-item
+				*ngFor="let item of cardMenuItems"
+				[disabled]="item.isDisable"
+				(click)="handleMenuClick(item.name)"
+			>
+				<mat-icon>{{ item.icon }}</mat-icon>
+				<span>{{ item.name }}</span>
+			</button>
+		</mat-menu>
+	</mat-card-header>
+
 </mat-card>

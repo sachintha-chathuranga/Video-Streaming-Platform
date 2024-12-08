@@ -7,9 +7,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
-import { SideBarItem } from '../../layout/sidebar/models/sidebarItem.dto';
-import { FeatureComponent } from '../feature/feature.component';
-import { SidebarComponent } from '../../layout/sidebar/components/sidebar/sidebar.component';
+import { FeatureComponent } from '../../../features/feature/feature.component';
+import { SideBarItem } from '../../sidebar/models/sidebarItem.dto';
+import { SidebarComponent } from '../../sidebar/sidebar.component';
 
 @Component({
 	selector: 'app-home',

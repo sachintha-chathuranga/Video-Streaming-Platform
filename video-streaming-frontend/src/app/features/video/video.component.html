@@ -1,34 +1,37 @@
 <div fxLayout="row" class="main-container">
 	<div fxFlex class="video-details-container">
 		<app-video-player
+			[isLoading]="isLoading"
 			[videoSource]="video?.videoUrl || ''"
 			class="video-player"
 		></app-video-player>
 		<div class="meta-data">
 			<div class="video-title">
-				<h1>
+				<h1 [ngClass]="{ skeleton: isLoading }">
 					{{ video?.title }}
 				</h1>
 			</div>
 			<div fxLayout="row wrap">
-				<div fxFlex="50%">
-					<mat-card-header>
+				<div [fxFlex]="isLoading ? '100%' : '50%'">
+					<mat-card-header [ngClass]="{ loading: isLoading }">
 						<div
 							mat-card-avatar
 							class="example-header-image"
 							[ngStyle]="{
-								'background-image': video?.channel?.channelImage
+								'background-image': isLoading
+									? 'none'
+									: video?.channel?.channelImage
 									? video?.channel?.channelImage
 									: 'url(\'/assets/no-person.png\')'
 							}"
 							[ngClass]="{ skeleton: isLoading }"
 						></div>
-						<div class="details">
+						<div class="details" [ngClass]="{ loading: isLoading }">
 							<mat-card-title [ngClass]="{ skeleton: isLoading }">
-								<a href="/">{{ video?.channel?.name }}</a>
+								<a href="/">{{ video && video.channel?.name }}</a>
 							</mat-card-title>
-							<mat-card-subtitle>
-								{{ video?.channel?.subscribersCount + ' subscribers' }}
+							<mat-card-subtitle [ngClass]="{ skeleton: isLoading }">
+								{{ video && video.channel?.subscribersCount + ' subscribers' }}
 							</mat-card-subtitle>
 						</div>
 						<button
@@ -36,21 +39,23 @@
 							class="subscribe-button"
 							mat-flat-button
 							color="warn"
+							[ngClass]="{ skeleton: isLoading }"
 							(click)="subscribeChannel()"
 						>
-							Subscribe
+							{{ isLoading ? '' : 'Subscribe' }}
 						</button>
 						<button
+							[ngClass]="{ skeleton: isLoading }"
 							*ngIf="video?.channel?.isUserSubscribe"
 							class="unsubscribe-button"
 							mat-flat-button
 							(click)="unSubscribeChannel()"
 						>
-							Unsubscribe
+							{{ isLoading ? '' : 'Unsubscribe' }}
 						</button>
 					</mat-card-header>
 				</div>
-				<div fxFlex="50%" fxLayoutAlign="end">
+				<div *ngIf="!isLoading" fxFlex="50%" fxLayoutAlign="end">
 					<div class="actions">
 						<span class="like-dislike-btn-group">
 							<button class="like-btn" (click)="likeVideo()">
@@ -99,9 +104,13 @@
 			</div>
 		</div>
 
-		<div class="video-description" >
+		<div class="video-description" [ngClass]="{ skeleton: isLoading }">
 			<p [ngClass]="{ expanded: isExpanded }">
-        {{video?.viewsCount}} views  Jun 29, 2024
+				{{ video && video.viewsCount + ' views,' }}
+				<span></span>
+				{{ video && video.createdTime | date }}
+				<br />
+				<br />
 				{{ video?.description }}
 			</p>
 			<span class="more-btn" (click)="toggleExpand()" *ngIf="video?.description">
@@ -111,14 +120,26 @@
 		<app-comment [videoId]="videoId" [isAuth]="isAuthenticated"></app-comment>
 	</div>
 	<div class="related-videos-container" fxFlex="402px">
-		<div fxLayout="column" fxLayoutGap="10px">
-			<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
-				<app-video-card
-					[video]="video"
-					[isLoading]="isLoading"
-					cardSize="small"
-				></app-video-card>
+		<ng-container
+			*ngIf="isVideoListLoading; then loadingTemplate; else contentTemplate"
+		></ng-container>
+		<ng-template #loadingTemplate>
+			<div fxLayout="column" fxLayoutGap="10px">
+				<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
+					<app-video-card cardSize="small" [isLoading]="isVideoListLoading"></app-video-card>
+				</div>
 			</div>
-		</div>
+		</ng-template>
+		<ng-template #contentTemplate>
+			<div fxLayout="column" fxLayoutGap="10px">
+				<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
+					<app-video-card
+						[video]="video"
+						[isLoading]="isVideoListLoading"
+						cardSize="small"
+					></app-video-card>
+				</div>
+			</div>
+		</ng-template>
 	</div>
 </div>

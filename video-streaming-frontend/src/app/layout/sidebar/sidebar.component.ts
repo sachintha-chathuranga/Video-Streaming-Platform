@@ -15,8 +15,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NavbarComponent } from '../../../header/navbar.component';
-import { SideBarItem } from '../../models/sidebarItem.dto';
+import { NavbarComponent } from '../header/navbar.component';
+import { SideBarItem } from './models/sidebarItem.dto';
 
 @Component({
 	selector: 'app-sidebar',

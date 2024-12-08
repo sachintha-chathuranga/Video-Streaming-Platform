@@ -3,6 +3,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChannelCardComponent } from '../../../features/channel/components/channel-card/channel-card.component';
+import { Channel } from '../../../features/channel/models/channel.dto';
 
 @Component({
 	selector: 'slider-toolbar',
@@ -14,9 +15,15 @@ import { ChannelCardComponent } from '../../../features/channel/components/chann
 export class SliderToolbarComponent {
 	@Input()
 	mode!: string;
-
+	@Input()
+	items!: string[];
+	@Input()
+	channels!: Channel[];
 	@Input()
 	isWindowView!: boolean;
+
+	@Input()
+	isLoading: boolean = false;
 
 	@ViewChild('scrollableContent', { read: ElementRef })
 	scrollableContent!: ElementRef;
@@ -24,23 +31,15 @@ export class SliderToolbarComponent {
 	activeButtonIndex: number = 0;
 	leftButton: boolean = false;
 	rightButton: boolean = true;
-	categories = [
-		'All',
-		'Music',
-		'Entertaitment',
-		'Funny',
-		'Movies',
-		'TV Series',
-		'Music',
-		'Entertaitment',
-		'Funny',
-		'Movies',
-		'TV Series',
-	];
 
-	selectedCategory: string = this.categories[this.activeButtonIndex];
+	selectedCategory!: Channel | string;
 	@Output()
 	onChangeCategory = new EventEmitter<string>();
+	ngOnInit() {
+		if (this.mode == 'chips') {
+			this.selectedCategory = this.items[this.activeButtonIndex];
+		}
+	}
 
 	scrollTo(isRight: boolean) {
 		const scrollPoints = isRight ? 300 : -300;

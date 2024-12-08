@@ -1,35 +1,35 @@
-<div class="card-container" [ngClass]="{ 'window-view': isWindowView }">
-  <div class="img-container">
-    <img
-      src="https://material.angular.io/assets/img/examples/shiba1.jpg"
-      alt=""
-    />
-  </div>
-  <div class="details">
-    <h3 class="text-overflow-1">FourBit LK</h3>
-    <div *ngIf="isWindowView" style="margin-bottom: 5px;">
-      <span >{{ "@" }}AusSLVlog</span>
-      <span id="dot">•</span>
-      <span>2.14K subscribers</span>
-    </div>
-    <p *ngIf="isWindowView" class="text-overflow-2">
-      Welcome to AusSL Vlog Official YouTube Channel! Hey there, mates! We're
-      Niro &amp; Anushka, and we're beyond thrilled to welcome you to our
-      channel. As a couple from Sri Lanka currently living in Melbourne,
-      Australia, we're all about pursuing our passions and living our best
-      lives. And that's exactly what we're doing with AusSL Vlog! We're
-      traveling across Australia and seeking out experiences that bring us joy
-      and fulfillment, all while inspiring and motivating you to do the same.
-      Our channel is jam-packed with a diverse range of content, from travel
-      vlogs and lifestyle tips to shopping hauls and glimpses into our daily
-      routines. We're all about giving you a glimpse into our world and showing
-      you how you can create a life that brings you happiness too. So, if you're
-      ready to join us on this epic journey, hit that subscribe button and let's
-      explore the latest additions to our YouTube channel together. We can't
-      wait to see where this adventure takes us! ❤️❤️
-    </p>
-  </div>
-  <div class="button-section">
-    <button mat-flat-button class="card-btn">Subscribe</button>
-  </div>
+<div class="card-container" [ngClass]="{ 'window-view': isWindowView, 'skeleton': isLoading }">
+	<div *ngIf="!isLoading" class="img-container">
+		<img [src]="channel.channelImage || './assets/no-person.png'" alt="" />
+	</div>
+	<div *ngIf="!isLoading" class="details">
+		<h3 class="text-overflow-1">{{ channel.name }}</h3>
+		<div *ngIf="isWindowView" style="margin-bottom: 5px">
+			<span>{{ '@' + channel.name }}</span>
+			<span id="dot">•</span>
+			<span>{{ channel.subscribersCount }} subscribers</span>
+		</div>
+		<p *ngIf="isWindowView" class="text-overflow-2">
+			{{ channel.description }}
+		</p>
+	</div>
+	<div *ngIf="!isLoading" class="button-section">
+		<button
+			*ngIf="!channel?.isUserSubscribe"
+			class="card-btn subscribe-button"
+			mat-flat-button
+			color="warn"
+			(click)="subscribeChannel()"
+		>
+			{{ isLoading ? '' : 'Subscribe' }}
+		</button>
+		<button
+			*ngIf="channel?.isUserSubscribe"
+			class="card-btn unsubscribe-button"
+			mat-flat-button
+			(click)="unSubscribeChannel()"
+		>
+			{{ isLoading ? '' : 'Unsubscribe' }}
+		</button>
+	</div>
 </div>

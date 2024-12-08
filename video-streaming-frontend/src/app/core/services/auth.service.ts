@@ -11,7 +11,7 @@ export class AuthService {
 		this.oidcAuthService.authorize();
 	}
 	logout() {
-		this.oidcAuthService.logoffAndRevokeTokens();
+		this.oidcAuthService.logoffAndRevokeTokens().subscribe();
 	}
 
 	isAuthenticated() {

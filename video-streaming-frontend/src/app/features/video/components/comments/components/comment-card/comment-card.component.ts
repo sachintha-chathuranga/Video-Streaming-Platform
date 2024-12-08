@@ -16,6 +16,7 @@ import { CommentDto } from '../../models/comment.dto';
 import { CommentService } from '../../services/comment.service';
 import { CommentInputComponent } from '../comment-input/comment-input.component';
 import { ReportCommentComponent } from '../report-comment/report-comment.component';
+import { LifetimePipe } from '../../../../../../shared/pipes/lifetime.pipe';
 
 @Component({
 	selector: 'app-comment-card',
@@ -29,8 +30,9 @@ import { ReportCommentComponent } from '../report-comment/report-comment.compone
 		MatMenuModule,
 		MatFormFieldModule,
 		MatInputModule,
-		CommentInputComponent,
 		MatDialogModule,
+		CommentInputComponent,
+		LifetimePipe
 	],
 	templateUrl: './comment-card.component.html',
 	styleUrl: './comment-card.component.css',
@@ -40,13 +42,15 @@ export class CommentCardComponent {
 	comment!: CommentDto;
 	@Input()
 	videoId!: string;
-	isExpanded = false;
 	@Input()
 	logginUser?: UserDto;
+	@Input()
+	isLoading: boolean = false;
 	@Output()
 	onUpdate = new EventEmitter<CommentDto>();
 	@Output()
 	onDelete = new EventEmitter<number>();
+	isExpanded = false;
 	cardMenuItems: CardMenuItem[] = [
 		{
 			name: 'Edit',

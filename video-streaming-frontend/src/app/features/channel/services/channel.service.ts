@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { PaginatedResponse } from '../../../core/models/pagination.dto';
 import { VideoDto } from '../../../core/models/video.dto';
 import { Channel } from '../models/channel.dto';
+import { Subscription } from '../../../shared/models/subscription.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -13,14 +14,14 @@ export class ChannelService {
 	private apiEndpoint: string = environment.apiEndpoint;
 	constructor(private httpClient: HttpClient) {}
 
-	subscribe(channelId?: number): Observable<Channel> {
+	subscribe(channelId?: number): Observable<Subscription> {
 		return this.httpClient
-			.put<Channel>(`${this.apiEndpoint}/channels/subscribe/${channelId}`, null)
+			.put<Subscription>(`${this.apiEndpoint}/channels/subscribe/${channelId}`, null)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-	unSubscribe(channelId?: number): Observable<Channel> {
+	unSubscribe(channelId?: number): Observable<Subscription> {
 		return this.httpClient
-			.put<Channel>(`${this.apiEndpoint}/channels/unsubscribe/${channelId}`, null)
+			.put<Subscription>(`${this.apiEndpoint}/channels/unsubscribe/${channelId}`, null)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 

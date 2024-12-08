@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,6 +16,7 @@ import { FileSelectorComponent } from '../../../shared/components/file-selector/
 import { VideoPlayerComponent } from '../../../shared/components/video-player/video-player.component';
 import { VideoFormComponent } from '../../video/components/video-form/video-form.component';
 import { VideoService } from '../../video/services/video.service';
+import { VideoUpdateDialogComponent } from '../../video/components/video-update-dialog/video-update-dialog.component';
 
 @Component({
 	selector: 'app-video-upload-stepper',
@@ -53,11 +54,11 @@ export class VideoUploadStepperComponent {
 	videoExtensions: string;
 	video!: VideoDto;
 	currentStep: number = 0;
-
+	
 	constructor(
 		private videoService: VideoService,
 		private config: ConfigService,
-		private snackbar: MatSnackBar
+		private snackbar: MatSnackBar,
 	) {
 		this.allowedVideoExtensions = config.SUPPORTED_VIDEO_FORMATS;
 		this.allowedImageExtensions = config.SUPPORTED_IMAGE_FORMATS;
@@ -72,7 +73,7 @@ export class VideoUploadStepperComponent {
 		// 	thumbnailUrl: '/assets/5.jpg',
 		// 	videoUrl: 'dsfdsf',
 		// 	videoStatus: 'PUBLIC',
-		// 	tags: ["DSFSD","DSFDS"],
+		// 	tags: ['DSFSD', 'DSFDS'],
 		// };
 	}
 

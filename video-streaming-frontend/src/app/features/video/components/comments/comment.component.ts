@@ -7,13 +7,13 @@ import { MatOption } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PaginatedResponse } from '../../../../../../core/models/pagination.dto';
-import { UserDto } from '../../../../../../core/models/user.dto';
-import { UserService } from '../../../../../../core/services/user.service';
-import { CommentDto } from '../../models/comment.dto';
-import { CommentService } from '../../services/comment.service';
-import { CommentCardComponent } from '../comment-card/comment-card.component';
-import { CommentInputComponent } from '../comment-input/comment-input.component';
+import { PaginatedResponse } from '../../../../core/models/pagination.dto';
+import { UserDto } from '../../../../core/models/user.dto';
+import { UserService } from '../../../../core/services/user.service';
+import { CommentCardComponent } from './components/comment-card/comment-card.component';
+import { CommentInputComponent } from './components/comment-input/comment-input.component';
+import { CommentDto } from './models/comment.dto';
+import { CommentService } from './services/comment.service';
 
 @Component({
 	selector: 'app-comment',
@@ -42,6 +42,7 @@ export class CommentComponent {
 	logginUser?: UserDto;
 	page: number = 0;
 	selectedFilter: string = 'createdDate';
+	isLoading: boolean = false;
 
 	constructor(
 		private userService: UserService,
@@ -70,7 +71,7 @@ export class CommentComponent {
 					this.totalComments += 1;
 				},
 				error: (error: HttpErrorResponse) => {
-					console.log(error.error.detail);
+					console.log(error.error);
 				},
 			});
 		}
@@ -127,13 +128,16 @@ export class CommentComponent {
 	}
 
 	getComments(sortBy: string) {
+		this.isLoading = true;
 		this.commentService.getAllComments(this.videoId, this.page, sortBy, this.isAuth).subscribe({
 			next: (response: PaginatedResponse<CommentDto>) => {
 				this.commentsDto = response.content;
 				this.totalComments = response.totalElements;
+				this.isLoading = false;
 			},
 			error: (response: HttpErrorResponse) => {
 				console.log(response.error);
+				this.isLoading = false;
 			},
 		});
 	}

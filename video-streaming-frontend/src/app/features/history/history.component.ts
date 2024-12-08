@@ -9,10 +9,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorDto } from '../../core/models/error.dto';
-import { VideoDto } from '../../core/models/video.dto';
 import { ErrorService } from '../../core/services/error.service';
+import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { VideoService } from '../video/services/video.service';
+import { UserService } from '../../core/services/user.service';
+import { PaginatedResponse } from '../../core/models/pagination.dto';
 
 @Component({
 	selector: 'app-history',
@@ -32,35 +34,32 @@ import { VideoService } from '../video/services/video.service';
 	styleUrl: './history.component.css',
 })
 export class HistoryComponent implements OnInit {
-	videoList?: Array<VideoDto> = [];
+	videoList?: Array<VideoCardDto> = [];
 	isLoading: boolean = false;
 	errorObject!: ErrorDto;
 	searchInput = '';
+	page: number =0;
+	pageSize: number = 10;
+	sortBy: string = 'watchTime';
+	sortDirection:  string = "desc";
 	constructor(
 		private videoService: VideoService,
+		private userService: UserService,
 		private errorService: ErrorService,
 		private snackBar: MatSnackBar
 	) {}
 	ngOnInit(): void {
-		this.videoService.getAllVideos('').subscribe({
-			next: (data: VideoDto[]) => {
-				this.videoList = data;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.snackBar.open(error.message, '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.errorObject = this.errorService.generateError(error);
+		this.fetchVideoHistory();
+	}
+	fetchVideoHistory() {
+		this.isLoading = true;
+		this.userService.getVideoHistory(this.page,this.pageSize,this.sortBy,this.sortDirection).subscribe({
+			next: (response: PaginatedResponse<VideoCardDto>) => {
+				this.videoList = response.content;
 				this.isLoading = false;
 			},
-			complete: () => {
-				// this.snackBar.open('Video data retrieval completed', '', {
-				//   duration: 3000,
-				//   horizontalPosition: 'right',
-				//   verticalPosition: 'top',
-				// });
+			error: (error: HttpErrorResponse) => {
+				this.errorObject = this.errorService.generateError(error);
 				this.isLoading = false;
 			},
 		});

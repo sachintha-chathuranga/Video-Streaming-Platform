@@ -8,6 +8,6 @@ export interface CommentDto {
 	user: UserDto;
 	likesCount: number;
 	dislikesCount: number;
-	lifeTime: string;
 	userLikeStatus?: UserLikeStatus;
+	createdDate: Date;
 }

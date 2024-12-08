@@ -1,32 +1,35 @@
 <div fxLayout="row" fxLayoutGap="17px">
 	<div
+		[ngClass]="{ skeleton: isLoading }"
 		fxFlex="none"
 		matCardAvatar
 		class="commentor-img"
 		[ngStyle]="{
-			'background-image': comment.user.pictureUrl || 'url(\'/assets/no-person.png\')'
+			'background-image': isLoading
+				? 'none'
+				: comment.user.pictureUrl || 'url(\'/assets/no-person.png\')'
 		}"
 	></div>
 	<div
 		fxFlex="100%"
 		class="comment-content"
 		fxLayout="column"
-		[ngClass]="{ hideOthers: showInputField }"
+		[ngClass]="{ hideOthers: showInputField, skeleton: isLoading }"
 	>
-		<div class="comment-header">
-			<a matCardTitle routerLink="">{{ comment.user.firstName }}</a>
-			<p matCardSubtitle>{{ comment.lifeTime }}</p>
+		<div *ngIf="!isLoading" class="comment-header">
+			<a matCardTitle routerLink="">{{ comment && comment.user.firstName }}</a>
+			<p matCardSubtitle>{{ comment && comment.createdDate | lifetime }}</p>
 		</div>
 		<div class="comment-body">
 			<p [ngClass]="{ expanded: isExpanded }" class="paragraph">
-				{{ comment.text }}
+				{{ comment && comment.text }}
 			</p>
-			<span class="more-btn" (click)="toggleExpand()">
+			<span *ngIf="!isLoading" class="more-btn" (click)="toggleExpand()">
 				{{ isExpanded ? 'Show less' : 'Read more' }}
 			</span>
 		</div>
 
-		<div class="comment-actions" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
+		<div *ngIf="!isLoading" class="comment-actions" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
 			<div fxLayout="row" fxLayoutAlign="start center">
 				<button mat-icon-button (click)="toggleLike()">
 					<mat-icon
@@ -35,22 +38,23 @@
 						"
 					></mat-icon>
 				</button>
-				<span>{{ comment.likesCount !==0 ? comment.likesCount : '' }}</span>
+				<span>{{ comment.likesCount !== 0 ? comment.likesCount : '' }}</span>
 			</div>
-			<button mat-icon-button (click)="toggledisLike()">
+			<button  mat-icon-button (click)="toggledisLike()">
 				<mat-icon
-						[fontIcon]="
-							comment.userLikeStatus?.isUserDislike ? 'thumb_down_alt' : 'thumb_down_off_alt'
-						"
-					></mat-icon>
+					[fontIcon]="
+						comment.userLikeStatus?.isUserDislike ? 'thumb_down_alt' : 'thumb_down_off_alt'
+					"
+				></mat-icon>
 			</button>
-			<span>{{ comment.dislikesCount !==0 ? comment.dislikesCount : '' }}</span>
+			<span>{{ comment.dislikesCount !== 0 ? comment.dislikesCount : '' }}</span>
 			<button mat-button>Reply</button>
 		</div>
 	</div>
 
 	<app-comment-input
-		*ngIf="showInputField"
+
+		*ngIf="showInputField && !isLoading"
 		fxFlex
 		submitName="Save"
 		[defaltInputValue]="comment.text"
@@ -59,7 +63,7 @@
 		(cancel)="handleCancel()"
 	></app-comment-input>
 
-	<div class="comment-options" [ngClass]="{ hideOthers: showInputField }">
+	<div *ngIf="!isLoading" class="comment-options" [ngClass]="{ hideOthers: showInputField }">
 		<button mat-icon-button>
 			<mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
 		</button>

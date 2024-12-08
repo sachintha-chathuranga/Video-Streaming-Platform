@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { BrandingComponent } from '../branding/branding.component';
+import { BrandingComponent } from '../../../channel/components/branding/branding.component';
 
 @Component({
 	selector: 'app-channel-form',

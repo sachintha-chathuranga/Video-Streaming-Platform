@@ -41,6 +41,10 @@
   font-weight: 500;
   cursor: pointer;
 }
+.mat-chip.skeleton{
+  height: 20px;
+  width: 60px;
+}
 
 .mat-chip:hover {
   background-color: #dadada;

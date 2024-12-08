@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -7,6 +7,9 @@ import { UserUpdateDto } from '../../features/profile/models/userUpdate.dto';
 import { AuthUserDto } from '../models/auth.dto';
 import { UserDto } from '../models/user.dto';
 import { VideoDto } from '../models/video.dto';
+import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
+import { PaginatedResponse } from '../models/pagination.dto';
+import { CommentDto } from '../../features/video/components/comments/models/comment.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -76,15 +79,52 @@ export class UserService {
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 
-	getUserPlaylist(searchQuery: string): Observable<VideoDto[]> {
+	getUserPlaylist(searchQuery: string): Observable<VideoCardDto[]> {
 		return this.httpClient
-			.get<VideoDto[]>(this.apiEndpoint + '/users/playlist' + `?searchQuery=${searchQuery}`)
+			.get<VideoCardDto[]>(this.apiEndpoint + '/users/playlist' + `?searchQuery=${searchQuery}`)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 
 	deletePlaylist(): Observable<boolean> {
 		return this.httpClient
 			.delete<boolean>(`${this.apiEndpoint}/users/playlist`)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+
+	getSubscriptions(
+		page: number,
+		size: number,
+		sortBy: string,
+		sortDirection: string
+	): Observable<PaginatedResponse<Channel>> {
+		let params = new HttpParams()
+			.set('page', page)
+			.set('size', size)
+			.set('sortBy', sortBy)
+			.set('sortDirection', sortDirection)
+
+		return this.httpClient
+			.get<PaginatedResponse<Channel>>(`${this.apiEndpoint}/users/subscriptions`, {
+				params,
+			})
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	getVideoHistory(
+		page: number,
+		size: number,
+		sortBy: string,
+		sortDirection: string
+	): Observable<PaginatedResponse<VideoCardDto>> {
+		let params = new HttpParams()
+			.set('page', page)
+			.set('size', size)
+			.set('sortBy', sortBy)
+			.set('sortDirection', sortDirection)
+
+		return this.httpClient
+			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/users/history`, {
+				params,
+			})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 }

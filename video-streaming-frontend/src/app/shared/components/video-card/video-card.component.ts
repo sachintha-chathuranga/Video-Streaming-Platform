@@ -10,6 +10,8 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { CardMenuItem } from '../../../core/models/cardMenuItem.dto';
 import { VideoDto } from '../../../core/models/video.dto';
 import { UserService } from '../../../core/services/user.service';
+import { LifetimePipe } from '../../pipes/lifetime.pipe';
+import { VideoCardDto } from './model/videoCard.dto';
 
 @Component({
 	selector: 'app-video-card',
@@ -21,15 +23,16 @@ import { UserService } from '../../../core/services/user.service';
 		RouterModule,
 		MatButtonModule,
 		MatIconModule,
+		LifetimePipe
 	],
 	templateUrl: './video-card.component.html',
 	styleUrl: './video-card.component.css',
 })
 export class VideoCardComponent {
 	@Input()
-	video!: VideoDto;
+	video!: VideoCardDto;
 	@Input()
-	isLoading: boolean = true;
+	isLoading: boolean = false;
 	@Input()
 	cardSize!: string;
 	@Input()
@@ -49,6 +52,7 @@ export class VideoCardComponent {
 		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
 			this.isAuthenticated = isAuthenticated;
 		});
+		console.log(this.cardSize)
 	}
 	openVideo() {
 		this.router.navigate(['/watch'], { queryParams: { v: this.video.id } });

@@ -15,5 +15,5 @@ export interface VideoDto {
 	viewsCount?: number;
 	commentsCount?: number;
 	userLikeStatus?: UserLikeStatus;
-	createdTime?: Date;
+	createdTime: Date;
 }

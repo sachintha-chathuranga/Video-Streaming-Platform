@@ -1,23 +1,21 @@
 import { Routes } from '@angular/router';
 import { autoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
-
 import { AuthorizationGuard } from './core/guards/authorization-guard.service';
 import { AnalyticComponent } from './features/analytic/analytic.component';
-import { ChannelCustomizationComponent } from './features/channel/page/channel-customization/channel-customization.component';
-import { ChannelComponent } from './features/channel/page/channel/channel.component';
+import { ChannelComponent } from './features/channel/channel.component';
 import { ContentComponent } from './features/content/content.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { FeatureComponent } from './features/feature/feature.component';
 import { HistoryComponent } from './features/history/history.component';
-import { HomeComponent } from './features/home/home.component';
-import { SavedVideosComponent } from './features/saved-videos/saved-videos.component';
-import { SubscriptionsComponent } from './features/subscriptions/subscriptions.component';
-
 import { PageNotFoundComponent } from './features/page-not-found/page-not-found.component';
-import { ProfileComponent } from './features/profile/pages/profile.component';
+import { ChannelCustomizationComponent } from './features/profile/profile-customization.component';
+import { SavedVideosComponent } from './features/saved-videos/saved-videos.component';
 import { SearchResultsComponent } from './features/search-results/search-results.component';
-import { VideoComponent } from './features/video/pages/video/video.component';
-import { WatchComponent } from './features/video/pages/watch/watch.component';
+import { SubscriptionsComponent } from './features/subscriptions/subscriptions.component';
+import { HomeComponent } from './layout/body/home/home.component';
+import { ProfileComponent } from './layout/body/profile/profile.component';
+import { WatchComponent } from './layout/body/watch/watch.component';
+import { VideoComponent } from './features/video/video.component';
 
 export const routes: Routes = [
 	{

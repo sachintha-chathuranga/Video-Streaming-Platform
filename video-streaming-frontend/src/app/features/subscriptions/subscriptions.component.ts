@@ -7,11 +7,14 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ErrorDto } from '../../core/models/error.dto';
-import { VideoDto } from '../../core/models/video.dto';
+import { PaginatedResponse } from '../../core/models/pagination.dto';
 import { ErrorService } from '../../core/services/error.service';
+import { UserService } from '../../core/services/user.service';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { SliderToolbarComponent } from '../../shared/components/slider-toolbar/slider-toolbar.component';
+import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
+import { Channel } from '../channel/models/channel.dto';
 import { VideoService } from '../video/services/video.service';
 
 @Component({
@@ -31,49 +34,64 @@ import { VideoService } from '../video/services/video.service';
 	styleUrl: './subscriptions.component.css',
 })
 export class SubscriptionsComponent {
-	subcribeVideos: Array<VideoDto> = [];
+	subcribeVideos: VideoCardDto[] = [];
+	subcribeChannels: Channel[] = [];
 	errorObject!: ErrorDto;
-	isLoading: boolean = false;
+	getVideoLoading: boolean = false;
+	getChannelLoading: boolean = false;
 	private timeoutId: any;
 	changeView: boolean = false;
+
+	channelPage: number = 0;
+	channelPageSize: number = 10;
+	channelSortBy: string = 'name';
+	channelSortDirection: string = 'asc';
 	constructor(
 		private videoService: VideoService,
 		private snackBar: MatSnackBar,
-		private errorService: ErrorService
+		private errorService: ErrorService,
+		private userService: UserService
 	) {}
 
 	ngOnInit(): void {
-		this.fetchData();
+		this.fetchChannels();
+		this.fetchVideos();
 	}
 	toggleView() {
 		this.changeView = !this.changeView;
 	}
-	fetchData() {
-		this.isLoading = true;
-		// this.timeoutId = setTimeout(() => {
+	fetchChannels() {
+		this.getChannelLoading = true;
+		this.userService
+			.getSubscriptions(
+				this.channelPage,
+				this.channelPageSize,
+				this.channelSortBy,
+				this.channelSortDirection
+			)
+			.subscribe({
+				next: (response: PaginatedResponse<Channel>) => {
+					this.subcribeChannels = response.content;
+					this.getChannelLoading = false;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.errorObject = this.errorService.generateError(error);
+					this.getChannelLoading = false;
+				},
+			});
+	}
+	fetchVideos() {
+		this.getVideoLoading = true;
 		this.videoService.getAllVideos('').subscribe({
-			next: (data: VideoDto[]) => {
+			next: (data: VideoCardDto[]) => {
 				this.subcribeVideos = data;
+				this.getVideoLoading = false;
 			},
 			error: (error: HttpErrorResponse) => {
-				this.snackBar.open(error.message, '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
 				this.errorObject = this.errorService.generateError(error);
-				this.isLoading = false;
-			},
-			complete: () => {
-				// this.snackBar.open('Video data retrieval completed', '', {
-				//   duration: 3000,
-				//   horizontalPosition: 'right',
-				//   verticalPosition: 'top',
-				// });
-				this.isLoading = false;
+				this.getVideoLoading = false;
 			},
 		});
-		// }, 2000);
 	}
 	ngOnDestroy() {
 		// Clear the timeout when the component is destroyed

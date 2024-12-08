@@ -1,46 +1,28 @@
-<div class="filter-toolbar">
-	<button mat-button (click)="toogleFilter()">
-		Filters
-		<mat-icon>tune</mat-icon>
-	</button>
-	<div class="filter-container" [ngClass]="{ hide: !isFilters }">
-		<mat-form-field>
-			<mat-label>Upload Date</mat-label>
-			<mat-select [(value)]="dateFilter" (selectionChange)="fetchData()">
-				<mat-option *ngFor="let option of dateOptions" [value]="option.value">
-					{{ option.viewValue }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-		<!-- <mat-form-field>
-			<mat-label>Type</mat-label>
-			<mat-select [(value)]="typeFilter" (selectionChange)="fetchData()">
-				<mat-option *ngFor="let option of typeOptions" [value]="option.value">
-					{{ option.viewValue }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field> -->
-		<mat-form-field>
-			<mat-label>Duration</mat-label>
-			<mat-select [(value)]="durationFilter" (selectionChange)="fetchData()">
-				<mat-option *ngFor="let option of durationOptions" [value]="option.value">
-					{{ option.viewValue }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-		<mat-form-field>
-			<mat-label>Sort By</mat-label>
-			<mat-select [(value)]="sortBy" (selectionChange)="fetchData()">
-				<mat-option *ngFor="let option of sortOptions" [value]="option.value">
-      {{ option.viewValue }}
-    </mat-option>
-			</mat-select>
-		</mat-form-field>
-	</div>
-</div>
+<app-filter-toolbar
+	(onLoading)="setLoading($event)"
+	(onError)="setError($event)"
+	(onVideoListChange)="setVideoList($event)"
+></app-filter-toolbar>
+<app-error-message
+	*ngIf="errorObject"
+	[errorObject]="errorObject"
+	(onRetryClick)="fetchData()"
+></app-error-message>
 
 <div fxLayout="column" fxLayoutGap="10px">
-	<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
-		<app-video-card [video]="video" [isLoading]="isLoading" cardSize="larger"></app-video-card>
-	</div>
+	<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+	<ng-template #loadingTemplate>
+		<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
+			<app-video-card cardSize="meadium" [isLoading]="isLoading"></app-video-card>
+		</div>
+	</ng-template>
+	<ng-template #contentTemplate>
+		<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
+			<app-video-card
+				[video]="video"
+				[isLoading]="isLoading"
+				cardSize="meadium"
+			></app-video-card>
+		</div>
+	</ng-template>
 </div>

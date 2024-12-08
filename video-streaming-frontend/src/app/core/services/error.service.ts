@@ -26,6 +26,13 @@ export class ErrorService {
 					errorIcon: 'assets/astroMan.png',
 				};
 				break;
+			case 401:
+				this.errorObject = {
+					errorTitle: 'Unauthorized',
+					errorMessage: "Please Sign in to continue.",
+					errorIcon: 'assets/astroMan.png',
+				};
+				break;
 			default:
 				this.errorObject = {
 					errorTitle: error.error.title,

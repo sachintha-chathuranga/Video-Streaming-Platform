@@ -25,8 +25,16 @@
 }
 
 .view-comments {
-  padding-top: 5px;
+  padding-top: 10px;
 }
+
 .activeFilter{
   background-color: #dfdfdf;
 }
+
+.comment-header h3.skeleton{
+  width: 200px;
+  height: 30px;
+}
+
+

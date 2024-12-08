@@ -2,15 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { UserFormComponent } from '../../../profile/components/user-form/user-form.component';
-import { ChannelFormComponent } from '../../components/channel-form/channel-form.component';
+import { UserFormComponent } from './components/user-form/user-form.component';
+import { ChannelFormComponent } from './components/channel-form/channel-form.component';
 
 @Component({
 	selector: 'app-channel-customization',
 	standalone: true,
 	imports: [CommonModule, UserFormComponent, ChannelFormComponent, MatButtonModule],
-	templateUrl: './channel-customization.component.html',
-	styleUrl: './channel-customization.component.css',
+	templateUrl: './profile-customization.component.html',
+	styleUrl: './profile-customization.component.css',
 })
 export class ChannelCustomizationComponent {
 	activeTab: string = 'account';

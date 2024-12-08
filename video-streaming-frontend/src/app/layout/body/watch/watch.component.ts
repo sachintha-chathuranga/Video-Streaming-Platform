@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { SidebarComponent } from '../../../../layout/sidebar/components/sidebar/sidebar.component';
-import { SideBarItem } from '../../../../layout/sidebar/models/sidebarItem.dto';
+import { SideBarItem } from '../../sidebar/models/sidebarItem.dto';
+import { SidebarComponent } from '../../sidebar/sidebar.component';
 
 @Component({
 	selector: 'app-watch',

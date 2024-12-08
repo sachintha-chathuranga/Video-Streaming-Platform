@@ -23,6 +23,7 @@ import { VideoService } from '../../services/video.service';
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Router } from '@angular/router';
 import { ConfigService } from '../../../../config.service';
 import { VideoDto } from '../../../../core/models/video.dto';
 import { FileMetaDataComponent } from '../../../../shared/components/file-meta-data/file-meta-data.component';
@@ -104,7 +105,8 @@ export class VideoFormComponent {
 		private snackBar: MatSnackBar,
 		private config: ConfigService,
 		private updateDialogRef: MatDialogRef<VideoUpdateDialogComponent>,
-		private uploadDialogRef: MatDialogRef<VideoUploadStepperComponent>
+		private uploadDialogRef: MatDialogRef<VideoUploadStepperComponent>,
+		private router: Router
 	) {
 		this.allowedImageExtensions = config.SUPPORTED_IMAGE_FORMATS;
 		this.imageExtensions = config.convertToExtentions(this.allowedImageExtensions);
@@ -191,7 +193,7 @@ export class VideoFormComponent {
 					this.removeFile();
 					this.onLoadChange.emit(false);
 					if (this.isNew) {
-						this.updateDialogRef.close();
+						this.uploadDialogRef.close(this.video);
 					}
 				},
 				error: (errorResponse: HttpErrorResponse) => {
@@ -240,7 +242,7 @@ export class VideoFormComponent {
 						if (!this.selectedFile) {
 							this.onLoadChange.emit(false);
 							if (this.isNew) {
-								this.updateDialogRef.close();
+								this.uploadDialogRef.close(data);
 							}
 						} else {
 							this.removeFile();

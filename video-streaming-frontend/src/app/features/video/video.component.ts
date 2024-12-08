@@ -9,19 +9,23 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { ConfigService } from '../../../../config.service';
-import { CardMenuItem } from '../../../../core/models/cardMenuItem.dto';
-import { ErrorDto } from '../../../../core/models/error.dto';
-import { LikeDislikeResponse } from '../../../../core/models/likeDislikeldto';
-import { VideoDto } from '../../../../core/models/video.dto';
-import { ErrorService } from '../../../../core/services/error.service';
-import { UserService } from '../../../../core/services/user.service';
-import { VideoCardComponent } from '../../../../shared/components/video-card/video-card.component';
-import { VideoPlayerComponent } from '../../../../shared/components/video-player/video-player.component';
-import { Channel } from '../../../channel/models/channel.dto';
-import { CommentComponent } from '../../components/comments/components/comment/comment.component';
-import { VideoService } from '../../services/video.service';
-import { ChannelService } from '../../../channel/services/channel.service';
+import { ConfigService } from '../../config.service';
+import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
+import { ErrorDto } from '../../core/models/error.dto';
+import { LikeDislikeResponse } from '../../core/models/likeDislikeldto';
+import { VideoDto } from '../../core/models/video.dto';
+import { ErrorService } from '../../core/services/error.service';
+import { UserService } from '../../core/services/user.service';
+import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
+import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
+import { VideoPlayerComponent } from '../../shared/components/video-player/video-player.component';
+import { Channel } from '../channel/models/channel.dto';
+import { ChannelService } from '../channel/services/channel.service';
+import { CommentComponent } from './components/comments/comment.component';
+import { VideoService } from './services/video.service';
+import { LifetimePipe } from '../../shared/pipes/lifetime.pipe';
+import { Subscription } from '../../shared/models/subscription.dto';
+
 @Component({
 	selector: 'app-video',
 	standalone: true,
@@ -43,9 +47,10 @@ import { ChannelService } from '../../../channel/services/channel.service';
 export class VideoComponent implements OnInit {
 	videoId!: string;
 	video?: VideoDto;
-	videoList?: Array<VideoDto> = [];
+	videoList?: Array<VideoCardDto> = [];
 	errorObject!: ErrorDto;
 	isLoading: boolean = false;
+	isVideoListLoading: boolean = false;
 	isExpanded = false;
 	cardMenuItems: CardMenuItem[] = [
 		{
@@ -71,6 +76,16 @@ export class VideoComponent implements OnInit {
 		private config: ConfigService,
 		private channelService: ChannelService
 	) {}
+	ngOnInit(): void {
+		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
+			this.isAuthenticated = isAuthenticated;
+		});
+		this.activatedRoute.queryParams.subscribe((params) => {
+			this.videoId = params['v']; // Get the value of the 'v' query parameter
+		});
+		this.fetchVideo();
+		this.fetchVideoList();
+	}
 	handleMenuClick(name: string) {
 		switch (name) {
 			case 'Download':
@@ -101,45 +116,34 @@ export class VideoComponent implements OnInit {
 		this.isExpanded = !this.isExpanded;
 	}
 
-	ngOnInit(): void {
-		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
-			this.isAuthenticated = isAuthenticated;
-		});
-		this.activatedRoute.queryParams.subscribe((params) => {
-			this.videoId = params['v']; // Get the value of the 'v' query parameter
-		});
+	fetchVideo() {
+		this.isLoading = true;
 		this.videoService.getVideoById(parseInt(this.videoId), this.isAuthenticated).subscribe({
 			next: (data: VideoDto) => {
 				if (data) {
 					this.video = data;
 					console.log(data);
+					this.isLoading = false;
 				}
 			},
 			error: (response: HttpErrorResponse) => {
 				console.log(response.error);
+				this.isLoading = false;
 			},
 		});
+	}
+	fetchVideoList() {
+		this.isVideoListLoading = true;
 		this.videoService.getAllVideos('').subscribe({
-			next: (data: VideoDto[]) => {
+			next: (data: VideoCardDto[]) => {
 				this.videoList = data;
+				this.isVideoListLoading = false;
 			},
-			error: (error: HttpErrorResponse) => {
-				this.snackBar.open(error.message, '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.errorObject = this.errorService.generateError(error);
-				this.isLoading = false;
+			error: (errorResponse: HttpErrorResponse) => {
+				console.log(errorResponse.error);
+				this.isVideoListLoading = false;
 			},
-			complete: () => {
-				// this.snackBar.open('Video data retrieval completed', '', {
-				//   duration: 3000,
-				//   horizontalPosition: 'right',
-				//   verticalPosition: 'top',
-				// });
-				this.isLoading = false;
-			},
+			
 		});
 	}
 	likeVideo() {
@@ -173,10 +177,11 @@ export class VideoComponent implements OnInit {
 	}
 	subscribeChannel() {
 		this.channelService.subscribe(this.video?.channel?.id).subscribe({
-			next: (data: Channel) => {
+			next: (data: Subscription) => {
 				if (this.video?.channel) {
 					console.log(data);
-					this.video.channel = data;
+					this.video.channel.subscribersCount = data.subscribersCount;
+					this.video.channel.isUserSubscribe = data.isUserSubscribe;
 				}
 			},
 			error: (response: HttpErrorResponse) => {
@@ -186,10 +191,11 @@ export class VideoComponent implements OnInit {
 	}
 	unSubscribeChannel() {
 		this.channelService.unSubscribe(this.video?.channel?.id).subscribe({
-			next: (data: Channel) => {
+			next: (data: Subscription) => {
 				if (this.video?.channel) {
 					console.log(data);
-					this.video.channel = data;
+					this.video.channel.subscribersCount = data.subscribersCount;
+					this.video.channel.isUserSubscribe = data.isUserSubscribe;
 				}
 			},
 			error: (response: HttpErrorResponse) => {
