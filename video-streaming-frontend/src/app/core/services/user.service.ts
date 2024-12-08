@@ -127,6 +127,13 @@ export class UserService {
 			})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
+	updateVideoHistory(
+		videoId: number,
+	): Observable<boolean> {
+		return this.httpClient
+			.put<boolean>(`${this.apiEndpoint}/users/history`, videoId)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
 }
 
 // 	http.post('/api/upload', myData, {

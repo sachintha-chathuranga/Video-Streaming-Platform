@@ -55,6 +55,11 @@ export class VideoCardComponent {
 		console.log(this.cardSize)
 	}
 	openVideo() {
+		this.userService.updateVideoHistory(this.video.id).subscribe({next: (response: boolean) =>{
+			console.log(response);
+		},error: (errorResponse:HttpErrorResponse)=>{
+			console.log(errorResponse);
+		}})
 		this.router.navigate(['/watch'], { queryParams: { v: this.video.id } });
 	}
 	handleMenuClick(name: String) {
