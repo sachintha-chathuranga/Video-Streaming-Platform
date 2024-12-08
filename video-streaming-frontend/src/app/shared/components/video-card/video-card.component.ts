@@ -8,7 +8,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterModule } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { CardMenuItem } from '../../../core/models/cardMenuItem.dto';
-import { VideoDto } from '../../../core/models/video.dto';
 import { UserService } from '../../../core/services/user.service';
 import { LifetimePipe } from '../../pipes/lifetime.pipe';
 import { VideoCardDto } from './model/videoCard.dto';
@@ -23,7 +22,7 @@ import { VideoCardDto } from './model/videoCard.dto';
 		RouterModule,
 		MatButtonModule,
 		MatIconModule,
-		LifetimePipe
+		LifetimePipe,
 	],
 	templateUrl: './video-card.component.html',
 	styleUrl: './video-card.component.css',
@@ -52,30 +51,49 @@ export class VideoCardComponent {
 		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
 			this.isAuthenticated = isAuthenticated;
 		});
-		console.log(this.cardSize)
+		console.log(this.cardSize);
 	}
 	openVideo() {
-		this.userService.updateVideoHistory(this.video.id).subscribe({next: (response: boolean) =>{
-			console.log(response);
-		},error: (errorResponse:HttpErrorResponse)=>{
-			console.log(errorResponse);
-		}})
+		this.userService.updateVideoHistory(this.video.id).subscribe({
+			next: (response: boolean) => {
+				console.log(response);
+			},
+			error: (errorResponse: HttpErrorResponse) => {
+				console.log(errorResponse);
+			},
+		});
 		this.router.navigate(['/watch'], { queryParams: { v: this.video.id } });
 	}
 	handleMenuClick(name: String) {
 		switch (name) {
-			case 'Remove':
-				this.removeVideo();
+			case 'delete_from_playlist':
+				this.removeVideoFromPlalist();
 				break;
-			case 'Save video':
-				this.saveVideo();
+			case 'save_to_playlist':
+				this.saveVideoToPlaylist();
+				break;
+			case 'remove_from_history':
+				this.removeVideoFromHistory();
 				break;
 			default:
 				console.log('Invalid Item name');
 				break;
 		}
 	}
-	removeVideo() {
+
+	removeVideoFromHistory() {
+		this.userService.removeVideoFromUserHistory(this.video.id).subscribe({
+			next: (data: boolean) => {
+				console.log('Remove Success!');
+				this.onDelete.emit(this.video.id);
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log('error');
+				console.log(error);
+			},
+		});
+	}
+	removeVideoFromPlalist() {
 		this.userService.removeVideoFromUserPlalist(this.video.id).subscribe({
 			next: (data: boolean) => {
 				console.log('Remove Success!');
@@ -87,7 +105,7 @@ export class VideoCardComponent {
 			},
 		});
 	}
-	saveVideo() {
+	saveVideoToPlaylist() {
 		this.userService.saveVideoToUserPlalist(this.video.id).subscribe({
 			next: (data: boolean) => {
 				console.log('Save Success!');

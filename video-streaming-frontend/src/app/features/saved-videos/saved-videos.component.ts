@@ -43,6 +43,7 @@ export class SavedVideosComponent {
 			name: 'Remove',
 			icon: 'delete',
 			isDisable: false,
+			action: 'delete_from_playlist'
 		},
 	];
 

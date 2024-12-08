@@ -72,7 +72,7 @@
 				mat-menu-item
 				*ngFor="let item of cardMenuItems"
 				[disabled]="item.isDisable"
-				(click)="handleMenuClick(item.name)"
+				(click)="handleMenuClick(item.action)"
 				[ngClass]="{
 					hideReport: comment.user.id == logginUser?.id && item.name == 'Report',
 					hideOthers: comment.user.id !== logginUser?.id && item.name !== 'Report'

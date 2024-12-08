@@ -18,6 +18,9 @@ vg-time-display {
   font-size: 14px;
   width: 45px;
 }
+vg-scrub-bar{
+  background-color: transparent;
+}
 vg-controls {
   background-color: #00000000 !important;
 }

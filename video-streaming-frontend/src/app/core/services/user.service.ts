@@ -101,7 +101,7 @@ export class UserService {
 			.set('page', page)
 			.set('size', size)
 			.set('sortBy', sortBy)
-			.set('sortDirection', sortDirection)
+			.set('sortDirection', sortDirection);
 
 		return this.httpClient
 			.get<PaginatedResponse<Channel>>(`${this.apiEndpoint}/users/subscriptions`, {
@@ -119,7 +119,7 @@ export class UserService {
 			.set('page', page)
 			.set('size', size)
 			.set('sortBy', sortBy)
-			.set('sortDirection', sortDirection)
+			.set('sortDirection', sortDirection);
 
 		return this.httpClient
 			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/users/history`, {
@@ -127,11 +127,14 @@ export class UserService {
 			})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-	updateVideoHistory(
-		videoId: number,
-	): Observable<boolean> {
+	updateVideoHistory(videoId: number): Observable<boolean> {
 		return this.httpClient
 			.put<boolean>(`${this.apiEndpoint}/users/history`, videoId)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	removeVideoFromUserHistory(videoId: number): Observable<boolean> {
+		return this.httpClient
+			.delete<boolean>(`${this.apiEndpoint}/users/history/${videoId}`)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 }

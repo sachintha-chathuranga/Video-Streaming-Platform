@@ -43,6 +43,7 @@ export class FeatureComponent implements OnInit {
 			name: 'Save video',
 			icon: 'save',
 			isDisable: false,
+			action: 'save_to_playlist'
 		},
 	];
 	categories = [

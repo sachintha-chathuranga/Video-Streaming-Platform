@@ -15,7 +15,6 @@
         <div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
           <app-video-card
             [video]="video"
-            [isLoading]="isLoading"
             [cardMenuItems]="cardMenuItems"
             (onDelete)="handleDelete($event)"
             cardSize="meadium"

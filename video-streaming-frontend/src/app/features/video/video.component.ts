@@ -57,11 +57,13 @@ export class VideoComponent implements OnInit {
 			name: 'Download',
 			icon: 'vertical_align_bottom',
 			isDisable: false,
+			action: 'download_video',
 		},
 		{
 			name: 'Save video',
 			icon: 'save',
 			isDisable: false,
+			action: 'save_to_playlist',
 		},
 	];
 	isAuthenticated: boolean = false;
@@ -88,10 +90,10 @@ export class VideoComponent implements OnInit {
 	}
 	handleMenuClick(name: string) {
 		switch (name) {
-			case 'Download':
+			case 'download_video':
 				this.downloadVideo();
 				break;
-			case 'Save video':
+			case 'save_to_playlist':
 				this.saveVideo();
 				break;
 			default:
@@ -143,7 +145,6 @@ export class VideoComponent implements OnInit {
 				console.log(errorResponse.error);
 				this.isVideoListLoading = false;
 			},
-			
 		});
 	}
 	likeVideo() {

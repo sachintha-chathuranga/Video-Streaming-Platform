@@ -56,16 +56,19 @@ export class CommentCardComponent {
 			name: 'Edit',
 			icon: 'edit_outline',
 			isDisable: false,
+			action: 'edit_comment'
 		},
 		{
 			name: 'Delete',
 			icon: 'delete_off',
 			isDisable: false,
+			action: 'delete_comment'
 		},
 		{
 			name: 'Report',
 			icon: 'flag',
 			isDisable: false,
+			action: 'report_comment'
 		},
 	];
 	showInputField: boolean = false;
@@ -122,15 +125,15 @@ export class CommentCardComponent {
 	handleCancel() {
 		this.showInputField = false;
 	}
-	handleMenuClick(name: string) {
-		switch (name) {
-			case 'Edit':
+	handleMenuClick(action: string) {
+		switch (action) {
+			case 'edit_comment':
 				this.editComment();
 				break;
-			case 'Delete':
+			case 'delete_comment':
 				this.openConfirmationDialog();
 				break;
-			case 'Report':
+			case 'report_comment':
 				this.reportComment();
 				break;
 			default:

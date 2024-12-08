@@ -15,6 +15,7 @@ import { VideoCardComponent } from '../../shared/components/video-card/video-car
 import { VideoService } from '../video/services/video.service';
 import { UserService } from '../../core/services/user.service';
 import { PaginatedResponse } from '../../core/models/pagination.dto';
+import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
 
 @Component({
 	selector: 'app-history',
@@ -38,10 +39,25 @@ export class HistoryComponent implements OnInit {
 	isLoading: boolean = false;
 	errorObject!: ErrorDto;
 	searchInput = '';
-	page: number =0;
+	page: number = 0;
 	pageSize: number = 10;
 	sortBy: string = 'watchTime';
-	sortDirection:  string = "desc";
+	sortDirection: string = 'desc';
+
+	cardMenuItems: CardMenuItem[] = [
+		{
+			name: 'Save',
+			icon: 'save',
+			isDisable: false,
+			action: 'save_to_playlist',
+		},
+		{
+			name: 'Remove',
+			icon: 'delete',
+			isDisable: false,
+			action: 'remove_from_history',
+		},
+	];
 	constructor(
 		private videoService: VideoService,
 		private userService: UserService,
@@ -51,17 +67,23 @@ export class HistoryComponent implements OnInit {
 	ngOnInit(): void {
 		this.fetchVideoHistory();
 	}
+	handleDelete(videoId: number) {
+		this.videoList = this.videoList?.filter((video) => video.id !== videoId);
+		console.log(this.videoList);
+	}
 	fetchVideoHistory() {
 		this.isLoading = true;
-		this.userService.getVideoHistory(this.page,this.pageSize,this.sortBy,this.sortDirection).subscribe({
-			next: (response: PaginatedResponse<VideoCardDto>) => {
-				this.videoList = response.content;
-				this.isLoading = false;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.errorObject = this.errorService.generateError(error);
-				this.isLoading = false;
-			},
-		});
+		this.userService
+			.getVideoHistory(this.page, this.pageSize, this.sortBy, this.sortDirection)
+			.subscribe({
+				next: (response: PaginatedResponse<VideoCardDto>) => {
+					this.videoList = response.content;
+					this.isLoading = false;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.errorObject = this.errorService.generateError(error);
+					this.isLoading = false;
+				},
+			});
 	}
 }

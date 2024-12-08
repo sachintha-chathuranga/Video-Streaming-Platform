@@ -16,6 +16,7 @@ import { VideoCardDto } from '../../shared/components/video-card/model/videoCard
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { Channel } from '../channel/models/channel.dto';
 import { VideoService } from '../video/services/video.service';
+import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
 
 @Component({
 	selector: 'app-subscriptions',
@@ -41,11 +42,20 @@ export class SubscriptionsComponent {
 	getChannelLoading: boolean = false;
 	private timeoutId: any;
 	changeView: boolean = false;
+	cardMenuItems: CardMenuItem[] = [
+		{
+			name: 'Save video',
+			icon: 'save',
+			isDisable: false,
+			action: 'save_to_playlist',
+		},
+	];
 
 	channelPage: number = 0;
 	channelPageSize: number = 10;
 	channelSortBy: string = 'name';
 	channelSortDirection: string = 'asc';
+
 	constructor(
 		private videoService: VideoService,
 		private snackBar: MatSnackBar,
