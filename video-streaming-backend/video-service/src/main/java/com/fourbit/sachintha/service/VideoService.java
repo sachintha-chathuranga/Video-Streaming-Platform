@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.LikeDislikeResponse;
+import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoUpdateMetaData;
 import com.fourbit.sachintha.exception.CustomException;
@@ -106,18 +107,18 @@ public class VideoService {
 		return thumbnailUrl;
 	}
 
-	public List<VideoDto> getVideos(String tagName) {
+	public List<VideoCardDto> getVideos(String tagName) {
 		List<Video> videos;
 		if (tagName == null || tagName.equalsIgnoreCase("All") || tagName.isEmpty()) {
 			videos = videoRepository.findByVideoStatus(VideoStatus.PUBLIC);
 		} else {
 			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, tagName);
 		}
-		List<VideoDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoDto(video)).toList();
+		List<VideoCardDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoCardDto(video)).toList();
 		return videoList;
 	}
 
-	public List<VideoDto> searchVideos(String searchQuery, String date, String duration, String sortBy) {
+	public List<VideoCardDto> searchVideos(String searchQuery, String date, String duration, String sortBy) {
 		LocalDateTime startDate = null;
 
 		// Calculate start date based on the 'date' filter
@@ -129,7 +130,7 @@ public class VideoService {
 		case "ty" -> startDate = LocalDateTime.now().minusYears(1);
 		}
 		List<Video> videos = videoRepository.searchVideosByFilter(searchQuery, startDate, duration, sortBy);
-		List<VideoDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoDto(video)).toList();
+		List<VideoCardDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoCardDto(video)).toList();
 		return videoList;
 	}
 
@@ -139,7 +140,7 @@ public class VideoService {
 		if (isAuthUser) {
 			logger.info("get Video for loggin user");
 			User user = userService.getRequestedUser();
-			return VideoMapper.mapToVideoDto2(video, user);
+			return VideoMapper.mapToVideoDto(video, user);
 		} else {
 			logger.info("get Video for guest user");
 			return VideoMapper.mapToVideoDto(video);
@@ -179,7 +180,7 @@ public class VideoService {
 		}
 
 		videoRepository.save(video);
-		VideoDto videoDto = VideoMapper.mapToVideoDto2(video, user);
+		VideoDto videoDto = VideoMapper.mapToVideoDto(video, user);
 		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
 				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
 	}
@@ -205,7 +206,7 @@ public class VideoService {
 		}
 
 		videoRepository.save(video);
-		VideoDto videoDto = VideoMapper.mapToVideoDto2(video, user);
+		VideoDto videoDto = VideoMapper.mapToVideoDto(video, user);
 		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
 				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
 	}

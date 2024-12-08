@@ -1,6 +1,7 @@
 package com.fourbit.sachintha.util.mapper;
 
 import com.fourbit.sachintha.dto.ChannelDto;
+import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.User;
 
@@ -26,7 +27,7 @@ public class ChannelMapper {
 		return channelDto;
 	}
 
-	public static ChannelDto mapTochannelDto2(Channel channel, User requestedUser) {
+	public static ChannelDto mapTochannelDto(Channel channel, User requestedUser) {
 		if (channel == null) {
 			return null;
 		}
@@ -34,6 +35,16 @@ public class ChannelMapper {
 		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
 		ChannelDto channelDto = new ChannelDto(channel.getId(), channel.getName(), channel.getDescription(),
 				channel.getBannerImage(), channel.getChannelImage(), subscribersCount, isUserSubscribe);
+		return channelDto;
+	}
+
+	public static SubscriptionResponse mapToSubscriptionResponse(Channel channel, User requestedUser) {
+		if (channel == null) {
+			return null;
+		}
+		Boolean isUserSubscribe = channel.getSubscribers().contains(requestedUser);
+		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
+		SubscriptionResponse channelDto = new SubscriptionResponse(subscribersCount, isUserSubscribe);
 		return channelDto;
 	}
 }

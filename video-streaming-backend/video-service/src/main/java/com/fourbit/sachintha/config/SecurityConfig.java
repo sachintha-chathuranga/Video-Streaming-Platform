@@ -27,7 +27,7 @@ public class SecurityConfig {
 	private String audience;
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/videos/get-video/**",
 				"/api/videos/get-all", "/api/videos/search", "/api/videos/{videoId}/comments").permitAll().anyRequest()
 				.authenticated()).cors(Customizer.withDefaults())
@@ -37,7 +37,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public JwtDecoder jwtDecoder() {
+	protected JwtDecoder jwtDecoder() {
 		NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuer);
 
 		OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);

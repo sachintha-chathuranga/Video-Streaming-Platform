@@ -1,5 +1,7 @@
 package com.fourbit.sachintha.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,6 @@ public class CommentDto {
 	private UserDto user;
 	private Long likesCount = Long.valueOf(0);
 	private Long dislikesCount = Long.valueOf(0);
-	private String lifeTime;
 	private UserLikeStatus userLikeStatus;
+	private LocalDateTime createdDate;
 }

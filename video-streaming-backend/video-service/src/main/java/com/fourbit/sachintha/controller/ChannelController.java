@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fourbit.sachintha.dto.ChannelDto;
+import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.service.ChannelService;
 
@@ -28,12 +28,12 @@ public class ChannelController {
 	private ChannelService channelService;
 
 	@PutMapping("/subscribe/{channelId}")
-	public ResponseEntity<ChannelDto> subscribe(@PathVariable Long channelId) {
+	public ResponseEntity<SubscriptionResponse> subscribe(@PathVariable Long channelId) {
 		return ResponseEntity.ok(channelService.subscribe(channelId));
 	}
 
 	@PutMapping("/unsubscribe/{channelId}")
-	public ResponseEntity<ChannelDto> unsubscribe(@PathVariable Long channelId) {
+	public ResponseEntity<SubscriptionResponse> unsubscribe(@PathVariable Long channelId) {
 		return ResponseEntity.ok(channelService.unsubscribe(channelId));
 	}
 

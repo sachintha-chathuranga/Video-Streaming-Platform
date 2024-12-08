@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query("SELECT v FROM User u JOIN u.saveVideos v WHERE u.id = :userId AND (v.title LIKE %:searchQuery% OR v.description LIKE %:searchQuery%)")
 	List<Video> findSavedVideosBySearchQuery(@Param("userId") Long userId, @Param("searchQuery") String searchQuery);
+
 }

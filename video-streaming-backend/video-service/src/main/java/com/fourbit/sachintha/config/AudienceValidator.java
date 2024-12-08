@@ -16,13 +16,8 @@ public class AudienceValidator implements OAuth2TokenValidator<Jwt> {
 	public OAuth2TokenValidatorResult validate(Jwt jwt) {
 		System.out.println("Audience:" + audience);
 
-		String id = jwt.getId();
-		String issure = jwt.getIssuer().toString();
-		System.out.println("id:" + id);
-		System.out.println("issure:" + issure);
-
 		if (!jwt.getAudience().contains(audience)) {
-			System.out.println("Success!");
+			System.out.println("Auth audience Success!");
 			return OAuth2TokenValidatorResult.success();
 		}
 

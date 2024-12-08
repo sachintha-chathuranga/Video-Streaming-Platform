@@ -2,21 +2,19 @@ package com.fourbit.sachintha.dto;
 
 import java.time.LocalDateTime;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class VideoHistoryDto {
-	private Long id;
-	private Long videoId;
+public class VideoHistoryDto extends VideoCardDto {
 	private LocalDateTime watchTime;
 	private Long watchDuration;
-	private String title;
-	private String thumbnailUrl;
-	private Integer likesCount;
-	private Integer dislikesCount;
-	private Long viewsCount;
+
+	public VideoHistoryDto(Long id, String title, String description, String thumbnailUrl, String channelName,
+			String channelImage, Long viewsCount, LocalDateTime createdTime, LocalDateTime watchTime,
+			Long watchDuration) {
+		super(id, title, description, thumbnailUrl, channelName, channelImage, viewsCount, createdTime);
+		this.watchTime = watchTime;
+		this.watchDuration = watchDuration;
+	}
+
 }

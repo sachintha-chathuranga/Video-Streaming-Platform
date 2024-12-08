@@ -43,7 +43,7 @@ public class CommentService {
 			comment.setVideo(video);
 			comment.setCreatedDate(LocalDateTime.now());
 			commentRepository.save(comment);
-			return CommentMapper.mapToCommentDto2(comment, user);
+			return CommentMapper.mapToCommentDto(comment, user);
 		} catch (Exception e) {
 			throw e;
 		}
@@ -60,7 +60,7 @@ public class CommentService {
 			commentRepository.save(comment);
 
 		}
-		return CommentMapper.mapToCommentDto2(comment, user);
+		return CommentMapper.mapToCommentDto(comment, user);
 	}
 
 	public Page<CommentDto> getCommentsByVideoId(Boolean isAuthUser, Long videoId, String page, String size,
@@ -95,7 +95,7 @@ public class CommentService {
 				comments = commentRepository.findByVideoIdSortedByUser(videoId, user.getId(), pageable);
 				logger.info("Sort By User comments");
 			}
-			return comments.map(comment -> CommentMapper.mapToCommentDto2(comment, user));
+			return comments.map(comment -> CommentMapper.mapToCommentDto(comment, user));
 
 		}
 		return comments.map(comment -> CommentMapper.mapToCommentDto(comment));
@@ -134,7 +134,7 @@ public class CommentService {
 		}
 
 		commentRepository.save(comment);
-		CommentDto commentDto = CommentMapper.mapToCommentDto2(comment, user);
+		CommentDto commentDto = CommentMapper.mapToCommentDto(comment, user);
 		return LikeDislikeResponse.builder().likesCount(commentDto.getLikesCount())
 				.dislikesCount(commentDto.getDislikesCount()).userLikeStatus(commentDto.getUserLikeStatus()).build();
 	}
@@ -159,7 +159,7 @@ public class CommentService {
 		}
 
 		commentRepository.save(comment);
-		CommentDto commentDto = CommentMapper.mapToCommentDto2(comment, user);
+		CommentDto commentDto = CommentMapper.mapToCommentDto(comment, user);
 		return LikeDislikeResponse.builder().likesCount(commentDto.getLikesCount())
 				.dislikesCount(commentDto.getDislikesCount()).userLikeStatus(commentDto.getUserLikeStatus()).build();
 	}

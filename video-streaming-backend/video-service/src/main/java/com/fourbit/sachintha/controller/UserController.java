@@ -2,6 +2,7 @@ package com.fourbit.sachintha.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
-import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoHistoryDto;
 import com.fourbit.sachintha.service.UserService;
 
@@ -76,8 +77,10 @@ public class UserController {
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<List<VideoHistoryDto>> getVideoHistory() {
-		return ResponseEntity.ok(userService.getVideoHistory());
+	public ResponseEntity<Page<VideoCardDto>> getVideoHistory(@RequestParam(defaultValue = "0") String page,
+			@RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "watchTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		return ResponseEntity.ok(userService.getVideoHistory(page, size, sortBy, sortDirection));
 	}
 
 	@DeleteMapping("/history")
@@ -86,9 +89,11 @@ public class UserController {
 		return ResponseEntity.ok(message);
 	}
 
-	@GetMapping("/subscribe")
-	public ResponseEntity<List<ChannelDto>> getSubscriptions() {
-		List<ChannelDto> list = userService.getUserSubscriptions();
+	@GetMapping("/subscriptions")
+	public ResponseEntity<Page<ChannelDto>> getSubscriptions(@RequestParam(defaultValue = "0") String page,
+			@RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "name") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDirection) {
+		Page<ChannelDto> list = userService.getUserSubscriptions(page, size, sortBy, sortDirection);
 		return ResponseEntity.ok(list);
 	}
 
@@ -99,8 +104,8 @@ public class UserController {
 	}
 
 	@GetMapping("/playlist")
-	public ResponseEntity<List<VideoDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
-		List<VideoDto> playlist = userService.getVideoPlaylist(searchQuery);
+	public ResponseEntity<List<VideoCardDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
+		List<VideoCardDto> playlist = userService.getVideoPlaylist(searchQuery);
 		return ResponseEntity.ok(playlist);
 	}
 

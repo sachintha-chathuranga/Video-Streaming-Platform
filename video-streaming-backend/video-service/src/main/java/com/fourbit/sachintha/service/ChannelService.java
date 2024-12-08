@@ -14,7 +14,7 @@ import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.fourbit.sachintha.dto.ChannelDto;
+import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
@@ -38,7 +38,7 @@ public class ChannelService {
 	private final UserService userService;
 	private final Logger logger = LoggerFactory.getLogger(ChannelService.class);
 
-	public ChannelDto subscribe(Long channelId) {
+	public SubscriptionResponse subscribe(Long channelId) {
 		User subscriber = userService.getRequestedUser();
 		Channel channel = channelRepository.findById(channelId)
 				.orElseThrow(() -> new CustomException("Channel not found!", HttpStatus.NOT_FOUND));
@@ -47,10 +47,10 @@ public class ChannelService {
 			channels.add(channel);
 			userRepository.save(subscriber);
 		}
-		return ChannelMapper.mapTochannelDto2(channel, subscriber);
+		return ChannelMapper.mapToSubscriptionResponse(channel, subscriber);
 	}
 
-	public ChannelDto unsubscribe(Long channelId) {
+	public SubscriptionResponse unsubscribe(Long channelId) {
 		User subscriber = userService.getRequestedUser();
 		Channel channel = channelRepository.findById(channelId)
 				.orElseThrow(() -> new CustomException("Channel not found!", HttpStatus.NOT_FOUND));
@@ -58,7 +58,7 @@ public class ChannelService {
 		List<Channel> channels = subscriber.getSubscriptions();
 		channels.remove(channel);
 		userRepository.save(subscriber);
-		return ChannelMapper.mapTochannelDto2(channel, subscriber);
+		return ChannelMapper.mapToSubscriptionResponse(channel, subscriber);
 	}
 
 	public Page<VideoDto> getVideos(Long channelId, String page, String size, String sortField, String sortDirection) {

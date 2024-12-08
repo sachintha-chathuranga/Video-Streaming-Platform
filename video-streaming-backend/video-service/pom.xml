@@ -9,9 +9,7 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.fourbit.sachintha</groupId>
 	<artifactId>video-service</artifactId>
-	<version>1.0-SNAPSHOT</version>
 
 	<properties>
 		<java.version>17</java.version>
