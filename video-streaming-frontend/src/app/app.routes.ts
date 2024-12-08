@@ -1,22 +1,21 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { FeatureComponent } from './pages/feature/feature.component';
-import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
-import { HistoryComponent } from './pages/history/history.component';
-import { CallbackComponent } from './pages/callback/callback.component';
-import { ProfileComponent } from './pages/profile/profile.component';
-import { ContentComponent } from './pages/content/content.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { AnalyticComponent } from './pages/analytic/analytic.component';
-import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { VideoComponent } from './pages/video/video.component';
-import { WatchComponent } from './pages/watch/watch.component';
-import { SavedVideosComponent } from './pages/saved-videos/saved-videos.component';
-import { AutoLoginPartialRoutesGuard, autoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
-import { ChannelComponent } from './pages/channel/channel.component';
-import { ChannelCustomizationComponent } from './pages/channel-customization/channel-customization.component';
-import { AuthorizationGuard } from './auth/authorization-guard.service';
-import { SearchResultsComponent } from './components/search-results/search-results.component';
+import { autoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
+import { AuthorizationGuard } from './core/guards/authorization-guard.service';
+import { AnalyticComponent } from './features/analytic/analytic.component';
+import { ChannelComponent } from './features/channel/channel.component';
+import { ContentComponent } from './features/content/content.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { FeatureComponent } from './features/feature/feature.component';
+import { HistoryComponent } from './features/history/history.component';
+import { PageNotFoundComponent } from './features/page-not-found/page-not-found.component';
+import { ChannelCustomizationComponent } from './features/profile/profile-customization.component';
+import { SavedVideosComponent } from './features/saved-videos/saved-videos.component';
+import { SearchResultsComponent } from './features/search-results/search-results.component';
+import { SubscriptionsComponent } from './features/subscriptions/subscriptions.component';
+import { HomeComponent } from './layout/body/home/home.component';
+import { ProfileComponent } from './layout/body/profile/profile.component';
+import { WatchComponent } from './layout/body/watch/watch.component';
+import { VideoComponent } from './features/video/video.component';
 
 export const routes: Routes = [
 	{
@@ -85,10 +84,6 @@ export const routes: Routes = [
 				component: AnalyticComponent,
 			},
 		],
-	},
-	{
-		path: 'callback',
-		component: CallbackComponent,
 	},
 	{
 		path: '**',

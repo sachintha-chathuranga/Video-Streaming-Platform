@@ -1,0 +1,27 @@
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+	background-color: white !important;
+}
+::ng-deep .mat-mdc-form-field-infix {
+	width: 100px !important;
+}
+::ng-deep .mat-mdc-form-field-subscript-wrapper{
+	display: none !important;
+}
+mat-form-field{
+	background-color: white;
+}
+.filter-toolbar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background-color: white;
+	margin: 0 10px;
+	display: flex;
+	align-items: center;
+}
+.filter-container {
+	max-height: 57px;
+}
+.filter-container.hide {
+	display: none;
+}

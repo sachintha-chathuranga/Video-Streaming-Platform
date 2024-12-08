@@ -2,6 +2,7 @@ package com.fourbit.sachintha.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,8 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
-import com.fourbit.sachintha.dto.VideoDto;
-import com.fourbit.sachintha.dto.VideoHistoryDto;
+import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,14 +31,8 @@ public class UserController {
 
 	@PostMapping("/signUp")
 	public ResponseEntity<UserDto> signUp(@RequestBody UserDto user) {
-		UserDto userDto = userService.signUp(user);
-		return new ResponseEntity<>(userDto, HttpStatus.CREATED);
-	}
-
-	@PostMapping
-	public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
 		UserDto userDto = userService.createUser(user);
-		return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+		return new ResponseEntity<>(userDto, HttpStatus.OK);
 	}
 
 	@PutMapping("/update")
@@ -70,9 +64,8 @@ public class UserController {
 	}
 
 	@PutMapping("/history")
-	public ResponseEntity<String> updateVideoHistory(@RequestBody VideoHistoryDto videoHistory) {
-		String message = userService.updateVideoHistory(videoHistory);
-		return ResponseEntity.ok(message);
+	public ResponseEntity<Boolean> updateVideoHistory(@RequestBody Long videoId) {
+		return ResponseEntity.ok(userService.updateVideoHistory(videoId));
 	}
 
 	@DeleteMapping("/history/{videoId}")
@@ -82,8 +75,10 @@ public class UserController {
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<List<VideoHistoryDto>> getVideoHistory() {
-		return ResponseEntity.ok(userService.getVideoHistory());
+	public ResponseEntity<Page<VideoCardDto>> getVideoHistory(@RequestParam(defaultValue = "0") String page,
+			@RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "watchTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		return ResponseEntity.ok(userService.getVideoHistory(page, size, sortBy, sortDirection));
 	}
 
 	@DeleteMapping("/history")
@@ -92,41 +87,33 @@ public class UserController {
 		return ResponseEntity.ok(message);
 	}
 
-	@PutMapping("/subscribe/{channelId}")
-	public ResponseEntity<ChannelDto> subscribe(@PathVariable Long channelId) {
-		return ResponseEntity.ok(userService.subscribe(channelId));
-	}
-
-	@GetMapping("/subscribe")
-	public ResponseEntity<List<ChannelDto>> getSubscriptions() {
-		List<ChannelDto> list = userService.getSubscribeChannels();
+	@GetMapping("/subscriptions")
+	public ResponseEntity<Page<ChannelDto>> getSubscriptions(@RequestParam(defaultValue = "0") String page,
+			@RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "name") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDirection) {
+		Page<ChannelDto> list = userService.getUserSubscriptions(page, size, sortBy, sortDirection);
 		return ResponseEntity.ok(list);
 	}
 
-	@PutMapping("/unsubscribe/{channelId}")
-	public ResponseEntity<ChannelDto> unsubscribe(@PathVariable Long channelId) {
-		return ResponseEntity.ok(userService.unsubscribe(channelId));
-	}
-
-	@PutMapping("/save-videos")
+	@PutMapping("/playlist")
 	public ResponseEntity<Boolean> saveVideoToPlaylist(@RequestBody Long videoId) {
 		userService.addVideoToPlaylist(videoId);
 		return ResponseEntity.ok(true);
 	}
 
-	@GetMapping("/save-videos")
-	public ResponseEntity<List<VideoDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
-		List<VideoDto> playlist = userService.getVideoPlaylist(searchQuery);
+	@GetMapping("/playlist")
+	public ResponseEntity<List<VideoCardDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
+		List<VideoCardDto> playlist = userService.getVideoPlaylist(searchQuery);
 		return ResponseEntity.ok(playlist);
 	}
 
-	@DeleteMapping("/save-videos")
+	@DeleteMapping("/playlist")
 	public ResponseEntity<Boolean> deletePlaylist() {
 		userService.deletePlaylist();
 		return ResponseEntity.ok(true);
 	}
 
-	@DeleteMapping("/save-videos/{videoId}")
+	@DeleteMapping("/playlist/{videoId}")
 	public ResponseEntity<Boolean> deletePlaylist(@PathVariable(name = "videoId") Long videoId) {
 		userService.removeVideoFromPlaylist(videoId);
 		return ResponseEntity.ok(true);

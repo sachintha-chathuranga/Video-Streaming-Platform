@@ -1,0 +1,73 @@
+<div class="comment-header">
+	<h3 [ngClass]="{ skeleton: isLoading }">{{ totalComments && totalComments + ' Comments' }}</h3>
+	<div *ngIf="!isLoading" class="sort-menu">
+		<span [matMenuTriggerFor]="menu" class="sort-btn">
+			<mat-icon>sort</mat-icon>
+			<p>Sort by</p>
+		</span>
+		<mat-menu #menu="matMenu" class="custom-menu">
+			<button
+				mat-menu-item
+				(click)="sortCommentBy('createdDate')"
+				[ngClass]="{ activeFilter: selectedFilter == 'createdDate' }"
+			>
+				<span>Newest first</span>
+			</button>
+			<button
+				mat-menu-item
+				(click)="sortCommentBy('likes')"
+				[ngClass]="{ activeFilter: selectedFilter == 'likes' }"
+			>
+				<span>Top comments</span>
+			</button>
+			<button
+				mat-menu-item
+				(click)="sortCommentBy('myComments')"
+				[ngClass]="{ activeFilter: selectedFilter == 'myComments' }"
+			>
+				<span>My comments</span>
+			</button>
+		</mat-menu>
+	</div>
+</div>
+<div fxLayout="row" fxLayoutGap="17px">
+	<div
+		mat-card-avatar
+		class="example-header-image"
+		[ngStyle]="{
+			'background-image': isLoading
+				? 'none'
+				: logginUser?.pictureUrl || 'url(\'/assets/no-person.png\')'
+		}"
+	></div>
+	<app-comment-input
+		*ngIf="!isLoading"
+		fxFlex
+		submitName="Comment"
+		[autofocus]="false"
+		defaltInputValue=""
+		(onSubmit)="postComment($event)"
+	></app-comment-input>
+</div>
+
+<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+
+<ng-template #loadingTemplate>
+	<div >
+		<div class="view-comments" *ngFor="let skelton of [1, 2, 3, 4, 5]">
+			<app-comment-card [isLoading]="isLoading"></app-comment-card>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #contentTemplate>
+	<div class="view-comments" *ngFor="let comment of commentsDto">
+		<app-comment-card
+			[comment]="comment"
+			[videoId]="videoId"
+			[logginUser]="logginUser"
+			(onDelete)="deleteComment($event)"
+			(onUpdate)="saveComment($event)"
+		></app-comment-card>
+	</div>
+</ng-template>

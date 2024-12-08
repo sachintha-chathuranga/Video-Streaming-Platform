@@ -1,0 +1,40 @@
+.comment-header{
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+}
+.comment-header h3{
+  font-size: 20px;
+  margin-right: 32px;
+  font-weight: 500;
+}
+
+.comment-header .sort-menu .sort-btn{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 7px;
+}
+.comment-header .sort-menu p{
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.example-header-image {
+  background-size: cover;
+}
+
+.view-comments {
+  padding-top: 10px;
+}
+
+.activeFilter{
+  background-color: #dfdfdf;
+}
+
+.comment-header h3.skeleton{
+  width: 200px;
+  height: 30px;
+}
+
+

@@ -1,0 +1,76 @@
+<div class="scroll-container">
+	<span
+		*ngIf="!isLoading"
+		class="btn-cover left-btn"
+		[ngClass]="{ hidden: !leftButton || isWindowView }"
+	></span>
+	<button
+		*ngIf="!isLoading"
+		[ngClass]="{ hidden: !leftButton || isWindowView }"
+		class="mat-button left-btn"
+		mat-icon-button
+		(click)="scrollTo(false)"
+		aria-label="Scroll Left"
+	>
+		<mat-icon style="right: -2px">arrow_back_ios</mat-icon>
+	</button>
+
+	<div #scrollableContent class="scrollable-content" [ngClass]="{ 'window-view': isWindowView }">
+		<ng-container *ngIf="mode == 'chips'; then chipTemplate; else channelTemplate"></ng-container>
+		<ng-template #chipTemplate>
+			<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+			<ng-template #loadingTemplate>
+				<span
+					class="loop-wrapper"
+					*ngFor="let skelton of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+				>
+					<span class="mat-chip" [ngClass]="{ skeleton: isLoading }"></span>
+				</span>
+			</ng-template>
+			<ng-template #contentTemplate>
+				<span class="loop-wrapper" *ngFor="let item of items; let i = index">
+					<span
+						class="mat-chip"
+						[ngClass]="{ active: activeButtonIndex === i }"
+						(click)="filterList(item, i)"
+					>
+						{{ item }}
+					</span>
+				</span>
+			</ng-template>
+		</ng-template>
+		<ng-template #channelTemplate>
+			<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+			<ng-template #loadingTemplate>
+				<span class="loop-wrapper" *ngFor="let skelton of [1, 2, 3, 4, 5, 6]">
+					<channel-card [isWindowView]="isWindowView" [isLoading]="isLoading"></channel-card>
+				</span>
+			</ng-template>
+			<ng-template #contentTemplate>
+				<span class="loop-wrapper" *ngFor="let channel of channels">
+					<channel-card
+						#channels
+						[channel]="channel"
+						[isWindowView]="isWindowView"
+					></channel-card>
+				</span>
+			</ng-template>
+		</ng-template>
+	</div>
+
+	<span
+		*ngIf="!isLoading"
+		class="btn-cover right-btn"
+		[ngClass]="{ hidden: !rightButton || isWindowView }"
+	></span>
+	<button
+		*ngIf="!isLoading"
+		[ngClass]="{ hidden: !rightButton || isWindowView }"
+		class="mat-button right-btn"
+		mat-icon-button
+		(click)="scrollTo(true)"
+		aria-label="Scroll Right"
+	>
+		<mat-icon>arrow_forward_ios</mat-icon>
+	</button>
+</div>

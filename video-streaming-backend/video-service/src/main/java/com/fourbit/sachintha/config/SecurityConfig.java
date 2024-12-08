@@ -27,17 +27,17 @@ public class SecurityConfig {
 	private String audience;
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests((authorize) -> authorize
-				.requestMatchers("/api/videos/get-video/**", "/api/videos/get-all", "/api/videos/search").permitAll()
-				.anyRequest().authenticated()).cors(Customizer.withDefaults())
+	protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/videos/get-video/**",
+				"/api/videos/get-all", "/api/videos/search", "/api/videos/{videoId}/comments").permitAll().anyRequest()
+				.authenticated()).cors(Customizer.withDefaults())
 				.oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
 				.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		return http.build();
 	}
 
 	@Bean
-	public JwtDecoder jwtDecoder() {
+	protected JwtDecoder jwtDecoder() {
 		NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuer);
 
 		OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);

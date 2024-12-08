@@ -1,0 +1,35 @@
+<div class="card-container" [ngClass]="{ 'window-view': isWindowView, 'skeleton': isLoading }">
+	<div *ngIf="!isLoading" class="img-container">
+		<img [src]="channel.channelImage || './assets/no-person.png'" alt="" />
+	</div>
+	<div *ngIf="!isLoading" class="details">
+		<h3 class="text-overflow-1">{{ channel.name }}</h3>
+		<div *ngIf="isWindowView" style="margin-bottom: 5px">
+			<span>{{ '@' + channel.name }}</span>
+			<span id="dot">•</span>
+			<span>{{ channel.subscribersCount }} subscribers</span>
+		</div>
+		<p *ngIf="isWindowView" class="text-overflow-2">
+			{{ channel.description }}
+		</p>
+	</div>
+	<div *ngIf="!isLoading" class="button-section">
+		<button
+			*ngIf="!channel?.isUserSubscribe"
+			class="card-btn subscribe-button"
+			mat-flat-button
+			color="warn"
+			(click)="subscribeChannel()"
+		>
+			{{ isLoading ? '' : 'Subscribe' }}
+		</button>
+		<button
+			*ngIf="channel?.isUserSubscribe"
+			class="card-btn unsubscribe-button"
+			mat-flat-button
+			(click)="unSubscribeChannel()"
+		>
+			{{ isLoading ? '' : 'Unsubscribe' }}
+		</button>
+	</div>
+</div>

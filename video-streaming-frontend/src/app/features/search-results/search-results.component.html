@@ -1,0 +1,28 @@
+<app-filter-toolbar
+	(onLoading)="setLoading($event)"
+	(onError)="setError($event)"
+	(onVideoListChange)="setVideoList($event)"
+></app-filter-toolbar>
+<app-error-message
+	*ngIf="errorObject"
+	[errorObject]="errorObject"
+	(onRetryClick)="fetchData()"
+></app-error-message>
+
+<div fxLayout="column" fxLayoutGap="10px">
+	<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+	<ng-template #loadingTemplate>
+		<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
+			<app-video-card cardSize="meadium" [isLoading]="isLoading"></app-video-card>
+		</div>
+	</ng-template>
+	<ng-template #contentTemplate>
+		<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
+			<app-video-card
+				[video]="video"
+				[isLoading]="isLoading"
+				cardSize="meadium"
+			></app-video-card>
+		</div>
+	</ng-template>
+</div>
