@@ -65,6 +65,9 @@ public class User {
 	@ManyToMany(mappedBy = "dislikes", cascade = CascadeType.ALL)
 	private List<Comment> dislikeComments = new ArrayList<>();
 
+	@ManyToMany(mappedBy = "views", cascade = CascadeType.ALL)
+	private List<Video> viewVideos = new ArrayList<>();
+
 	public User(Long id, String firstName, String lastName, String email, String pictureUrl, String about, String sub) {
 		this.id = id;
 		this.firstName = firstName;

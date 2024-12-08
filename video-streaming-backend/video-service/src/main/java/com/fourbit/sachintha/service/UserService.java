@@ -134,10 +134,12 @@ public class UserService {
 
 	@Transactional
 	public Boolean updateVideoHistory(Long videoId) {
+		logger.info("Invoke updateVideoHistory function");
 		User user = this.getRequestedUser();
 		VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), videoId);
 		LocalDateTime watchTime = LocalDateTime.now();
 		if (videoHistory == null) {
+			logger.info("create new videoHistory");
 			Video video = this.videoRepository.findById(videoId)
 					.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
 
@@ -147,8 +149,13 @@ public class UserService {
 			videoHistory.setVideo(video);
 			videoHistory.setWatchTime(watchTime);
 			// increament video views count by one
-			video.setViewsCount(video.getViewsCount() + 1);
+			List<User> views = video.getViews();
+			if (!views.contains(user)) {
+				logger.info("Create new Views");
+				views.add(user);
+			}
 		} else {
+			logger.info("Update existing videoHistory");
 			// update watch time
 			videoHistory.setWatchTime(watchTime);
 		}
@@ -156,10 +163,10 @@ public class UserService {
 		return true;
 	}
 
-	public String removeHistoryVideo(Long videoId) {
+	public Boolean removeHistoryVideo(Long videoId) {
 		User user = this.getRequestedUser();
 		videoHistoryRepository.deleteByUserAndVideo(user.getId(), videoId);
-		return "Video remove from history";
+		return true;
 	}
 
 //	Use @Transactional(readOnly = true) for methods that only fetch data.

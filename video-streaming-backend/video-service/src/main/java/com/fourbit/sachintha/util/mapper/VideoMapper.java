@@ -19,11 +19,12 @@ public class VideoMapper {
 		Long likesCount = Long.valueOf(video.getLikes().size());
 		Long dislikesCount = Long.valueOf(video.getDislikes().size());
 		Long commentsCount = Long.valueOf(video.getComments().size());
+		Long viewsCount = Long.valueOf(video.getViews().size());
 		List<String> tags = video.getTags().stream().map(data -> TagMapper.maptoString(data)).toList();
 		VideoDto videoDto = new VideoDto(video.getId(), video.getDescription(), video.getTitle(),
 				ChannelMapper.mapTochannelDto(video.getChannel()), video.getVideoUrl(), video.getVideoStatus(),
-				video.getThumbnailUrl(), tags, likesCount, dislikesCount, Long.valueOf(video.getViewsCount()),
-				commentsCount, video.getCreatedTime(), video.getDuration(), uls);
+				video.getThumbnailUrl(), tags, likesCount, dislikesCount, viewsCount, commentsCount,
+				video.getCreatedTime(), video.getDuration(), uls);
 
 		return videoDto;
 
@@ -41,11 +42,12 @@ public class VideoMapper {
 		Long likesCount = Long.valueOf(video.getLikes().size());
 		Long dislikesCount = Long.valueOf(video.getDislikes().size());
 		Long commentsCount = Long.valueOf(video.getComments().size());
+		Long viewsCount = Long.valueOf(video.getViews().size());
 		List<String> tags = video.getTags().stream().map(data -> TagMapper.maptoString(data)).toList();
 		VideoDto videoDto = new VideoDto(video.getId(), video.getDescription(), video.getTitle(),
 				ChannelMapper.mapTochannelDto(video.getChannel(), requestedUser), video.getVideoUrl(),
-				video.getVideoStatus(), video.getThumbnailUrl(), tags, likesCount, dislikesCount,
-				Long.valueOf(video.getViewsCount()), commentsCount, video.getCreatedTime(), video.getDuration(), uls);
+				video.getVideoStatus(), video.getThumbnailUrl(), tags, likesCount, dislikesCount, viewsCount,
+				commentsCount, video.getCreatedTime(), video.getDuration(), uls);
 
 		return videoDto;
 
@@ -55,10 +57,10 @@ public class VideoMapper {
 		if (video == null) {
 			return null;
 		}
-
+		Long viewsCount = Long.valueOf(video.getViews().size());
 		VideoCardDto videoDto = new VideoCardDto(video.getId(), video.getTitle(), video.getDescription(),
-				video.getThumbnailUrl(), video.getChannel().getName(), video.getChannel().getChannelImage(),
-				Long.valueOf(video.getViewsCount()), video.getCreatedTime());
+				video.getThumbnailUrl(), video.getChannel().getName(), video.getChannel().getChannelImage(), viewsCount,
+				video.getCreatedTime());
 
 		return videoDto;
 

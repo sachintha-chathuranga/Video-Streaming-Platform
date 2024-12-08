@@ -69,9 +69,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("/history/{videoId}")
-	public ResponseEntity<String> removeVideoFromHistory(@PathVariable Long videoId) {
-		String message = userService.removeHistoryVideo(videoId);
-		return ResponseEntity.ok(message);
+	public ResponseEntity<Boolean> removeVideoFromHistory(@PathVariable Long videoId) {
+		return ResponseEntity.ok(userService.removeHistoryVideo(videoId));
 	}
 
 	@GetMapping("/history")

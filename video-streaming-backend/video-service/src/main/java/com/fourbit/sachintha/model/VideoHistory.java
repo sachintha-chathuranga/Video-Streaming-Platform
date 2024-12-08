@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "user_views_history")
+@Table(name = "user_video_history")
 @AllArgsConstructor
 @NoArgsConstructor
 public class VideoHistory {

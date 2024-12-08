@@ -30,8 +30,7 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 			+ " ( :duration = 'lt-4min' AND v.duration < 4 ) OR "
 			+ " ( :duration = 'bt-4min-20min' AND v.duration BETWEEN 4 AND 20 ) OR "
 			+ " ( :duration = 'gt-20min' AND v.duration > 20 ) ) " + "ORDER BY "
-			+ "CASE WHEN :sortBy = 'date' THEN v.createdTime END DESC, "
-			+ "CASE WHEN :sortBy = 'views' THEN v.viewsCount END DESC")
+			+ "CASE WHEN :sortBy = 'date' THEN v.createdTime END DESC")
 	List<Video> searchVideosByFilter(@Param("searchQuery") String searchQuery,
 			@Param("startDate") LocalDateTime startDate, @Param("duration") String duration,
 			@Param("sortBy") String sortBy);
