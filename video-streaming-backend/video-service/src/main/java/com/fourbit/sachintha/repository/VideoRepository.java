@@ -1,7 +1,6 @@
 package com.fourbit.sachintha.repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,33 +13,42 @@ import com.fourbit.sachintha.model.VideoStatus;
 
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
-//	@Query("SELECT v FROM Video v WHERE " + "( :startDate IS NULL OR v.createdTime >= :startDate ) AND "
-//			+ "( :duration = '' OR " + " ( :duration = 'lt-4min' AND v.duration < 4 ) OR "
-//			+ " ( :duration = 'bt-4min-20min' AND v.duration BETWEEN 4 AND 20 ) OR "
-//			+ " ( :duration = 'gt-20min' AND v.duration > 20 ) ) " + "ORDER BY "
-//			+ "CASE WHEN :sortBy = 'date' THEN v.createdTime END DESC, "
-//			+ "CASE WHEN :sortBy = 'views' THEN v.viewsCount END DESC ")
-//	List<Video> findVideosByFilter(@Param("startDate") LocalDateTime startDate, @Param("duration") String duration,
-//			@Param("sortBy") String sortBy);
-
-	@Query("SELECT v FROM Video v WHERE "
-			+ "( :searchQuery = '' OR LOWER(v.title) LIKE LOWER(CONCAT('%', :searchQuery, '%'))"
-			+ "   OR LOWER(v.description) LIKE LOWER(CONCAT('%', :searchQuery, '%')) ) AND"
-			+ "( :startDate IS NULL OR v.createdTime >= :startDate ) AND " + "( :duration = '' OR "
-			+ " ( :duration = 'lt-4min' AND v.duration < 4 ) OR "
-			+ " ( :duration = 'bt-4min-20min' AND v.duration BETWEEN 4 AND 20 ) OR "
-			+ " ( :duration = 'gt-20min' AND v.duration > 20 ) ) " + "ORDER BY "
-			+ "CASE WHEN :sortBy = 'date' THEN v.createdTime END DESC")
-	List<Video> searchVideosByFilter(@Param("searchQuery") String searchQuery,
-			@Param("startDate") LocalDateTime startDate, @Param("duration") String duration,
-			@Param("sortBy") String sortBy);
+	@Query("""
+			SELECT v FROM Video v WHERE v.videoStatus = 'PUBLIC' AND
+			(:searchQuery = '' OR LOWER(v.title) LIKE LOWER(CONCAT('%', :searchQuery, '%'))
+			  OR LOWER(v.description) LIKE LOWER(CONCAT('%', :searchQuery, '%'))) AND
+			 (:startDate IS NULL OR v.createdTime >= :startDate)  AND
+			  (:duration = '' OR
+			 :duration = 'lt-4min' AND v.duration < 4  OR
+			  :duration = 'bt-4min-20min' AND v.duration BETWEEN 4 AND 20 OR
+			:duration = 'gt-20min' AND v.duration > 20)
+			""")
+	Page<Video> searchVideosByFilter(@Param("searchQuery") String searchQuery,
+			@Param("startDate") LocalDateTime startDate, @Param("duration") String duration, Pageable pageable);
 
 	@Query("SELECT v FROM Video v JOIN v.tags t WHERE  v.videoStatus = :status AND t.name = :tagName")
-	List<Video> findVideosByTagName(@Param("status") VideoStatus status, @Param("tagName") String tagName);
+	Page<Video> findVideosByTagName(@Param("status") VideoStatus status, @Param("tagName") String tagName,
+			Pageable pageable);
 
 	@Query("SELECT v FROM Video v WHERE v.channel.id = :channelId")
 	Page<Video> findByChannelId(@Param("channelId") Long channelId, Pageable pageable);
 
-	List<Video> findByVideoStatus(VideoStatus videoStatus);
+	Page<Video> findByVideoStatus(VideoStatus videoStatus, Pageable pageable);
+
+	@Query("""
+			SELECT v FROM Video v JOIN v.saveUsers u WHERE u.id = :userId AND
+			(:searchQuery='' OR LOWER(v.title) LIKE LOWER(CONCAT('%', :searchQuery, '%')) OR
+			LOWER(v.description) LIKE LOWER(CONCAT('%', :searchQuery, '%')))
+			""")
+	Page<Video> findSavedVideosByUserId(@Param("userId") Long userId, @Param("searchQuery") String searchQuery,
+			Pageable pageable);
+
+	@Query("""
+			SELECT v FROM Video v
+			        JOIN v.channel c
+			        JOIN c.subscribers u
+			        WHERE u.id = :userId AND v.videoStatus = 'PUBLIC'
+			""")
+	Page<Video> findLatestSubscriptionVideos(Long userId, Pageable pageable);
 
 }

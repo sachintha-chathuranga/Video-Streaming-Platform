@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,6 +34,8 @@ public class User {
 	private String pictureUrl;
 	private String about;
 	private String sub;
+	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+	private Boolean isRecordHistory;
 
 	// this will create new field in table name as channel_id
 	@OneToOne(cascade = CascadeType.ALL)
@@ -68,7 +71,8 @@ public class User {
 	@ManyToMany(mappedBy = "views", cascade = CascadeType.ALL)
 	private List<Video> viewVideos = new ArrayList<>();
 
-	public User(Long id, String firstName, String lastName, String email, String pictureUrl, String about, String sub) {
+	public User(Long id, String firstName, String lastName, String email, String pictureUrl, String about, String sub,
+			Boolean isRecordHistory) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -76,6 +80,7 @@ public class User {
 		this.pictureUrl = pictureUrl;
 		this.about = about;
 		this.sub = sub;
+		this.isRecordHistory = isRecordHistory;
 	}
 
 	public String getFullName() {

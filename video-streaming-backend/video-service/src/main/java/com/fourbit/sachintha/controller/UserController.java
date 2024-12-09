@@ -74,16 +74,22 @@ public class UserController {
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<Page<VideoCardDto>> getVideoHistory(@RequestParam(defaultValue = "0") String page,
-			@RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "watchTime") String sortBy,
+	public ResponseEntity<Page<VideoCardDto>> getVideoHistory(
+			@RequestParam(required = false, defaultValue = "") String searchQuery,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "watchTime") String sortBy,
 			@RequestParam(defaultValue = "desc") String sortDirection) {
-		return ResponseEntity.ok(userService.getVideoHistory(page, size, sortBy, sortDirection));
+		return ResponseEntity.ok(userService.getVideoHistory(page, size, sortBy, sortDirection, searchQuery));
 	}
 
 	@DeleteMapping("/history")
-	public ResponseEntity<String> clearVideoHistory() {
-		String message = userService.clearVideoHistory();
-		return ResponseEntity.ok(message);
+	public ResponseEntity<Boolean> clearVideoHistory() {
+		return ResponseEntity.ok(userService.clearVideoHistory());
+	}
+
+	@PostMapping("/history")
+	public ResponseEntity<Boolean> toggleHistoryRecording() {
+		return ResponseEntity.ok(userService.toggleHistoryRecording());
 	}
 
 	@GetMapping("/subscriptions")
@@ -94,6 +100,14 @@ public class UserController {
 		return ResponseEntity.ok(list);
 	}
 
+	@GetMapping("/subscriptions/videos")
+	public ResponseEntity<Page<VideoCardDto>> getSubscriptionsVideos(@RequestParam(defaultValue = "0") String page,
+			@RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "createdTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		Page<VideoCardDto> list = userService.getUserSubscriptionsVideos(page, size, sortBy, sortDirection);
+		return ResponseEntity.ok(list);
+	}
+
 	@PutMapping("/playlist")
 	public ResponseEntity<Boolean> saveVideoToPlaylist(@RequestBody Long videoId) {
 		userService.addVideoToPlaylist(videoId);
@@ -101,9 +115,12 @@ public class UserController {
 	}
 
 	@GetMapping("/playlist")
-	public ResponseEntity<List<VideoCardDto>> getPlaylist(@RequestParam(required = false) String searchQuery) {
-		List<VideoCardDto> playlist = userService.getVideoPlaylist(searchQuery);
-		return ResponseEntity.ok(playlist);
+	public ResponseEntity<Page<VideoCardDto>> getPlaylist(
+			@RequestParam(required = false, defaultValue = "") String searchQuery,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "title") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDirection) {
+		return ResponseEntity.ok(userService.getVideoPlaylist(page, size, sortBy, sortDirection, searchQuery));
 	}
 
 	@DeleteMapping("/playlist")

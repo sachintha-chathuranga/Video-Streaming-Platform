@@ -15,4 +15,5 @@ public class UserDto {
 	private String pictureUrl;
 	private String about;
 	private String sub;
+	private Boolean isRecordHistory;
 }

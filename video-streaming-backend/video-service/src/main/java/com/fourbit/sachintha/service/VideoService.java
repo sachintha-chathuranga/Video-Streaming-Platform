@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -107,20 +112,40 @@ public class VideoService {
 		return thumbnailUrl;
 	}
 
-	public List<VideoCardDto> getVideos(String tagName) {
-		List<Video> videos;
+	public Page<VideoCardDto> getVideos(String tagName, String page, String size, String sortField,
+			String sortDirection) {
+		logger.info("Invoke getVideoHistory function");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+
+		Pageable pageable;
+		Page<Video> videos;
+
+		Sort sort = Sort.by(sortField);
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
 		if (tagName == null || tagName.equalsIgnoreCase("All") || tagName.isEmpty()) {
-			videos = videoRepository.findByVideoStatus(VideoStatus.PUBLIC);
+			videos = videoRepository.findByVideoStatus(VideoStatus.PUBLIC, pageable);
 		} else {
-			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, tagName);
+			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, tagName, pageable);
 		}
-		List<VideoCardDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoCardDto(video)).toList();
+		Page<VideoCardDto> videoList = videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 		return videoList;
 	}
 
-	public List<VideoCardDto> searchVideos(String searchQuery, String date, String duration, String sortBy) {
+	public Page<VideoCardDto> searchVideos(String searchQuery, String date, String duration, String page, String size,
+			String sortField, String sortDirection) {
 		LocalDateTime startDate = null;
-
+		logger.info("Invoke searchVideos function");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		logger.info("date: " + date);
+		logger.info("SearchQuery: " + searchQuery);
+		logger.info("Duration: " + duration);
 		// Calculate start date based on the 'date' filter
 		switch (date) {
 		case "lh" -> startDate = LocalDateTime.now().minusHours(1);
@@ -129,8 +154,16 @@ public class VideoService {
 		case "tm" -> startDate = LocalDateTime.now().minusMonths(1);
 		case "ty" -> startDate = LocalDateTime.now().minusYears(1);
 		}
-		List<Video> videos = videoRepository.searchVideosByFilter(searchQuery, startDate, duration, sortBy);
-		List<VideoCardDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoCardDto(video)).toList();
+		Sort sort;
+		if (sortField.equals("createdTime")) {
+			sort = Sort.by(sortField);
+		} else {
+			sort = JpaSort.unsafe("size(" + sortField + ")");
+		}
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		Pageable pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+		Page<Video> videos = videoRepository.searchVideosByFilter(searchQuery, startDate, duration, pageable);
+		Page<VideoCardDto> videoList = videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 		return videoList;
 	}
 
