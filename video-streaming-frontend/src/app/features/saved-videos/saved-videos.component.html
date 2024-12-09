@@ -10,18 +10,18 @@
 				</div>
 			</div>
 		</ng-template>
-    <ng-template #contentTemplate>
-      <div fxLayout="column" fxLayoutGap="10px">
-        <div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
-          <app-video-card
-            [video]="video"
-            [cardMenuItems]="cardMenuItems"
-            (onDelete)="handleDelete($event)"
-            cardSize="meadium"
-          ></app-video-card>
-        </div>
-      </div>
-    </ng-template>
+		<ng-template #contentTemplate>
+			<div fxLayout="column" fxLayoutGap="10px">
+				<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
+					<app-video-card
+						[video]="video"
+						[cardMenuItems]="cardMenuItems"
+						(onDelete)="handleDelete($event)"
+						cardSize="meadium"
+					></app-video-card>
+				</div>
+			</div>
+		</ng-template>
 	</div>
 	<div
 		fxFlex="42%"
@@ -32,22 +32,26 @@
 		fxLayoutAlign.lt-sm="center"
 	>
 		<div class="setting-container">
-			<mat-form-field class="mat-form-field">
+			<mat-form-field [autofocus]="true" class="mat-form-field">
 				<mat-icon>search</mat-icon>
 				<input
-					[disabled]="isLoading || videoList?.length == 0"
 					matInput
 					placeholder="Search save videos"
-					(input)="onSearch($event)"
+					(input)="onSearch()"
 					[(ngModel)]="searchInput"
+					autofocus
 				/>
-				@if (searchInput) {
-				<button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+	
+				<button *ngIf="searchInput" matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
 					<mat-icon>close</mat-icon>
 				</button>
-				}
+		
 			</mat-form-field>
-			<button mat-flat-button [disabled]="isLoading || videoList?.length == 0" (click)="clearPlayList()">
+			<button
+				mat-flat-button
+				[disabled]="isDeleting || isLoading"
+				(click)="clearPlayList()"
+			>
 				<mat-icon>delete</mat-icon>
 				Clear all saved videos
 			</button>

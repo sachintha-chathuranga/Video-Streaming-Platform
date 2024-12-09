@@ -92,9 +92,9 @@ export class SubscriptionsComponent {
 	}
 	fetchVideos() {
 		this.getVideoLoading = true;
-		this.videoService.getAllVideos('').subscribe({
-			next: (data: VideoCardDto[]) => {
-				this.subcribeVideos = data;
+		this.userService.getLatestVideoFromSubscriptions().subscribe({
+			next: (data: PaginatedResponse<VideoCardDto>) => {
+				this.subcribeVideos = data.content;
 				this.getVideoLoading = false;
 			},
 			error: (error: HttpErrorResponse) => {

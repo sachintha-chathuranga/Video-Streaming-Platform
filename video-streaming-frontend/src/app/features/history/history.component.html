@@ -5,11 +5,7 @@
 		<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
 		<ng-template #loadingTemplate>
 			<div fxLayout="column" fxLayoutGap="10px">
-				<div
-					class="fxItem"
-					fxFlex="100%"
-					*ngFor="let skelton of [1, 2, 3, 4, 5]"
-				>
+				<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
 					<app-video-card cardSize="meadium" [isLoading]="isLoading"></app-video-card>
 				</div>
 			</div>
@@ -38,20 +34,31 @@
 		<div class="setting-container">
 			<mat-form-field class="mat-form-field">
 				<mat-icon>search</mat-icon>
-				<input matInput placeholder="Search watch history" [disabled]="isLoading || videoList?.length == 0"  [(ngModel)]="searchInput" />
-				@if (searchInput) {
-				<button matSuffix mat-icon-button aria-label="Clear" (click)="searchInput = ''">
+				<input
+					matInput
+					placeholder="Search watch history"
+					(input)="onSearch()"
+					[(ngModel)]="searchInput"
+					autofocus
+				/>
+
+				<button
+					*ngIf="searchInput"
+					matSuffix
+					mat-icon-button
+					aria-label="Clear"
+					(click)="clearInput()"
+				>
 					<mat-icon>close</mat-icon>
 				</button>
-				}
 			</mat-form-field>
-			<button mat-flat-button [disabled]="isLoading || videoList?.length == 0" >
+			<button mat-flat-button (click)="clearHistory()" [disabled]="isDeleting || isLoading">
 				<mat-icon>delete</mat-icon>
 				Clear all watch history
 			</button>
-			<button mat-flat-button [disabled]="isLoading">
-				<mat-icon>pause</mat-icon>
-				Pause watch history
+			<button mat-flat-button [disabled]="isLoading || isDeleting" (click)="togglePauseHistory()">
+				<mat-icon>{{isRecordHistory ? 'pause' : 'play_arrow'}}</mat-icon>
+				{{isRecordHistory ? 'Pause' : 'Record'}} watch history
 			</button>
 		</div>
 	</div>

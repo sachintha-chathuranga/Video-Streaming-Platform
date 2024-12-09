@@ -91,7 +91,7 @@
 						<mat-menu #menu="matMenu" class="custom-menu">
 							<button
 								mat-menu-item
-								*ngFor="let item of cardMenuItems"
+								*ngFor="let item of videoMenuItems"
 								[disabled]="item.isDisable"
 								(click)="handleMenuClick(item.action)"
 							>
@@ -126,7 +126,7 @@
 		<ng-template #loadingTemplate>
 			<div fxLayout="column" fxLayoutGap="10px">
 				<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
-					<app-video-card cardSize="small" [isLoading]="isVideoListLoading"></app-video-card>
+					<app-video-card  cardSize="small" [isLoading]="isVideoListLoading"></app-video-card>
 				</div>
 			</div>
 		</ng-template>
@@ -137,6 +137,7 @@
 						[video]="video"
 						[isLoading]="isVideoListLoading"
 						cardSize="small"
+						[cardMenuItems]="videoCardMenuItems"
 					></app-video-card>
 				</div>
 			</div>

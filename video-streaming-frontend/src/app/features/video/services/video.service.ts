@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { LikeDislikeResponse } from '../../../core/models/likeDislikeldto';
+import { PaginatedResponse } from '../../../core/models/pagination.dto';
 import { VideoDto } from '../../../core/models/video.dto';
 import { VideoCardDto } from '../../../shared/components/video-card/model/videoCard.dto';
 import { VideoUpdateDto } from '../models/videoUpdate.dto';
@@ -24,7 +25,7 @@ export class VideoService {
 	saveVideoToCache(video: VideoDto) {
 		this.video = video;
 	}
-	
+
 	likeVideo(videoId: string): Observable<LikeDislikeResponse> {
 		return this.httpClient
 			.put<LikeDislikeResponse>(`${this.apiEndpoint}/videos/${videoId}/toggle-like`, null)
@@ -67,9 +68,11 @@ export class VideoService {
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 
-	getAllVideos(tagName: string): Observable<VideoCardDto[]> {
+	getFeatureVideos(tagName: string): Observable<PaginatedResponse<VideoCardDto>> {
 		return this.httpClient
-			.get<VideoCardDto[]>(this.apiEndpoint + '/videos/get-all' + `?tagName=${tagName}`)
+			.get<PaginatedResponse<VideoCardDto>>(
+				`${this.apiEndpoint}/videos/feature?tagName=${tagName}`
+			)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 	searchVideos(
@@ -77,13 +80,17 @@ export class VideoService {
 		date: string,
 		duration: string,
 		sortBy: string
-	): Observable<VideoCardDto[]> {
+	): Observable<PaginatedResponse<VideoCardDto>> {
+		let params = new HttpParams()
+			.set('searchQuery', searchQuery)
+			.set('date', date)
+			.set('duration', duration)
+			// .set('page', page)
+			// .set('size', size)
+			.set('sortBy', sortBy);
+		// .set('sortDirection', sortDirection);
 		return this.httpClient
-			.get<VideoCardDto[]>(
-				this.apiEndpoint +
-					'/videos/search' +
-					`?searchQuery=${searchQuery}&date=${date}&duration=${duration}&sortBy=${sortBy}`
-			)
+			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/videos/search`, { params })
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 }

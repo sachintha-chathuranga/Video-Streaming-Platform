@@ -15,6 +15,7 @@ import { SliderToolbarComponent } from '../../shared/components/slider-toolbar/s
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { VideoService } from '../video/services/video.service';
+import { PaginatedResponse } from '../../core/models/pagination.dto';
 @Component({
 	selector: 'app-feature',
 	standalone: true,
@@ -78,10 +79,10 @@ export class FeatureComponent implements OnInit {
 	}
 	fetchData() {
 		this.isLoading = true;
-		this.videoService.getAllVideos(this.tagName).subscribe({
-			next: (data: VideoCardDto[]) => {
+		this.videoService.getFeatureVideos(this.tagName).subscribe({
+			next: (data: PaginatedResponse<VideoCardDto>) => {
 				this.errorObject = null;
-				this.featuredVideos = data;
+				this.featuredVideos = data.content;
 				this.isLoading = false;
 			},
 			error: (error: HttpErrorResponse) => {

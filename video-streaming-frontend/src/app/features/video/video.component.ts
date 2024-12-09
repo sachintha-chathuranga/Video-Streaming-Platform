@@ -25,6 +25,7 @@ import { CommentComponent } from './components/comments/comment.component';
 import { VideoService } from './services/video.service';
 import { LifetimePipe } from '../../shared/pipes/lifetime.pipe';
 import { Subscription } from '../../shared/models/subscription.dto';
+import { PaginatedResponse } from '../../core/models/pagination.dto';
 
 @Component({
 	selector: 'app-video',
@@ -52,13 +53,21 @@ export class VideoComponent implements OnInit {
 	isLoading: boolean = false;
 	isVideoListLoading: boolean = false;
 	isExpanded = false;
-	cardMenuItems: CardMenuItem[] = [
+	videoMenuItems: CardMenuItem[] = [
 		{
 			name: 'Download',
 			icon: 'vertical_align_bottom',
 			isDisable: false,
 			action: 'download_video',
 		},
+		{
+			name: 'Save video',
+			icon: 'save',
+			isDisable: false,
+			action: 'save_to_playlist',
+		},
+	];
+	videoCardMenuItems: CardMenuItem[] = [
 		{
 			name: 'Save video',
 			icon: 'save',
@@ -136,9 +145,9 @@ export class VideoComponent implements OnInit {
 	}
 	fetchVideoList() {
 		this.isVideoListLoading = true;
-		this.videoService.getAllVideos('').subscribe({
-			next: (data: VideoCardDto[]) => {
-				this.videoList = data;
+		this.videoService.getFeatureVideos('').subscribe({
+			next: (response: PaginatedResponse<VideoCardDto>) => {
+				this.videoList = response.content;
 				this.isVideoListLoading = false;
 			},
 			error: (errorResponse: HttpErrorResponse) => {

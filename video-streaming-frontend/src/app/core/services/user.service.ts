@@ -4,12 +4,10 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Channel } from '../../features/channel/models/channel.dto';
 import { UserUpdateDto } from '../../features/profile/models/userUpdate.dto';
-import { AuthUserDto } from '../models/auth.dto';
-import { UserDto } from '../models/user.dto';
-import { VideoDto } from '../models/video.dto';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
+import { AuthUserDto } from '../models/auth.dto';
 import { PaginatedResponse } from '../models/pagination.dto';
-import { CommentDto } from '../../features/video/components/comments/models/comment.dto';
+import { UserDto } from '../models/user.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -17,8 +15,10 @@ import { CommentDto } from '../../features/video/components/comments/models/comm
 export class UserService {
 	private user!: UserDto;
 	constructor(private httpClient: HttpClient) {
+		console.log('User Service Rendered');
 		let localUser = sessionStorage.getItem('user');
 		if (localUser) {
+			console.log('Local user available');
 			this.user = JSON.parse(localUser);
 		}
 	}
@@ -31,16 +31,12 @@ export class UserService {
 		this.user = user;
 		sessionStorage.setItem('user', JSON.stringify(user));
 	}
+	setIsRecordHistory(isRecord: boolean) {
+		this.user.isRecordHistory = isRecord;
+		sessionStorage.setItem('user', JSON.stringify(this.user));
+	}
 	removeUser() {
 		sessionStorage.removeItem('user');
-	}
-
-	getUserDetails(videoId: string) {
-		console.log('get user');
-	}
-
-	getUserId() {
-		return this.user?.id;
 	}
 
 	updateUser(userData: UserUpdateDto): Observable<UserDto> {
@@ -48,7 +44,6 @@ export class UserService {
 			.put<UserDto>(this.apiEndpoint + '/users/update', userData)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-
 	registerUser(userData: any, token: any) {
 		console.log(userData);
 		let newUser: AuthUserDto = {
@@ -68,6 +63,7 @@ export class UserService {
 			});
 	}
 
+	// User Plalist API calls
 	saveVideoToUserPlalist(videoId: number): Observable<boolean> {
 		return this.httpClient
 			.put<boolean>(`${this.apiEndpoint}/users/playlist`, videoId)
@@ -78,13 +74,13 @@ export class UserService {
 			.delete<boolean>(`${this.apiEndpoint}/users/playlist/${videoId}`)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-
-	getUserPlaylist(searchQuery: string): Observable<VideoCardDto[]> {
+	getUserPlaylist(searchQuery: string): Observable<PaginatedResponse<VideoCardDto>> {
 		return this.httpClient
-			.get<VideoCardDto[]>(this.apiEndpoint + '/users/playlist' + `?searchQuery=${searchQuery}`)
+			.get<PaginatedResponse<VideoCardDto>>(
+				this.apiEndpoint + '/users/playlist' + `?searchQuery=${searchQuery}`
+			)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-
 	deletePlaylist(): Observable<boolean> {
 		return this.httpClient
 			.delete<boolean>(`${this.apiEndpoint}/users/playlist`)
@@ -109,13 +105,31 @@ export class UserService {
 			})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
+
+	getLatestVideoFromSubscriptions(): Observable<PaginatedResponse<VideoCardDto>> {
+		// let params = new HttpParams()
+		// 	.set('page', page)
+		// 	.set('size', size)
+		// 	.set('sortBy', sortBy)
+		// 	.set('sortDirection', sortDirection);
+
+		return this.httpClient
+			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/users/subscriptions/videos`, {
+				// params,
+			})
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+
+	// User history API calls
 	getVideoHistory(
 		page: number,
 		size: number,
 		sortBy: string,
-		sortDirection: string
+		sortDirection: string,
+		searchQuery: string
 	): Observable<PaginatedResponse<VideoCardDto>> {
 		let params = new HttpParams()
+			.set('searchQuery', searchQuery)
 			.set('page', page)
 			.set('size', size)
 			.set('sortBy', sortBy)
@@ -135,6 +149,16 @@ export class UserService {
 	removeVideoFromUserHistory(videoId: number): Observable<boolean> {
 		return this.httpClient
 			.delete<boolean>(`${this.apiEndpoint}/users/history/${videoId}`)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	clearHistory(): Observable<boolean> {
+		return this.httpClient
+			.delete<boolean>(`${this.apiEndpoint}/users/history`)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	pauseVideoHistory(): Observable<boolean> {
+		return this.httpClient
+			.post<boolean>(`${this.apiEndpoint}/users/history`, {})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 }

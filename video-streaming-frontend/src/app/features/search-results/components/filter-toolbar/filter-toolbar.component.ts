@@ -14,12 +14,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
+import { PaginatedResponse } from '../../../../core/models/pagination.dto';
 
 @Component({
 	selector: 'app-filter-toolbar',
 	standalone: true,
 	imports: [
-    CommonModule,
+		CommonModule,
 		FlexLayoutModule,
 		MatFormFieldModule,
 		MatSelectModule,
@@ -41,7 +42,7 @@ export class FilterToolbarComponent {
 
 	sortOptions: FilterOptions[] = [
 		{ value: '', viewValue: 'Relevance' },
-		{ value: 'date', viewValue: 'Upload date' },
+		{ value: 'createdTime', viewValue: 'Upload date' },
 		{ value: 'views', viewValue: 'View count' },
 		{ value: 'likes', viewValue: 'Likes count' },
 	];
@@ -70,7 +71,7 @@ export class FilterToolbarComponent {
 	durationFilter: string = this.durationOptions[0].value;
 	searchQuery!: string;
 	isFilters: boolean = false;
-  isLoading: boolean = false;
+	isLoading: boolean = false;
 
 	constructor(
 		private videoService: VideoService,
@@ -81,25 +82,25 @@ export class FilterToolbarComponent {
 	ngOnInit(): void {
 		this.activatedRoute.queryParams.subscribe((params) => {
 			this.searchQuery = params['search_query'];
-			// this.fetchData();
+			this.fetchData();
 		});
 	}
 	fetchData() {
 		this.onLoading.emit(true);
-    this.isLoading =true;
+		this.isLoading = true;
 		this.videoService
 			.searchVideos(this.searchQuery, this.dateFilter, this.durationFilter, this.sortBy)
 			.subscribe({
-				next: (data: VideoCardDto[]) => {
-					this.onVideoListChange.emit(data);
-          this.onError.emit(null);
+				next: (data: PaginatedResponse<VideoCardDto>) => {
+					this.onVideoListChange.emit(data.content);
+					this.onError.emit(null);
 					this.onLoading.emit(false);
-          this.isLoading=false;
+					this.isLoading = false;
 				},
 				error: (error: HttpErrorResponse) => {
-          this.onError.emit(this.errorService.generateError(error));
+					this.onError.emit(this.errorService.generateError(error));
 					this.onLoading.emit(false);
-          this.isLoading=false;
+					this.isLoading = false;
 				},
 			});
 	}
