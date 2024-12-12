@@ -6,7 +6,7 @@
 		<ng-template #loadingTemplate>
 			<div fxLayout="column" fxLayoutGap="10px">
 				<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
-					<app-video-card cardSize="meadium" [isLoading]="isLoading"></app-video-card>
+					<app-video-card [cardSize]="windowSize" [isLoading]="isLoading"></app-video-card>
 				</div>
 			</div>
 		</ng-template>
@@ -17,7 +17,7 @@
 						[video]="video"
 						[cardMenuItems]="cardMenuItems"
 						(onDelete)="handleDelete($event)"
-						cardSize="meadium"
+						[cardSize]="windowSize"
 					></app-video-card>
 				</div>
 			</div>

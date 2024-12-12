@@ -16,25 +16,26 @@
 			/>
 		</div>
 		<div class="header-details">
-			<h1 class="channel-name" [ngClass]="{ skeleton: isLoading }">{{ channel && channel.name }}</h1>
+			<h1 class="channel-name" [ngClass]="{ skeleton: isLoading }">
+				{{ channel && channel.name }}
+			</h1>
 			<p class="channel-info" [ngClass]="{ skeleton: isLoading }">
-				{{
-					channel
-						? '&#64;' +
-						  channel.name +
-						  ' • ' +
-						  channel.subscribersCount +
-						  ' subscribers • ' +
-						  channel.videoCount +
-						  ' videos'
-						: ''
-				}}
+				<span id="hashTag">
+					{{ channel ? '&#64;' + channel.name + ' • ' : '' }}
+				</span>
+				<span>
+					{{
+						channel
+							? channel.subscribersCount + ' subscribers • ' + channel.videoCount + ' videos'
+							: ''
+					}}
+				</span>
 			</p>
-			<p	class="channel-description text-overflow-1" [ngClass]="{ skeleton: isLoading }">
+			<p class="channel-description text-overflow-1" [ngClass]="{ skeleton: isLoading }">
 				{{ channel ? channel.description || 'Welcome to ' + channel.name + '....' : '' }}
 			</p>
 			<!-- <a href="http://">{{ channel ? 'instagram.com/numofcodevt' : '' }}</a> -->
-			<div>
+			<div class="btn-container">
 				<button
 					*ngIf="!channel?.isUserSubscribe"
 					class="card-btn subscribe-button"

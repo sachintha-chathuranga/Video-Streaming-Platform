@@ -17,6 +17,7 @@ import { UserService } from '../../core/services/user.service';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { VideoService } from '../video/services/video.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
 	selector: 'app-history',
@@ -46,7 +47,7 @@ export class HistoryComponent implements OnInit {
 	sortBy: string = 'watchTime';
 	sortDirection: string = 'desc';
 	isRecordHistory: boolean = false;
-
+	windowSize: string = 'meadium';
 	cardMenuItems: CardMenuItem[] = [
 		{
 			name: 'Save',
@@ -65,11 +66,23 @@ export class HistoryComponent implements OnInit {
 		private videoService: VideoService,
 		private userService: UserService,
 		private errorService: ErrorService,
-		private snackBar: MatSnackBar
+		private snackBar: MatSnackBar,
+		private breakpointObserver: BreakpointObserver
 	) {}
 	ngOnInit(): void {
 		this.isRecordHistory = this.userService.getUser().isRecordHistory;
 		this.fetchVideoHistory();
+		this.breakpointObserver
+			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.subscribe((result) => {
+				if (result.matches) {
+					if (result.breakpoints[Breakpoints.XSmall]) {
+						this.windowSize = 'small';
+					} else {
+						this.windowSize = 'meadium';
+					}
+				}
+			});
 	}
 	onSearch(): void {
 		this.fetchVideoHistory();

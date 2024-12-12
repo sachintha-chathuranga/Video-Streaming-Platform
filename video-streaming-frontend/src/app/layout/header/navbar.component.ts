@@ -1,5 +1,6 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,12 +52,14 @@ export class NavbarComponent {
 
 	isAuthenticated!: boolean;
 	readonly dialog = inject(MatDialog);
+	windowSize: string = 'meadium';
 
 	constructor(
 		private authService: AuthService,
 		private router: Router,
 		private userService: UserService,
-		private activatedRoute: ActivatedRoute
+		private activatedRoute: ActivatedRoute,
+		private breakpointObserver: BreakpointObserver
 	) {}
 
 	ngOnInit(): void {
@@ -66,6 +69,17 @@ export class NavbarComponent {
 		this.activatedRoute.queryParams.subscribe((params) => {
 			this.value = params['search_query'];
 		});
+		this.breakpointObserver
+			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.subscribe((result) => {
+				if (result.matches) {
+					if (result.breakpoints[Breakpoints.XSmall]) {
+						this.windowSize = 'small';
+					} else {
+						this.windowSize = 'meadium';
+					}
+				}
+			});
 	}
 	search() {
 		if (this.value) {

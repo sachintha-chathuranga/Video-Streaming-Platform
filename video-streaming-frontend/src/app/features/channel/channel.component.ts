@@ -1,16 +1,16 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
 import { PaginatedResponse } from '../../core/models/pagination.dto';
-import { VideoDto } from '../../core/models/video.dto';
 import { AuthService } from '../../core/services/auth.service';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
+import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { ChannelHeaderComponent } from './components/channel-header/channel-header.component';
 import { ChannelService } from './services/channel.service';
-import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
-import { CommonModule } from '@angular/common';
 
 @Component({
 	selector: 'app-channel',
@@ -37,10 +37,13 @@ export class ChannelComponent {
 		},
 	];
 
+	windowSize: string = 'meadium';
+
 	constructor(
 		private channelService: ChannelService,
 		private authService: AuthService,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private breakpointObserver: BreakpointObserver
 	) {}
 	ngOnInit() {
 		this.authService.isAuthenticated().subscribe((data) => {
@@ -51,21 +54,30 @@ export class ChannelComponent {
 			this.channelId = params['id'];
 			this.fetchVideos(this.channelId);
 		});
+		this.breakpointObserver
+			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.subscribe((result) => {
+				if (result.matches) {
+					if (result.breakpoints[Breakpoints.XSmall]) {
+						this.windowSize = 'small';
+					} else {
+						this.windowSize = 'meadium';
+					}
+				}
+			});
 	}
 
 	fetchVideos(channelId: number) {
 		this.isLoading = true;
-		this.channelService
-			.getChannelPublicVideos(channelId)
-			.subscribe({
-				next: (response: PaginatedResponse<VideoCardDto>) => {
-					this.videos = response.content;
-					this.isLoading = false;
-				},
-				error: (errorResponse: HttpErrorResponse) => {
-					console.log(errorResponse.error);
-					this.isLoading = false;
-				},
-			});
+		this.channelService.getChannelPublicVideos(channelId).subscribe({
+			next: (response: PaginatedResponse<VideoCardDto>) => {
+				this.videos = response.content;
+				this.isLoading = false;
+			},
+			error: (errorResponse: HttpErrorResponse) => {
+				console.log(errorResponse.error);
+				this.isLoading = false;
+			},
+		});
 	}
 }

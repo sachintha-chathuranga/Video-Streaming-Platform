@@ -15,6 +15,7 @@ import { ErrorService } from '../../core/services/error.service';
 import { UserService } from '../../core/services/user.service';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
 	selector: 'app-saved-videos',
@@ -39,6 +40,7 @@ export class SavedVideosComponent {
 	isDeleting: boolean = false;
 	errorObject!: ErrorDto;
 	searchInput = '';
+	windowSize: string = 'meadium';
 	cardMenuItems: CardMenuItem[] = [
 		{
 			name: 'Remove',
@@ -51,11 +53,23 @@ export class SavedVideosComponent {
 	constructor(
 		private userService: UserService,
 		private errorService: ErrorService,
-		private snackBar: MatSnackBar
+		private snackBar: MatSnackBar,
+		private breakpointObserver: BreakpointObserver
 	) {}
 
 	ngOnInit(): void {
 		this.fetchSavedVideos();
+		this.breakpointObserver
+			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.subscribe((result) => {
+				if (result.matches) {
+					if (result.breakpoints[Breakpoints.XSmall]) {
+						this.windowSize = 'small';
+					} else {
+						this.windowSize = 'meadium';
+					}
+				}
+			});
 	}
 	handleDelete(videoId: number) {
 		this.videoList = this.videoList?.filter((video) => video.id !== videoId);
@@ -95,7 +109,7 @@ export class SavedVideosComponent {
 			next: (data: boolean) => {
 				this.videoList = [];
 
-				this.snackBar.open("Playlist Deleted successfully", '', {
+				this.snackBar.open('Playlist Deleted successfully', '', {
 					duration: 3000,
 					horizontalPosition: 'right',
 					verticalPosition: 'top',

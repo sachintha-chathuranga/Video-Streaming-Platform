@@ -35,9 +35,12 @@
 		<button mat-icon-button class="search-toggle-btn" (click)="openSearchBox()">
 			<mat-icon>search</mat-icon>
 		</button>
-		<button id="create-btn" mat-flat-button *ngIf="isAuthenticated" (click)="gotoVideoUpload()">
+		<button class="create-btn" mat-flat-button *ngIf="isAuthenticated && windowSize == 'meadium'" (click)="gotoVideoUpload()">
 			<mat-icon>add</mat-icon>
-			<span>Create</span>
+			<span >Create</span>
+		</button>
+		<button class="create-btn" mat-icon-button *ngIf="isAuthenticated && windowSize == 'small'" (click)="gotoVideoUpload()">
+			<mat-icon>add</mat-icon>
 		</button>
 		<button mat-icon-button>
 			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>

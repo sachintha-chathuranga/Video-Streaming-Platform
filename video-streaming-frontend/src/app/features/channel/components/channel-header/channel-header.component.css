@@ -15,7 +15,6 @@
 	margin: 25px 0;
 	display: flex;
 }
-
 .profile-image-container {
 	margin-right: 15px;
 	border-radius: 50%;
@@ -33,18 +32,7 @@
 	flex-direction: column;
 	justify-content: space-around;
 }
-.channel-name.skeleton {
-	width: 80%;
-	height: 20px;
-}
-.channel-info.skeleton {
-	width: 80%;
-	height: 20px;
-}
-.channel-description.skeleton {
-	width: 60%;
-	height: 20px;
-}
+
 .header-details p {
 	color: var(--theme-font-shadow);
 }
@@ -61,6 +49,22 @@
 @media only screen and (max-width: 600px) {
 	.details-container {
 		margin: 10px 0;
+	}
+	.channel-name{
+		font-size: 20px;
+		font-weight: 500;
+	}
+	.btn-container{
+		margin-top: 5px;
+	}
+	#hashTag{
+		display: none;
+	}
+	.channel-description{
+		display: none !important;
+	}
+	.header-details{
+		font-size: 14px;
 	}
 	.profile-image-container {
 		width: 70px;
@@ -84,4 +88,17 @@
 	.card-btn {
 		height: 30px;
 	}
+}
+
+.channel-name.skeleton {
+	width: 80%;
+	height: 20px;
+}
+.channel-info.skeleton {
+	width: 80%;
+	height: 20px;
+}
+.channel-description.skeleton {
+	width: 60%;
+	height: 20px;
 }

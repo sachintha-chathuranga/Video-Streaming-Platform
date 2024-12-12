@@ -58,7 +58,7 @@ mat-card-header.meadium {
 	padding-left: 16px;
 	flex: 1;
 }
-mat-card-header mat-icon{
+mat-card-header mat-icon {
 	cursor: pointer;
 }
 .example-card.small .details {
@@ -78,7 +78,6 @@ mat-card-title {
 	font-size: 15px;
 	line-height: normal;
 	overflow: hidden;
-	margin-bottom: 5px;
 }
 mat-card-title h3 {
 	cursor: default;
@@ -92,6 +91,10 @@ mat-card-title h3 {
 	padding: 0 !important;
 	line-height: 25px;
 }
+.example-card.large mat-card-title {
+	margin-bottom: 5px;
+}
+
 .example-card.small mat-card-title h3 {
 	font-size: 14px;
 	font-weight: 500;
@@ -178,15 +181,18 @@ mat-card-title.skeleton {
 	width: 100%;
 	height: 20px;
 	padding: 0;
+	margin-bottom: 8px;
 }
 mat-card-subtitle.skeleton {
 	width: 70%;
 	height: 20px;
-	bottom: 6px;
 }
 
 @media screen and (max-width: 600px) {
 	.example-card .img img {
 		max-height: 300px;
+	}
+	mat-card-header mat-icon {
+		font-size: 20px;
 	}
 }
