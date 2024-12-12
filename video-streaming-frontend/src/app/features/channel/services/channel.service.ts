@@ -6,6 +6,7 @@ import { PaginatedResponse } from '../../../core/models/pagination.dto';
 import { VideoDto } from '../../../core/models/video.dto';
 import { Channel } from '../models/channel.dto';
 import { Subscription } from '../../../shared/models/subscription.dto';
+import { VideoCardDto } from '../../../shared/components/video-card/model/videoCard.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -14,6 +15,13 @@ export class ChannelService {
 	private apiEndpoint: string = environment.apiEndpoint;
 	constructor(private httpClient: HttpClient) {}
 
+	getChannel(isAuth: boolean, channelId?: number): Observable<Channel> {
+		let params = new HttpParams()
+			.set('isAuth', isAuth);
+		return this.httpClient
+			.get<Channel>(`${this.apiEndpoint}/channels/${channelId}`,{params})
+			.pipe(catchError((error) => throwError(() => error)));
+	}
 	subscribe(channelId?: number): Observable<Subscription> {
 		return this.httpClient
 			.put<Subscription>(`${this.apiEndpoint}/channels/subscribe/${channelId}`, null)
@@ -25,7 +33,7 @@ export class ChannelService {
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 
-	getChannelVideos(
+	getAllChannelVideos(
 		channelId: number,
 		page: number,
 		size: number,
@@ -40,6 +48,24 @@ export class ChannelService {
 		return this.httpClient
 			.get<PaginatedResponse<VideoDto>>(`${this.apiEndpoint}/channels/${channelId}/videos`, {
 				params,
+			})
+			.pipe(catchError(this.errorHandler));
+	}
+	getChannelPublicVideos(
+		channelId: number,
+		// page: number,
+		// size: number,
+		// sortBy: string,
+		// sortDirection: string
+	): Observable<PaginatedResponse<VideoCardDto>> {
+		// let params = new HttpParams()
+		// 	.set('page', page)
+		// 	.set('size', size)
+		// 	.set('sortBy', sortBy)
+		// 	.set('sortDirection', sortDirection);
+		return this.httpClient
+			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/channels/${channelId}/public-videos`, {
+				// params,
 			})
 			.pipe(catchError(this.errorHandler));
 	}

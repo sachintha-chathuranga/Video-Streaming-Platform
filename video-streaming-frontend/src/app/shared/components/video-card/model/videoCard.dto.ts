@@ -3,8 +3,9 @@ export interface VideoCardDto {
 	title: string;
 	description: string;
 	thumbnailUrl: string;
-	channelName: String;
-	channelImage: String;
+	channelName: string;
+	channelImage: string;
+	channelId:number;
 	viewsCount: number;
 	createdTime: Date;
 }

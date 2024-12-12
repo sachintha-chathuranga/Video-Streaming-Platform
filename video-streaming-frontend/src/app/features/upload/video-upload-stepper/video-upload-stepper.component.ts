@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -74,6 +74,7 @@ export class VideoUploadStepperComponent {
 		// 	videoUrl: 'dsfdsf',
 		// 	videoStatus: 'PUBLIC',
 		// 	tags: ['DSFSD', 'DSFDS'],
+		// 	createdTime: new Date()
 		// };
 	}
 

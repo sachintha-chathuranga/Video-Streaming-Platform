@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
+import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.service.ChannelService;
 
@@ -26,6 +28,12 @@ import lombok.RequiredArgsConstructor;
 public class ChannelController {
 	@Autowired
 	private ChannelService channelService;
+
+	@GetMapping("/{channelId}")
+	public ResponseEntity<ChannelDto> getChannel(@PathVariable Long channelId,
+			@RequestParam(defaultValue = "false") Boolean isAuth) {
+		return ResponseEntity.ok(channelService.getChannel(isAuth, channelId));
+	}
 
 	@PutMapping("/subscribe/{channelId}")
 	public ResponseEntity<SubscriptionResponse> subscribe(@PathVariable Long channelId) {
@@ -43,6 +51,14 @@ public class ChannelController {
 			@RequestParam(defaultValue = "createdTime") String sortBy,
 			@RequestParam(defaultValue = "desc") String sortDirection) {
 		return ResponseEntity.ok(channelService.getVideos(channelId, page, size, sortBy, sortDirection));
+	}
+
+	@GetMapping("/{channelId}/public-videos")
+	public ResponseEntity<Page<VideoCardDto>> getPublicVideosByChannelId(@PathVariable Long channelId,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "createdTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		return ResponseEntity.ok(channelService.getPublicVideos(channelId, page, size, sortBy, sortDirection));
 	}
 
 	@DeleteMapping("/{channelId}/videos")

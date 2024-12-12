@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -12,11 +12,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CardMenuItem } from '../../../../../../core/models/cardMenuItem.dto';
 import { UserDto } from '../../../../../../core/models/user.dto';
+import { DialogBoxComponent } from '../../../../../../shared/components/dialog-box/dialog-box.component';
+import { DialogData } from '../../../../../../shared/components/dialog-box/models/dialogData.dto';
+import { LifetimePipe } from '../../../../../../shared/pipes/lifetime.pipe';
 import { CommentDto } from '../../models/comment.dto';
 import { CommentService } from '../../services/comment.service';
 import { CommentInputComponent } from '../comment-input/comment-input.component';
 import { ReportCommentComponent } from '../report-comment/report-comment.component';
-import { LifetimePipe } from '../../../../../../shared/pipes/lifetime.pipe';
 
 @Component({
 	selector: 'app-comment-card',
@@ -30,9 +32,9 @@ import { LifetimePipe } from '../../../../../../shared/pipes/lifetime.pipe';
 		MatMenuModule,
 		MatFormFieldModule,
 		MatInputModule,
-		MatDialogModule,
 		CommentInputComponent,
-		LifetimePipe
+		LifetimePipe,
+		DialogBoxComponent,
 	],
 	templateUrl: './comment-card.component.html',
 	styleUrl: './comment-card.component.css',
@@ -56,23 +58,36 @@ export class CommentCardComponent {
 			name: 'Edit',
 			icon: 'edit_outline',
 			isDisable: false,
-			action: 'edit_comment'
+			action: 'edit_comment',
 		},
 		{
 			name: 'Delete',
 			icon: 'delete_off',
 			isDisable: false,
-			action: 'delete_comment'
+			action: 'delete_comment',
 		},
 		{
 			name: 'Report',
 			icon: 'flag',
 			isDisable: false,
-			action: 'report_comment'
+			action: 'report_comment',
 		},
 	];
 	showInputField: boolean = false;
-	@ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
+	deleteDialogData: DialogData = {
+		title: 'Delete Comment',
+		description: 'Are you sure to delete this comment',
+		actions: [
+			{
+				displayName: 'Cancel',
+				action: 'close',
+			},
+			{
+				displayName: 'Delete',
+				action: 'delete-comment',
+			},
+		],
+	};
 
 	constructor(
 		private dialog: MatDialog,
@@ -142,7 +157,18 @@ export class CommentCardComponent {
 		}
 	}
 	openConfirmationDialog() {
-		this.dialog.open(this.dialogTemplate);
+		const dialogRef = this.dialog.open(DialogBoxComponent, {
+			disableClose: true,
+			data: this.deleteDialogData,
+		});
+
+		dialogRef.afterClosed().subscribe((result: string) => {
+			console.log('After Close: ' + result);
+			if (result == 'delete-comment') {
+				console.log("trigger delte")
+				this.deleteComment();
+			}
+		});
 	}
 	deleteComment() {
 		this.onDelete.emit(this.comment.id);

@@ -22,8 +22,9 @@ public class ChannelMapper {
 		}
 		Boolean isUserSubscribe = false;
 		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
+		Long videoCount = Long.valueOf(channel.getVideos().size());
 		ChannelDto channelDto = new ChannelDto(channel.getId(), channel.getName(), channel.getDescription(),
-				channel.getBannerImage(), channel.getChannelImage(), subscribersCount, isUserSubscribe);
+				channel.getBannerImage(), channel.getChannelImage(), subscribersCount, isUserSubscribe, videoCount);
 		return channelDto;
 	}
 
@@ -33,8 +34,9 @@ public class ChannelMapper {
 		}
 		Boolean isUserSubscribe = channel.getSubscribers().contains(requestedUser);
 		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
+		Long videoCount = Long.valueOf(channel.getVideos().size());
 		ChannelDto channelDto = new ChannelDto(channel.getId(), channel.getName(), channel.getDescription(),
-				channel.getBannerImage(), channel.getChannelImage(), subscribersCount, isUserSubscribe);
+				channel.getBannerImage(), channel.getChannelImage(), subscribersCount, isUserSubscribe, videoCount);
 		return channelDto;
 	}
 

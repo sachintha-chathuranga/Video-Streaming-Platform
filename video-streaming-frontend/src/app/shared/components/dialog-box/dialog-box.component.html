@@ -1,0 +1,7 @@
+<h3 mat-dialog-title>{{dialogData.title}}</h3>
+<mat-dialog-content>
+	<p>{{dialogData.description}}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+	<button *ngFor="let button of dialogData.actions" mat-button mat-dialog-close (click)="handleCick(button.action)">{{button.displayName}}</button>
+</mat-dialog-actions>

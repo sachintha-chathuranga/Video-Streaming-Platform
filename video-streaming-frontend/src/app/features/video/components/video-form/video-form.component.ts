@@ -29,8 +29,8 @@ import { VideoDto } from '../../../../core/models/video.dto';
 import { FileMetaDataComponent } from '../../../../shared/components/file-meta-data/file-meta-data.component';
 import { VideoPlayerComponent } from '../../../../shared/components/video-player/video-player.component';
 import { VideoUploadStepperComponent } from '../../../upload/video-upload-stepper/video-upload-stepper.component';
-import { VideoUpdateDto } from '../../models/videoUpdate.dto';
 import { VideoUpdateDialogComponent } from '../video-update-dialog/video-update-dialog.component';
+import { VideoUpdateDto } from '../../models/videoUpdate.dto';
 
 @Component({
 	selector: 'app-video-form',
@@ -207,7 +207,6 @@ export class VideoFormComponent {
 	saveVideo() {
 		if (this.videoDetails.dirty) {
 			if (this.videoDetails.status == 'VALID') {
-				console.log('Save to db');
 				this.onLoadChange.emit(true);
 				const videoMetaData: VideoUpdateDto = {
 					id: this.video.id,
@@ -238,11 +237,16 @@ export class VideoFormComponent {
 						this.video = data;
 						this.setVideoDetails();
 						this.videoChange.emit(this.video);
-						this.snackBar.open('Video Metadata Updated successfully', 'OK');
+						this.snackBar.open('Video Metadata Updated successfully','', {
+						duration: 3000,
+						horizontalPosition: 'right',
+						verticalPosition: 'top',
+					});
 						if (!this.selectedFile) {
 							this.onLoadChange.emit(false);
 							if (this.isNew) {
-								this.uploadDialogRef.close(data);
+								this.router.navigate(['profile/content'], { state: { data: this.video } });
+								this.uploadDialogRef.close();
 							}
 						} else {
 							this.removeFile();

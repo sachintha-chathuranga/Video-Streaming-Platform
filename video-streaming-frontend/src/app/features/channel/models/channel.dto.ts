@@ -6,4 +6,5 @@ export interface Channel {
 	channelImage: string;
 	subscribersCount?: number;
 	isUserSubscribe?: boolean;
+	videoCount: number;
 }

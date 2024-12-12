@@ -32,6 +32,7 @@
 			*ngIf="cardSize == 'large'"
 			mat-card-avatar
 			class="example-header-image"
+			(click)="gotoChannel()"
 			[ngStyle]="{
 				'background-image': isLoading ? 'none' : video && video.channelImage || 'url(\'/assets/no-person.png\')'
 			}"

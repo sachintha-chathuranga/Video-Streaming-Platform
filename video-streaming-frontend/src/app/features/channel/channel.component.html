@@ -1,25 +1,26 @@
-<header>
-  <div
-    [ngStyle]="{ 'background-image': coverImage }"
-    class="cover-image-container"
-  >
-    <!-- <img src="https://ap-south-app-bucket.s3.ap-south-1.amazonaws.com/Thumbnail/9fab9749-c798-433a-93e0-d9430d03b49d.png" alt="cover image" class="cover-image"> -->
-  </div>
-  <div class="details-container">
-    <div class="profile-image-container">
-      <div
-        [ngStyle]="{ 'background-image': coverImage }"
-        class="profile-image"
-      ></div>
-    </div>
-    <div class="header-details">
-      <h1>Title of the channel</h1>
-      <p>&#64;numofcode • 3.69K subscribers • 26 videos</p>
-      <p>Welcome to numofcode ....</p>
-      <a href="http://">instagram.com/numofcodevt</a>
-      <div>
-        <button mat-raised-button>Subscribe</button>
-      </div>
-    </div>
-  </div>
-</header>
+<channel-header [channelId]="channelId" [isAuthenticated]="isAuthenticated"></channel-header>
+<mat-tab-group animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
+	<mat-tab label="Videos">
+		<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+		<ng-template #loadingTemplate>
+			<div fxLayout="column" fxLayoutGap="10px">
+				<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
+					<app-video-card cardSize="meadium" [isLoading]="isLoading"></app-video-card>
+				</div>
+			</div>
+		</ng-template>
+		<ng-template #contentTemplate>
+			<div fxLayout="column" fxLayoutGap="10px">
+				<div class="fxItem" fxFlex="100%" *ngFor="let video of videos">
+					<app-video-card
+						[video]="video"
+						cardSize="meadium"
+						[cardMenuItems]="cardMenuItems"
+					></app-video-card>
+				</div>
+			</div>
+		</ng-template>
+	</mat-tab>
+	<mat-tab label="Playlist" disabled></mat-tab>
+	<mat-tab label="Community" disabled></mat-tab>
+</mat-tab-group>

@@ -64,6 +64,9 @@ export class VideoCardComponent {
 		});
 		this.router.navigate(['/watch'], { queryParams: { v: this.video.id } });
 	}
+	gotoChannel() {
+		this.router.navigate(['/channel', this.video.channelId]);
+	}
 	handleMenuClick(name: String) {
 		switch (name) {
 			case 'delete_from_playlist':

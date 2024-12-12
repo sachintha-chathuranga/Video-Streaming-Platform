@@ -15,4 +15,5 @@ public class ChannelDto {
 	private String channelImage;
 	private Long subscribersCount = Long.valueOf(0);
 	private Boolean isUserSubscribe;
+	private Long videoCount = Long.valueOf(0);
 }

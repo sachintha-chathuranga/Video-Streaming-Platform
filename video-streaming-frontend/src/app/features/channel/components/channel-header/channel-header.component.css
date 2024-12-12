@@ -1,0 +1,87 @@
+.cover-image-container {
+	width: 100%;
+	height: 200px;
+	background-color: #cdd9e79c;
+	background-size: cover;
+	background-position: center;
+	border-radius: 20px;
+	overflow: hidden;
+}
+.cover-image-container .cover-image {
+	width: 100%;
+	object-fit: cover;
+}
+.details-container {
+	margin: 25px 0;
+	display: flex;
+}
+
+.profile-image-container {
+	margin-right: 15px;
+	border-radius: 50%;
+	width: 170px;
+	height: 170px;
+}
+
+.profile-image {
+	width: 100%;
+	object-fit: cover;
+}
+.header-details {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+.channel-name.skeleton {
+	width: 80%;
+	height: 20px;
+}
+.channel-info.skeleton {
+	width: 80%;
+	height: 20px;
+}
+.channel-description.skeleton {
+	width: 60%;
+	height: 20px;
+}
+.header-details p {
+	color: var(--theme-font-shadow);
+}
+.card-btn {
+	padding: 0 18px;
+}
+.subscribe-button {
+	min-width: 100px;
+}
+.unsubscribe-button {
+	min-width: 120px;
+	background-color: black !important;
+}
+@media only screen and (max-width: 600px) {
+	.details-container {
+		margin: 10px 0;
+	}
+	.profile-image-container {
+		width: 70px;
+		height: 70px;
+	}
+	.cover-image-container {
+		height: 100px;
+	}
+
+	.channel-name.skeleton {
+		height: 10px;
+		margin-bottom: 5px;
+	}
+	.channel-info.skeleton {
+		height: 10px;
+		margin-bottom: 5px;
+	}
+	.channel-description.skeleton {
+		display: none;
+	}
+	.card-btn {
+		height: 30px;
+	}
+}

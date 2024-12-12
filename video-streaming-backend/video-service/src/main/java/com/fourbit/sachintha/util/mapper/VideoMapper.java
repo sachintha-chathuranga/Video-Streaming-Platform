@@ -59,8 +59,8 @@ public class VideoMapper {
 		}
 		Long viewsCount = Long.valueOf(video.getViews().size());
 		VideoCardDto videoDto = new VideoCardDto(video.getId(), video.getTitle(), video.getDescription(),
-				video.getThumbnailUrl(), video.getChannel().getName(), video.getChannel().getChannelImage(), viewsCount,
-				video.getCreatedTime());
+				video.getThumbnailUrl(), video.getChannel().getId(), video.getChannel().getName(),
+				video.getChannel().getChannelImage(), viewsCount, video.getCreatedTime());
 
 		return videoDto;
 

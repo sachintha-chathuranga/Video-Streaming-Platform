@@ -14,7 +14,9 @@ import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
+import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
@@ -126,6 +128,40 @@ public class ChannelService {
 		// Save the channel to persist changes
 		channelRepository.save(channel);
 		return true;
+	}
+
+	public ChannelDto getChannel(Boolean isAuthUser, Long channelId) {
+		Channel channel = channelRepository.findById(channelId)
+				.orElseThrow(() -> new CustomException("Channel not found!", HttpStatus.NOT_FOUND));
+		if (isAuthUser) {
+			User user = this.userService.getRequestedUser();
+			logger.info("data get from auth user");
+			return ChannelMapper.mapTochannelDto(channel, user);
+		}
+
+		return ChannelMapper.mapTochannelDto(channel);
+	}
+
+	public Page<VideoCardDto> getPublicVideos(Long channelId, String page, String size, String sortField,
+			String sortDirection) {
+		logger.info("Invoke get All public videos form channel");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		Pageable pageable;
+		Page<Video> videos;
+
+		Sort sort;
+		if (sortField.equals("createdTime")) {
+			sort = Sort.by(sortField);
+		} else {
+			sort = JpaSort.unsafe("size(" + sortField + ")");
+		}
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+		videos = videoRepository.findPublicVideosByChannelId(channelId, pageable);
+		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 	}
 
 }
