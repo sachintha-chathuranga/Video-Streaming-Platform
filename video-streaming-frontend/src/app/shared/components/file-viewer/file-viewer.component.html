@@ -1,0 +1,23 @@
+<div class="layout">
+   <app-video-player
+		class="layout-left"
+		[videoSource]="fileUrl"
+		[borderRadius]="'4px'"
+      *ngIf="fileType=='Video';else imageTemplate"
+	></app-video-player>
+   <ng-template #imageTemplate>
+      <div class="layout-left">
+         <div class="image">
+            <img [src]="fileUrl" alt="Selected Image" />
+         </div>
+      </div>
+   </ng-template>
+	<div class="layout-right">
+		<app-file-meta-data [file]="file" [fileType]="fileType"></app-file-meta-data>
+		<div class="bottom">
+			<button (click)="removeFile()">Unselect</button>
+		</div>
+	</div>
+</div>
+
+

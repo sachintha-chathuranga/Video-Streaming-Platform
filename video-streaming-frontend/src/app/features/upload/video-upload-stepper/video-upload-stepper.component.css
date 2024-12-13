@@ -17,74 +17,9 @@ mat-dialog-content {
 	justify-content: center;
 	flex: 1;
 }
-.container {
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-.layout {
-	display: flex;
-	width: 100%;
-}
-.layout-left {
-	width: 70%;
-	padding-right: 18px;
-	margin: 10px 0;
-	box-sizing: border-box;
-	border-right: 1px solid rgba(59, 59, 59, 0.315);
-	display: flex;
-}
-.layout-right {
-	width: 30%;
-	margin: 10px 0;
-	box-sizing: border-box;
-	padding-left: 18px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-}
-
-.bottom {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.bottom button {
-	border: none;
-	background-color: #ff5c5c;
-	color: white;
-	padding: 10px;
-	border-radius: 3px;
-	width: 100%;
-	font-size: 14px;
-	font-weight: 600;
-	letter-spacing: 1px;
-}
-.bottom button:hover {
-	cursor: pointer;
-	background-color: #f34343;
-}
-
-app-file-selector {
+app-file-manager {
 	width: 96%;
 	height: 90%;
-	padding-bottom: 15px;
-}
-
-.image {
-	border-radius: 5px;
-	aspect-ratio: 16 / 9;
-	overflow: hidden;
-	background-color: #ececec;
-	display: flex;
-	padding: 5px;
-}
-.image img {
-	width: 100%;
-	object-fit: cover;
 }
 .mat-progress-bar {
 	position: sticky;
@@ -97,16 +32,4 @@ app-file-selector {
 		width: 96% !important;
 		max-height: calc(100vh - 50px) !important;
 	}
-	.layout {
-		flex-direction: column;
-	}
-	.layout-left {
-		width: 100%;
-		padding-right: 0;
-		border-right: none;
-	}
-	.layout-right{
-		width: 100%;
-		padding-left: 0;
-	}
-} 
+}

@@ -41,12 +41,6 @@ public class UserController {
 		return ResponseEntity.ok(savedUser);
 	}
 
-	@PostMapping("/upload")
-	public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
-		String url = userService.uploadProfilePicture(file);
-		return new ResponseEntity<>(url, HttpStatus.CREATED);
-	}
-
 	@GetMapping
 	public ResponseEntity<List<UserDto>> getUsers() {
 		List<UserDto> users = userService.getUsers();
@@ -133,6 +127,12 @@ public class UserController {
 	public ResponseEntity<Boolean> deletePlaylist(@PathVariable(name = "videoId") Long videoId) {
 		userService.removeVideoFromPlaylist(videoId);
 		return ResponseEntity.ok(true);
+	}
+
+	@PostMapping("/upload-picture")
+	public ResponseEntity<String> uploadThumbnail(@RequestParam("file") MultipartFile file) {
+		String url = userService.uploadProfilePicture(file);
+		return ResponseEntity.ok(url);
 	}
 
 }

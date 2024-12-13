@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +13,8 @@ import { ActivatedRoute } from '@angular/router';
 import { UserDto } from '../../../../core/models/user.dto';
 import { UserService } from '../../../../core/services/user.service';
 import { UserUpdateDto } from '../../models/userUpdate.dto';
+import { BrandingComponent } from '../branding/branding.component';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
 	selector: 'app-user-form',
@@ -27,11 +29,13 @@ import { UserUpdateDto } from '../../models/userUpdate.dto';
 		MatButtonModule,
 		MatSnackBarModule,
 		FlexLayoutModule,
+		BrandingComponent,
 	],
 	templateUrl: './user-form.component.html',
 	styleUrl: './user-form.component.css',
 })
 export class UserFormComponent {
+	logginUser!: UserDto;
 	userDetails: FormGroup;
 	firstName: FormControl = new FormControl('', [Validators.required]);
 	lastName: FormControl = new FormControl('', [Validators.required]);
@@ -45,19 +49,16 @@ export class UserFormComponent {
 	selectedFile!: File;
 	selectedFileName: string = '';
 	videoId = '';
-	logginUser!: UserDto | null;
 	isLoading = false;
 	uploadProgress = 0;
+	productName!: string;
+	@ViewChild(BrandingComponent) brandingComponent!: BrandingComponent;
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private snackBar: MatSnackBar,
 		private userService: UserService
 	) {
-		this.logginUser = this.userService.getUser();
-		this.firstName.setValue(this.logginUser?.firstName);
-		this.lastName.setValue(this.logginUser?.lastName);
-		this.about.setValue(this.logginUser?.about);
 		this.userDetails = new FormGroup({
 			firstName: this.firstName,
 			lastName: this.lastName,
@@ -65,9 +66,44 @@ export class UserFormComponent {
 			about: this.about,
 		});
 	}
+	ngOnInit() {
+		this.logginUser = this.userService.getUser();
+		this.productName = environment.productName;
+		this.setVideoDetails();
+	}
+	setVideoDetails(): void {
+		this.userDetails.setValue({
+			firstName: this.logginUser.firstName,
+			lastName: this.logginUser.lastName,
+			email: this.logginUser.email,
+			about: this.logginUser.about,
+		});
+		// this.imageUrl = this.video.thumbnailUrl;
+	}
 
 	resetForm(): void {
 		this.userDetails.reset(this.logginUser);
+	}
+
+	uploadProfilePicture(file: File) {
+		this.isLoading = true;
+		this.userService.uploadProfilePicture(file).subscribe({
+			next: (data: string) => {
+				this.isLoading = false;
+				this.logginUser.pictureUrl = data;
+				this.userService.setProfilePicture(data);
+				this.brandingComponent.clearFile();
+				this.snackBar.open("Picture Upload Successfully", '', {
+					duration: 3000,
+				});
+			},
+			error: (errorResponse: HttpErrorResponse) => {
+				this.isLoading = false;
+				this.snackBar.open(errorResponse.error.detail, '', {
+					duration: 3000,
+				});
+			},
+		});
 	}
 	publishChanges() {
 		const updatedUser: UserUpdateDto = {

@@ -105,6 +105,12 @@ public class UserService {
 
 	public String uploadProfilePicture(MultipartFile file) {
 		User user = this.getRequestedUser();
+		String existingImage = user.getPictureUrl();
+		if (existingImage != null && !existingImage.isBlank()) {
+			logger.info("Start to deleting image from S3..");
+			awsS3Service.deleteFile(existingImage);
+			logger.info("deleted successfully");
+		}
 		String photoUrl = awsS3Service.uploadFile(file, "profile_photoes");
 		user.setPictureUrl(photoUrl);
 		userRepository.save(user);

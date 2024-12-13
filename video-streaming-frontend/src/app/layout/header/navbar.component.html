@@ -8,7 +8,7 @@
 		>
 			<mat-icon>menu</mat-icon>
 		</button>
-		<h1 class="example-app-name" (click)="navigate('/')">MediaPulse</h1>
+		<h1 class="example-app-name" (click)="navigate('/')">{{productName}}</h1>
 
 		<span class="example-spacer">
 			<div class="search-container hide" #searchBox>
@@ -46,16 +46,16 @@
 			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
 		</button>
 		<div class="profile-img-cover" [matMenuTriggerFor]="menu" *ngIf="isAuthenticated; else noAuth">
-			<img src="/assets/no-person.png" />
+			<img [src]="logginUser && logginUser.pictureUrl || '/assets/no-person.png'" />
 		</div>
 		<mat-menu #menu="matMenu" class="custom-menu ">
 			<div class="menu-header">
 				<div class="profile-img-cover">
-					<img src="/assets/no-person.png" />
+					<img [src]="logginUser && logginUser.pictureUrl || '/assets/no-person.png'" />
 				</div>
 				<div class="menu-user-info">
-					<p class="text-overflow-1 name">Sachintha Chathuranga dsf d df sd dsa fs d</p>
-					<p class="text-overflow-1 email">mmschathuranga1&#64;gmail.com  df d ds afds   dffd </p>
+					<p class="text-overflow-1 name">{{logginUser.firstName+" "+logginUser.lastName}}</p>
+					<p class="text-overflow-1 email">{{logginUser.email}} </p>
 				</div>
 			</div>
 			<mat-divider></mat-divider>

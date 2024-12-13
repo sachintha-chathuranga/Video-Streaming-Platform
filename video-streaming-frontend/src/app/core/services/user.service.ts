@@ -35,6 +35,10 @@ export class UserService {
 		this.user.isRecordHistory = isRecord;
 		sessionStorage.setItem('user', JSON.stringify(this.user));
 	}
+	setProfilePicture(pictureUrl:string){
+		this.user.pictureUrl = pictureUrl;
+		sessionStorage.setItem('user', JSON.stringify(this.user));
+	}
 	removeUser() {
 		sessionStorage.removeItem('user');
 	}
@@ -159,6 +163,15 @@ export class UserService {
 	pauseVideoHistory(): Observable<boolean> {
 		return this.httpClient
 			.post<boolean>(`${this.apiEndpoint}/users/history`, {})
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	uploadProfilePicture(file: File): Observable<string> {
+		const formData = new FormData();
+		formData.append('file', file, file.name);
+		return this.httpClient
+			.post('http://localhost:8080/api/users/upload-picture', formData, {
+				responseType: 'text',
+			})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 }

@@ -1,0 +1,10 @@
+<div class="container" *ngIf="fileUrl; else videoUploader">
+	<app-file-viewer [fileType]="fileType" [fileUrl]="fileUrl" [file]="file" (onFileRemove)="removeFile($event)"></app-file-viewer>
+</div>
+<ng-template #videoUploader>
+	<app-file-selector
+		(onFileSelect)="setFile($event)"
+		[allowedExtentions]="extensions"
+		[fileType]="fileType"
+	></app-file-selector>
+</ng-template>

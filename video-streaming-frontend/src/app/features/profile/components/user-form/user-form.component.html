@@ -1,10 +1,11 @@
+<app-branding type="Profile" (onPictureUpload)="uploadProfilePicture($event)" [pictureUrl]="logginUser.pictureUrl"></app-branding>
 <div class="user-form-container">
 	<form [formGroup]="userDetails" #form>
 		<div class="section">
 			<label>First Name</label>
 			<p>
 				Choose a channel name that represents you and your content. Changes made to your
-				name and picture are visible only on YouTube and not other Google services. You can
+				name and picture are visible only on {{productName}} and not other Google services. You can
 				change your name twice in 14 days.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
@@ -24,7 +25,7 @@
 			<label>Last Name</label>
 			<p>
 				Choose a channel name that represents you and your content. Changes made to your
-				name and picture are visible only on YouTube and not other Google services. You can
+				name and picture are visible only on {{productName}} and not other Google services. You can
 				change your name twice in 14 days.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
@@ -63,7 +64,7 @@
 				ID, which is the numbers and letters at the end of the URL.
 			</p>
 			<div class="custom-form-field">
-				<input mat-input type="text" [value]="logginUser?.email" readonly />
+				<input mat-input type="text" [value]="logginUser.email" readonly />
 			</div>
 		</div>
 	</form>

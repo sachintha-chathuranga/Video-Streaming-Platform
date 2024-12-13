@@ -16,6 +16,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { VideoUploadStepperComponent } from '../../features/upload/video-upload-stepper/video-upload-stepper.component';
+import { environment } from '../../../environments/environment';
+import { UserDto } from '../../core/models/user.dto';
 
 @Component({
 	selector: 'navbar',
@@ -49,6 +51,8 @@ export class NavbarComponent {
 	@Input()
 	snav!: any;
 	value = '';
+	logginUser!: UserDto;
+	productName!: string;
 
 	isAuthenticated!: boolean;
 	readonly dialog = inject(MatDialog);
@@ -63,6 +67,8 @@ export class NavbarComponent {
 	) {}
 
 	ngOnInit(): void {
+		this.logginUser = this.userService.getUser();
+		this.productName = environment.productName;
 		this.authService.isAuthenticated().subscribe(({ isAuthenticated }) => {
 			this.isAuthenticated = isAuthenticated;
 		});

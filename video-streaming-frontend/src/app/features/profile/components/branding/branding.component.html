@@ -1,28 +1,36 @@
 <div class="branding-container">
   <mat-card class="example-card" appearance="outlined">
     <mat-card-header>
-      <mat-card-title>Picture</mat-card-title>
+      <mat-card-title>{{type}} Picture</mat-card-title>
       <mat-card-subtitle
         >Your profile picture will appear where your channel is presented on
-        YouTube, like next to your videos and comments</mat-card-subtitle
+        {{productName}}, like next to your videos and comments</mat-card-subtitle
       >
     </mat-card-header>
     <mat-card-title-group>
-      <div class="img-container">
-        <img id="profile-img" src="/assets/no-person.png" />
+      <div class="img-container" >
+        <img  matTooltip="Change Picture"  (click)="fileInput.click()" id="profile-img" [src]="pictureObjUrl || '/assets/no-person.png'" />
       </div>
+      <input
+					type="file"
+					#fileInput
+					(change)="onProfileImageChange($event)"
+					[accept]="imageExtensions"
+					hidden
+				/>
       <mat-card-content>
         It’s recommended to use a picture that’s at least 98 x 98 pixels and 4MB
         or less. Use a PNG or GIF (no animations) file. Make sure your picture
-        follows the YouTube Community Guidelines.
+        follows the {{productName}} Community Guidelines.
         <mat-card-actions>
-          <button mat-flat-button>Upload</button>
-          <button mat-button>Remove</button>
+          <button mat-flat-button *ngIf="!selectedPictureFile" (click)="fileInput.click()" >Change</button>
+          <button mat-flat-button *ngIf="selectedPictureFile" (click)="onPictureUpload.emit(selectedPictureFile)">Upload</button>
+          <button mat-button *ngIf="selectedPictureFile" (click)="resetPicture()">Reset</button>
         </mat-card-actions>
       </mat-card-content>
     </mat-card-title-group>
   </mat-card>
-  <mat-card class="example-card" appearance="outlined">
+  <mat-card *ngIf="type=='Channel'" class="example-card" appearance="outlined">
     <mat-card-header>
       <mat-card-title>Banner Image</mat-card-title>
       <mat-card-subtitle

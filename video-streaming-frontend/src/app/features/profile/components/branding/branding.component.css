@@ -1,4 +1,6 @@
-
+.branding-container{
+  margin-top: 20px;
+}
 .example-card {
    border: none;
    margin-bottom: 20px;
@@ -38,10 +40,14 @@ mat-card-title-group {
   border-radius: 50%;
   width: 140px;
   height: 140px;
+  cursor: pointer;
 }
 .img-container #banner-img{
   width: 100%;
 }
 mat-card-content {
   width: 330px;
+}
+mat-card-actions{
+  gap: 10px;
 }
