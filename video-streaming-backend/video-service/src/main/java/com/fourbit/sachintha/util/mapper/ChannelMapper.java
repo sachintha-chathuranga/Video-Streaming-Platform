@@ -12,7 +12,7 @@ public class ChannelMapper {
 			return null;
 		}
 		Channel channel = new Channel(channelDto.getId(), channelDto.getName(), channelDto.getDescription(),
-				channelDto.getBannerImage(), channelDto.getChannelImage());
+				channelDto.getEmail(), channelDto.getBannerImage(), channelDto.getChannelImage());
 		return channel;
 	}
 
@@ -24,7 +24,8 @@ public class ChannelMapper {
 		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
 		Long videoCount = Long.valueOf(channel.getVideos().size());
 		ChannelDto channelDto = new ChannelDto(channel.getId(), channel.getName(), channel.getDescription(),
-				channel.getBannerImage(), channel.getChannelImage(), subscribersCount, isUserSubscribe, videoCount);
+				channel.getEmail(), channel.getBannerImage(), channel.getChannelImage(), subscribersCount,
+				isUserSubscribe, videoCount);
 		return channelDto;
 	}
 
@@ -36,7 +37,8 @@ public class ChannelMapper {
 		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
 		Long videoCount = Long.valueOf(channel.getVideos().size());
 		ChannelDto channelDto = new ChannelDto(channel.getId(), channel.getName(), channel.getDescription(),
-				channel.getBannerImage(), channel.getChannelImage(), subscribersCount, isUserSubscribe, videoCount);
+				channel.getEmail(), channel.getBannerImage(), channel.getChannelImage(), subscribersCount,
+				isUserSubscribe, videoCount);
 		return channelDto;
 	}
 

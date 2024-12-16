@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
+import com.fourbit.sachintha.dto.UserUpdateDto;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
@@ -88,15 +89,16 @@ public class UserService {
 		return UserMapper.mapToUserDto(existingUser);
 	}
 
-	public UserDto updateUser(UserDto userDto) {
+	public UserDto updateUser(UserUpdateDto userDto) {
+		logger.info("Invoke Update Usaer function");
 		User user = this.getRequestedUser();
-		if (userDto.getFirstName() != null) {
+		if (userDto.getFirstName() != null && !userDto.getFirstName().isBlank()) {
 			user.setFirstName(userDto.getFirstName());
 		}
-		if (userDto.getLastName() != null) {
+		if (userDto.getLastName() != null && !userDto.getLastName().isBlank()) {
 			user.setLastName(userDto.getLastName());
 		}
-		if (userDto.getAbout() != null) {
+		if (userDto.getAbout() != null && !userDto.getAbout().isBlank()) {
 			user.setAbout(userDto.getAbout());
 		}
 		User savedUser = userRepository.save(user);
@@ -126,6 +128,11 @@ public class UserService {
 	public UserDto getUserById(Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new CustomException("User not found!", HttpStatus.NOT_FOUND));
+		return UserMapper.mapToUserDto(user);
+	}
+
+	public UserDto getUserBySub(String sub) {
+		User user = userRepository.findBySub(sub);
 		return UserMapper.mapToUserDto(user);
 	}
 

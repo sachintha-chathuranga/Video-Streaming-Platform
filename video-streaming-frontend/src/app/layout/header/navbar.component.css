@@ -126,6 +126,9 @@ h1.example-app-name {
 	color: gray;
 }
 @media screen and (max-width: 600px) {
+	h1.example-app-name {
+		display: none;
+	}
 	.search-toggle-btn {
 		display: block;
 	}

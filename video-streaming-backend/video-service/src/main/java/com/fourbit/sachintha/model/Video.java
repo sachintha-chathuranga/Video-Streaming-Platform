@@ -34,7 +34,7 @@ public class Video {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@Column(length = 2500) // Set the max length to 1000
+	@Column(length = 2500) // Set the max length to 2500
 	private String description;
 	@Column(length = 100)
 	private String title;

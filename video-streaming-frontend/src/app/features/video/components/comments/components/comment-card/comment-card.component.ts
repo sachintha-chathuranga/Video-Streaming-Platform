@@ -45,7 +45,7 @@ export class CommentCardComponent {
 	@Input()
 	videoId!: string;
 	@Input()
-	logginUser?: UserDto;
+	logginUser: UserDto | null = null;
 	@Input()
 	isLoading: boolean = false;
 	@Output()

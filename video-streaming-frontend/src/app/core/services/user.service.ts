@@ -13,7 +13,9 @@ import { UserDto } from '../models/user.dto';
 	providedIn: 'root',
 })
 export class UserService {
-	private user!: UserDto;
+	private user: UserDto | null = null;
+	private apiEndpoint: string = environment.apiEndpoint;
+
 	constructor(private httpClient: HttpClient) {
 		console.log('User Service Rendered');
 		let localUser = sessionStorage.getItem('user');
@@ -22,34 +24,45 @@ export class UserService {
 			this.user = JSON.parse(localUser);
 		}
 	}
-	private apiEndpoint: string = environment.apiEndpoint;
-
-	getUser(): UserDto {
+	// Getter to retrieve the user as an Observable
+	getUser(): UserDto | null {
 		return this.user;
 	}
-	setUser(user: UserDto) {
+
+	// Method to update the user
+	setUser(user: UserDto): void {
 		this.user = user;
 		sessionStorage.setItem('user', JSON.stringify(user));
 	}
-	setIsRecordHistory(isRecord: boolean) {
-		this.user.isRecordHistory = isRecord;
-		sessionStorage.setItem('user', JSON.stringify(this.user));
-	}
-	setProfilePicture(pictureUrl:string){
-		this.user.pictureUrl = pictureUrl;
-		sessionStorage.setItem('user', JSON.stringify(this.user));
-	}
 	removeUser() {
+		this.user = null;
 		sessionStorage.removeItem('user');
 	}
 
+	setIsRecordHistory(isRecord: boolean) {
+		if (this.user) {
+			this.user.isRecordHistory = isRecord;
+			sessionStorage.setItem('user', JSON.stringify(this.user));
+		}
+	}
+	setProfilePicture(pictureUrl: string) {
+		if (this.user) {
+			this.user.pictureUrl = pictureUrl;
+			sessionStorage.setItem('user', JSON.stringify(this.user));
+		}
+	}
+
+	getUserDetails(sub:string): Observable<UserDto>{
+		return this.httpClient
+			.get<UserDto>(`${this.apiEndpoint}/users/loggin-user/${sub}`)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
 	updateUser(userData: UserUpdateDto): Observable<UserDto> {
 		return this.httpClient
 			.put<UserDto>(this.apiEndpoint + '/users/update', userData)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-	registerUser(userData: any, token: any) {
-		console.log(userData);
+	registerUser(userData: any, token: any): Observable<UserDto> {
 		let newUser: AuthUserDto = {
 			firstName: userData?.given_name,
 			lastName: userData?.family_name,
@@ -59,12 +72,9 @@ export class UserService {
 		const headers = new HttpHeaders({
 			Authorization: `Bearer ${token}`,
 		});
-		this.httpClient
+		return this.httpClient
 			.post<UserDto>(this.apiEndpoint + '/users/signUp', newUser, { headers })
-			.subscribe((data) => {
-				this.user = data;
-				sessionStorage.setItem('user', JSON.stringify(data));
-			});
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 
 	// User Plalist API calls

@@ -11,6 +11,7 @@ public class ChannelDto {
 	private Long id;
 	private String name;
 	private String description;
+	private String email;
 	private String bannerImage;
 	private String channelImage;
 	private Long subscribersCount = Long.valueOf(0);

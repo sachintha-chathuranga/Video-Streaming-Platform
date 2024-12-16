@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -13,11 +14,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
+import { UserDto } from '../../core/models/user.dto';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { VideoUploadStepperComponent } from '../../features/upload/video-upload-stepper/video-upload-stepper.component';
-import { environment } from '../../../environments/environment';
-import { UserDto } from '../../core/models/user.dto';
 
 @Component({
 	selector: 'navbar',
@@ -51,7 +52,7 @@ export class NavbarComponent {
 	@Input()
 	snav!: any;
 	value = '';
-	logginUser!: UserDto;
+	logginUser: UserDto | null = null;
 	productName!: string;
 
 	isAuthenticated!: boolean;
@@ -67,10 +68,25 @@ export class NavbarComponent {
 	) {}
 
 	ngOnInit(): void {
-		this.logginUser = this.userService.getUser();
 		this.productName = environment.productName;
-		this.authService.isAuthenticated().subscribe(({ isAuthenticated }) => {
-			this.isAuthenticated = isAuthenticated;
+		let localUser = this.userService.getUser();
+
+		this.authService.getAuthState().subscribe(({ authResult, userDataResult }) => {
+			this.isAuthenticated = authResult.isAuthenticated;
+			if (this.isAuthenticated) {
+				if (!localUser && userDataResult.userData) {
+					this.userService.getUserDetails(userDataResult.userData.sub).subscribe({
+						next: (user: UserDto) => {
+							this.logginUser = user;
+						},
+						error: (errorResponse: HttpErrorResponse) => {
+							console.log(errorResponse.error);
+						},
+					});
+				} else {
+					this.logginUser = localUser;
+				}
+			}
 		});
 		this.activatedRoute.queryParams.subscribe((params) => {
 			this.value = params['search_query'];

@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
@@ -11,13 +12,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
 import { ErrorDto } from '../../core/models/error.dto';
 import { PaginatedResponse } from '../../core/models/pagination.dto';
-import { UserDto } from '../../core/models/user.dto';
 import { ErrorService } from '../../core/services/error.service';
 import { UserService } from '../../core/services/user.service';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { VideoService } from '../video/services/video.service';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
 	selector: 'app-history',
@@ -70,7 +69,11 @@ export class HistoryComponent implements OnInit {
 		private breakpointObserver: BreakpointObserver
 	) {}
 	ngOnInit(): void {
-		this.isRecordHistory = this.userService.getUser().isRecordHistory;
+		let user = this.userService.getUser();
+		if (user) {
+			this.isRecordHistory = user.isRecordHistory;
+		}
+
 		this.fetchVideoHistory();
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])

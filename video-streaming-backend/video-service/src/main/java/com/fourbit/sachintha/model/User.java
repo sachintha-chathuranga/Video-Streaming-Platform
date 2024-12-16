@@ -32,6 +32,7 @@ public class User {
 	private String lastName;
 	private String email;
 	private String pictureUrl;
+	@Column(length = 1000) // Set the max length to 1000
 	private String about;
 	private String sub;
 	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")

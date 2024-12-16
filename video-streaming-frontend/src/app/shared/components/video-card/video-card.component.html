@@ -34,7 +34,7 @@
 			class="example-header-image"
 			(click)="gotoChannel()"
 			[ngStyle]="{
-				'background-image': isLoading ? 'none' : video && video.channelImage || 'url(\'/assets/no-person.png\')'
+				'background-image': isLoading ? 'none' :  'url('+(video.channelImage || 'assets/no-person.png')+')'
 			}"
 			[ngClass]="{ skeleton: isLoading }"
 		></div>

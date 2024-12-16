@@ -212,23 +212,19 @@ export class VideoFormComponent {
 					id: this.video.id,
 				};
 				if (this.video.title != this.videoDetails.get('title')?.value) {
-					console.log('Add title to request');
-					console.log('Title lenght: ' + this.videoDetails.get('title')?.value.length);
+					
 					videoMetaData.title = this.videoDetails.get('title')?.value;
 				}
 				if (this.video.description != this.videoDetails.get('description')?.value) {
-					console.log('Add description to request');
-					console.log(
-						'Description lenght: ' + this.videoDetails.get('description')?.value.length
-					);
+	
 					videoMetaData.description = this.videoDetails.get('description')?.value;
 				}
 				if (this.video.videoStatus != this.videoDetails.get('videoStatus')?.value) {
-					console.log('Add videoStatus to request');
+			
 					videoMetaData.videoStatus = this.videoDetails.get('videoStatus')?.value;
 				}
 				if (!this.config.isArraysEqual(this.video.tags, this.videoDetails.get('tags')?.value)) {
-					console.log('Add tags to request');
+			
 					videoMetaData.tags = this.videoDetails.get('tags')?.value;
 				}
 

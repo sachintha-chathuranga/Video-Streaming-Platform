@@ -27,6 +27,7 @@ public class Channel {
 	private Long id;
 	private String name;
 	private String description;
+	private String email;
 	private String bannerImage;
 	private String channelImage;
 
@@ -40,10 +41,11 @@ public class Channel {
 	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true) // this field not create in table
 	private List<Video> videos = new ArrayList<>();
 
-	public Channel(Long id, String name, String des, String banner, String img) {
+	public Channel(Long id, String name, String des, String email, String banner, String img) {
 		this.id = id;
 		this.name = name;
 		this.description = des;
+		this.email = email;
 		this.bannerImage = banner;
 		this.channelImage = img;
 	}

@@ -8,7 +8,7 @@
 		>
 			<mat-icon>menu</mat-icon>
 		</button>
-		<h1 class="example-app-name" (click)="navigate('/')">{{productName}}</h1>
+		<h1 class="example-app-name" (click)="navigate('/')">{{ productName }}</h1>
 
 		<span class="example-spacer">
 			<div class="search-container hide" #searchBox>
@@ -16,15 +16,16 @@
 					<mat-icon>arrow_back</mat-icon>
 				</button>
 				<div class="search-box">
-					<input #inputField type="text" [(ngModel)]="value" placeholder="Search" (keyup.enter)="search()"/>
+					<input
+						#inputField
+						type="text"
+						[(ngModel)]="value"
+						placeholder="Search"
+						(keyup.enter)="search()"
+					/>
 					@if (value) {
 					<mat-icon>close</mat-icon>
-					<button
-						matSuffix
-						mat-icon-button
-						aria-label="Clear"
-						(click)="value = ''"
-					></button>
+					<button matSuffix mat-icon-button aria-label="Clear" (click)="value = ''"></button>
 					}
 				</div>
 				<div class="search-btn" matTooltip="Search" (click)="search()">
@@ -35,27 +36,43 @@
 		<button mat-icon-button class="search-toggle-btn" (click)="openSearchBox()">
 			<mat-icon>search</mat-icon>
 		</button>
-		<button class="create-btn" mat-flat-button *ngIf="isAuthenticated && windowSize == 'meadium'" (click)="gotoVideoUpload()">
+		<button
+			class="create-btn"
+			mat-flat-button
+			*ngIf="isAuthenticated && windowSize == 'meadium'"
+			(click)="gotoVideoUpload()"
+		>
 			<mat-icon>add</mat-icon>
-			<span >Create</span>
+			<span>Create</span>
 		</button>
-		<button class="create-btn" mat-icon-button *ngIf="isAuthenticated && windowSize == 'small'" (click)="gotoVideoUpload()">
+		<button
+			class="create-btn"
+			mat-icon-button
+			*ngIf="isAuthenticated && windowSize == 'small'"
+			(click)="gotoVideoUpload()"
+		>
 			<mat-icon>add</mat-icon>
 		</button>
 		<button mat-icon-button>
 			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
 		</button>
-		<div class="profile-img-cover" [matMenuTriggerFor]="menu" *ngIf="isAuthenticated; else noAuth">
-			<img [src]="logginUser && logginUser.pictureUrl || '/assets/no-person.png'" />
+		<div
+			class="profile-img-cover"
+			[matMenuTriggerFor]="menu"
+			*ngIf="isAuthenticated; else noAuth"
+		>
+			<img [src]="(logginUser?.pictureUrl) || '/assets/no-person.png'" />
 		</div>
-		<mat-menu #menu="matMenu" class="custom-menu ">
+		<mat-menu #menu="matMenu" class="custom-menu">
 			<div class="menu-header">
 				<div class="profile-img-cover">
-					<img [src]="logginUser && logginUser.pictureUrl || '/assets/no-person.png'" />
+					<img [src]="(logginUser?.pictureUrl) || '/assets/no-person.png'" />
 				</div>
-				<div class="menu-user-info">
-					<p class="text-overflow-1 name">{{logginUser.firstName+" "+logginUser.lastName}}</p>
-					<p class="text-overflow-1 email">{{logginUser.email}} </p>
+				<div  *ngIf="logginUser" class="menu-user-info">
+					<p class="text-overflow-1 name">
+						{{ logginUser.firstName + ' ' + logginUser.lastName}}
+					</p>
+					<p class="text-overflow-1 email">{{ logginUser.email }}</p>
 				</div>
 			</div>
 			<mat-divider></mat-divider>

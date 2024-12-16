@@ -18,9 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
+import com.fourbit.sachintha.dto.UserUpdateDto;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +38,7 @@ public class UserController {
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<UserDto> updateUserDetails(@RequestBody UserDto userDto) {
+	public ResponseEntity<UserDto> updateUserDetails(@Valid @RequestBody UserUpdateDto userDto) {
 		UserDto savedUser = userService.updateUser(userDto);
 		return ResponseEntity.ok(savedUser);
 	}
@@ -50,6 +52,11 @@ public class UserController {
 	@GetMapping("/{id}")
 	public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
 		return ResponseEntity.ok(userService.getUserById(id));
+	}
+
+	@GetMapping("/loggin-user/{sub}")
+	public ResponseEntity<UserDto> getUserBySub(@PathVariable String sub) {
+		return ResponseEntity.ok(userService.getUserBySub(sub));
 	}
 
 	@DeleteMapping("/{id}")

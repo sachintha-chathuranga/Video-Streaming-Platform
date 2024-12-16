@@ -1,7 +1,13 @@
 <h2 class="main-title">Customizations</h2>
 
 <div>
-	<mat-tab-group animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
+
+		<div class="view-btn-container">
+			<button mat-button (click)="navigateToChannel()" >View Channel</button>
+		</div>
+
+	<mat-tab-group [selectedIndex]="selected.value"
+               (selectedIndexChange)="selected.setValue($event)" animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
 		<mat-tab label="Account">
 			<app-user-form></app-user-form>
 		</mat-tab>

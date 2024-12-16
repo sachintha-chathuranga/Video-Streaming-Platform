@@ -101,10 +101,11 @@ export class ContentComponent implements OnInit {
 					this.dataSource.data = [...this.dataSource.data, data];
 				}
 			});
-		const user = this.userService.getUser();
+		let user = this.userService.getUser();
 		if (user) {
 			this.channelId = user.id;
 		}
+
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
 			.subscribe((result) => {

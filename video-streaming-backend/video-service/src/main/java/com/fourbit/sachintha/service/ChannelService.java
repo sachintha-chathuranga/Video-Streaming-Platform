@@ -13,8 +13,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
+import com.fourbit.sachintha.dto.ChannelUpdateDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
@@ -130,6 +132,12 @@ public class ChannelService {
 		return true;
 	}
 
+	public ChannelDto getUserChannel() {
+		User user = this.userService.getRequestedUser();
+		Channel channel = user.getChannel();
+		return ChannelMapper.mapTochannelDto(channel, user);
+	}
+
 	public ChannelDto getChannel(Boolean isAuthUser, Long channelId) {
 		Channel channel = channelRepository.findById(channelId)
 				.orElseThrow(() -> new CustomException("Channel not found!", HttpStatus.NOT_FOUND));
@@ -162,6 +170,59 @@ public class ChannelService {
 		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
 		videos = videoRepository.findPublicVideosByChannelId(channelId, pageable);
 		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
+	}
+
+	public String uploadChannelPicture(MultipartFile file) {
+		logger.info("Invoke Upload channel picture function");
+		User requestedUser = userService.getRequestedUser();
+		Channel channel = requestedUser.getChannel();
+		String existingImage = channel.getChannelImage();
+		if (existingImage != null && !existingImage.isBlank()) {
+			logger.info("Start to deleting image from S3..");
+			awsS3Service.deleteFile(existingImage);
+			logger.info("deleted successfully");
+		}
+		String photoUrl = awsS3Service.uploadFile(file, "channel_images");
+
+		channel.setChannelImage(photoUrl);
+		channelRepository.save(channel);
+		return photoUrl;
+	}
+
+	public String uploadBannerImage(MultipartFile file) {
+		logger.info("Invoke Upload Banner image function");
+		User requestedUser = userService.getRequestedUser();
+		Channel channel = requestedUser.getChannel();
+		String existingImage = channel.getBannerImage();
+		if (existingImage != null && !existingImage.isBlank()) {
+			logger.info("Start to deleting image from S3..");
+			awsS3Service.deleteFile(existingImage);
+			logger.info("deleted successfully");
+		}
+		String photoUrl = awsS3Service.uploadFile(file, "banner_images");
+
+		channel.setBannerImage(photoUrl);
+		channelRepository.save(channel);
+		return photoUrl;
+	}
+
+	public ChannelDto updateChannel(ChannelUpdateDto channelDto) {
+		logger.info("Invoke Update Channel function");
+		Channel channel = userService.getRequestedUser().getChannel();
+		if (channelDto.getName() != null && !channelDto.getName().isBlank()) {
+			channel.setName(channelDto.getName());
+		}
+
+		if (channelDto.getDescription() != null && !channelDto.getDescription().isBlank()) {
+			channel.setDescription(channelDto.getDescription());
+		}
+
+		if (channelDto.getEmail() != null && !channelDto.getEmail().isBlank()) {
+			channel.setEmail(channelDto.getEmail());
+		}
+		channelRepository.save(channel);
+
+		return ChannelMapper.mapTochannelDto(channel);
 	}
 
 }

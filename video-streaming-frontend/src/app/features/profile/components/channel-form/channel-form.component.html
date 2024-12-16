@@ -1,73 +1,85 @@
-<app-branding type="Channel"></app-branding>
-<div class="user-form-container">
-	<form [formGroup]="userDetails" #form>
+<app-branding
+	*ngIf="channel"
+	type="Channel"
+	[isLoading]="isLoading"
+	[pictureUrl]="channel.channelImage"
+	[bannerUrl]="channel.bannerImage"
+	(onPictureUpload)="uploadChannelPicture($event)"
+	(onBannerUpload)="uploadBannerImage($event)"
+></app-branding>
+<div class="channel-form-container">
+	<form [formGroup]="channelDetails" #form>
 		<div class="section">
 			<label>Name</label>
 			<p>
-				Choose a channel name that represents you and your content. Changes made to your
-				name and picture are visible only on YouTube and not other Google services. You can
-				change your name twice in 14 days.
+				Choose a channel name that represents you and your content. Changes made to your name
+				and picture are visible only on {{productName}} and not other Google services. You can change
+				your name twice in 14 days.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
 				<input
 					matInput
 					placeholder="Enter Channel Name"
-					[formControl]="channelName"
-					(blur)="updateErrorMessage('channelName')"
+					[formControl]="name"
+					(ngModelChange)="onInputChange()"
+					(blur)="updateErrorMessage('name')"
 					required
 				/>
-				@if (channelName.invalid){
-				<mat-error>{{ errorMessage.channelName }}</mat-error>
-				}
+
+				<mat-error *ngIf="name.invalid">{{ errorMessage.name }}</mat-error>
 			</mat-form-field>
 		</div>
 		<div class="section">
-			<label>Description</label>
+			<label>About</label>
 			<p>
-				Tell viewers about your channel. Your description will appear in the About section
-				of your channel and search result, among other places.
+				Tell viewers about your channel. Your description will appear in the About section of
+				your channel and search result, among other places.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
 				<textarea
+					#textArea
 					matInput
-					[formControl]="about"
+					[formControl]="description"
 					rows="5"
 					placeholder="Enter Description"
+					(ngModelChange)="onInputChange()"
 					(input)="autoGrow($event)"
 				></textarea>
 			</mat-form-field>
 		</div>
 		<div class="section">
-			<label>Channel URL</label>
-			<p>
-				This is the standard web address for your channel. It includes your unique channel
-				ID, which is the numbers and letters at the end of the URL.
-			</p>
-			<div class="custom-form-field">
-				<input mat-input type="text" [value]="generatedUrl" readonly />
-				<button mat-icon-button matSuffix (click)="copyToClipboard()">
-					<mat-icon>content_copy</mat-icon>
-				</button>
-			</div>
-		</div>
-		<div class="section">
 			<label>Contact info</label>
 			<p>
-				Let people know how to contact you with business inquiries. The email address you
-				enter may appear in the About section of your channel and be visible to viewers.
+				Let people know how to contact you with business inquiries. The email address you enter
+				may appear in the About section of your channel and be visible to viewers.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
 				<input
 					matInput
 					placeholder="Enter your email"
 					[formControl]="email"
+					(ngModelChange)="onInputChange()"
 					(blur)="updateErrorMessage('email')"
-					required
 				/>
-				@if (email.invalid){
-				<mat-error>{{ errorMessage.email }}</mat-error>
-				}
+				<mat-error *ngIf="email.invalid">{{ errorMessage.email }}</mat-error>
 			</mat-form-field>
 		</div>
+		<div class="section">
+			<label>Channel URL</label>
+			<p>
+				This is the standard web address for your channel. It includes your unique channel ID,
+				which is the numbers and letters at the end of the URL.
+			</p>
+			<div class="custom-form-field">
+				<input mat-input type="text" [value]="hostUrl+'/'+generatedUrl" readonly />
+				<button mat-icon-button matSuffix (click)="copyToClipboard()">
+					<mat-icon>content_copy</mat-icon>
+				</button>
+			</div>
+		</div>
 	</form>
+</div>
+<div *ngIf="hasAnyChanges" class="action-container">
+	<button mat-button [disabled]="isLoading" (click)="resetAll()">Reset</button>
+	<button mat-flat-button [disabled]="isLoading" (click)="publishChanges()">Publish</button>
 </div>

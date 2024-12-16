@@ -5,7 +5,22 @@
 	line-height: 32px;
 	margin-bottom: 20px;
 }
-
+::ng-deep mat-tab-header {
+	position: sticky !important;
+	top: 0 !important;
+	z-index: 2 !important;
+	background-color: white !important;
+}
+.view-btn-container {
+	display: flex;
+	justify-content: end;
+	position: sticky;
+	top: -40px;
+	z-index: 12;
+}
+.view-btn-container button{
+	top: 44px;
+}
 @media screen and (max-width: 600px) {
 	.main-title {
 		margin: 0;

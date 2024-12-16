@@ -1,53 +1,80 @@
-.branding-container{
-  margin-top: 20px;
+.branding-container {
+	margin-top: 20px;
 }
 .example-card {
-   border: none;
-   margin-bottom: 20px;
+	border: none;
+	margin-bottom: 20px;
 }
-mat-card-header{
-   padding: 0;
+mat-card-header {
+	padding: 0;
 }
-mat-card-title{
-  font-size: 16px;
-  font-weight: 500;
+mat-card-title {
+	font-size: 16px;
+	font-weight: 500;
 }
-mat-card-subtitle, mat-card-content {
-  font-size: 13px;
-  font-weight: 400;
-  color: gray;
+mat-card-subtitle,
+mat-card-content {
+	font-size: 13px;
+	font-weight: 400;
+	color: gray;
+	text-align: justify;
 }
 
 mat-card-title-group {
-  margin-top: 8px;
-  align-items: flex-start;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
+	margin-top: 8px;
+	align-items: flex-start;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
 }
 .img-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  min-width: 290px;
-  height: 160px;
-  border-radius: 8px;
-  object-fit: cover;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+	min-width: 290px;
+	max-width: 290px;
+	height: 160px;
+	object-fit: cover;
+	overflow: hidden;
 }
 .img-container #profile-img {
-  border-radius: 50%;
-  width: 140px;
-  height: 140px;
-  cursor: pointer;
+	border-radius: 50%;
+	width: 140px;
+	height: 140px;
+	cursor: pointer;
 }
-.img-container #banner-img{
-  width: 100%;
+.img-container #banner-img {
+	width: 100%;
+	cursor: pointer;
+	object-fit: cover;
+	border-radius: 8px;
 }
 mat-card-content {
-  width: 330px;
+	width: 330px;
 }
-mat-card-actions{
-  gap: 10px;
+mat-card-actions {
+	gap: 10px;
+}
+@media screen and (max-width: 600px) {
+	.example-card {
+		margin-bottom: 0;
+	}
+
+	mat-card-content {
+		width: auto;
+		padding: 0 0 0 10px !important;
+	
+	}
+	.img-container {
+		align-items: start;
+		min-width: 140px;
+		max-width: 140px;
+		height: fit-content;
+	}
+	.img-container #profile-img {
+		width: 120px;
+		height: 120px;
+	}
 }

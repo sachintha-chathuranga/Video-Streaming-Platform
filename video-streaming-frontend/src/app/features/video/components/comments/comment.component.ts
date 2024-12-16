@@ -39,7 +39,7 @@ export class CommentComponent {
 
 	commentsDto: CommentDto[] = [];
 	totalComments!: number;
-	logginUser?: UserDto;
+	logginUser: UserDto | null = null;
 	page: number = 0;
 	selectedFilter: string = 'createdDate';
 	isLoading: boolean = false;
@@ -51,7 +51,7 @@ export class CommentComponent {
 	) {}
 
 	ngOnInit(): void {
-		this.logginUser = this.userService.getUser();
+		this.logginUser = this.userService.getUser()
 		this.getComments('createdDate');
 	}
 	sortCommentBy(sortBy: string) {

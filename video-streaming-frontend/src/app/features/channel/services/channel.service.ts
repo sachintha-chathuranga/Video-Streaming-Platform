@@ -4,9 +4,10 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PaginatedResponse } from '../../../core/models/pagination.dto';
 import { VideoDto } from '../../../core/models/video.dto';
-import { Channel } from '../models/channel.dto';
-import { Subscription } from '../../../shared/models/subscription.dto';
 import { VideoCardDto } from '../../../shared/components/video-card/model/videoCard.dto';
+import { Subscription } from '../../../shared/models/subscription.dto';
+import { Channel } from '../models/channel.dto';
+import { ChannelUpdateDto } from '../../profile/components/channel-form/models/channelUpdate.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -15,11 +16,20 @@ export class ChannelService {
 	private apiEndpoint: string = environment.apiEndpoint;
 	constructor(private httpClient: HttpClient) {}
 
-	getChannel(isAuth: boolean, channelId?: number): Observable<Channel> {
-		let params = new HttpParams()
-			.set('isAuth', isAuth);
+	updateChannel(channelData: ChannelUpdateDto): Observable<Channel> {
 		return this.httpClient
-			.get<Channel>(`${this.apiEndpoint}/channels/${channelId}`,{params})
+			.put<Channel>(this.apiEndpoint + '/channels/update', channelData)
+			.pipe(catchError((error) => throwError(() => error)));}
+
+	getChannel(isAuth: boolean, channelId?: number): Observable<Channel> {
+		let params = new HttpParams().set('isAuth', isAuth);
+		return this.httpClient
+			.get<Channel>(`${this.apiEndpoint}/channels/${channelId}`, { params })
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	getUserChannel(): Observable<Channel> {
+		return this.httpClient
+			.get<Channel>(`${this.apiEndpoint}/channels/user-channel`)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 	subscribe(channelId?: number): Observable<Subscription> {
@@ -52,7 +62,7 @@ export class ChannelService {
 			.pipe(catchError(this.errorHandler));
 	}
 	getChannelPublicVideos(
-		channelId: number,
+		channelId: number
 		// page: number,
 		// size: number,
 		// sortBy: string,
@@ -64,9 +74,12 @@ export class ChannelService {
 		// 	.set('sortBy', sortBy)
 		// 	.set('sortDirection', sortDirection);
 		return this.httpClient
-			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/channels/${channelId}/public-videos`, {
-				// params,
-			})
+			.get<PaginatedResponse<VideoCardDto>>(
+				`${this.apiEndpoint}/channels/${channelId}/public-videos`,
+				{
+					// params,
+				}
+			)
 			.pipe(catchError(this.errorHandler));
 	}
 
@@ -76,6 +89,25 @@ export class ChannelService {
 				body: videoIds,
 			})
 			.pipe(catchError(this.errorHandler));
+	}
+
+	uploadChannelPicture(file: File): Observable<string> {
+		const formData = new FormData();
+		formData.append('file', file, file.name);
+		return this.httpClient
+			.post(`http://localhost:8080/api/channels/upload-picture`, formData, {
+				responseType: 'text',
+			})
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	uploadBannerImage(file: File): Observable<string> {
+		const formData = new FormData();
+		formData.append('file', file, file.name);
+		return this.httpClient
+			.post(`http://localhost:8080/api/channels/upload-banner`, formData, {
+				responseType: 'text',
+			})
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 	errorHandler(error: HttpErrorResponse) {
 		// return throwError(() => new Error(error.message || 'Server Error'));

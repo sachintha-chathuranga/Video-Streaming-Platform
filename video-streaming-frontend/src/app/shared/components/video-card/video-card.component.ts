@@ -51,7 +51,6 @@ export class VideoCardComponent {
 		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
 			this.isAuthenticated = isAuthenticated;
 		});
-		console.log(this.cardSize);
 	}
 	openVideo() {
 		this.userService.updateVideoHistory(this.video.id).subscribe({
