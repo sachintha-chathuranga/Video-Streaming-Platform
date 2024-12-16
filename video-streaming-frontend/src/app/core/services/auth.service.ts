@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthenticatedResult, LoginResponse, OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { Observable, combineLatest, map } from 'rxjs';
-import { AuthUserDto } from '../models/auth.dto';
 
 @Injectable({
 	providedIn: 'root',

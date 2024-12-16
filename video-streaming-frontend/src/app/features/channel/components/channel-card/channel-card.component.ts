@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { Channel } from '../../models/channel.dto';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ChannelService } from '../../services/channel.service';
 import { Subscription } from '../../../../shared/models/subscription.dto';
+import { ChannelService } from '../../../../shared/services/channel.service';
+import { Channel } from '../../models/channel.dto';
 
 @Component({
 	selector: 'channel-card',
@@ -21,7 +21,7 @@ export class ChannelCardComponent {
 	@Input()
 	isLoading: boolean = false;
 
-	constructor(private channelService: ChannelService){}
+	constructor(private channelService: ChannelService) {}
 	subscribeChannel() {
 		this.channelService.subscribe(this.channel?.id).subscribe({
 			next: (data: Subscription) => {

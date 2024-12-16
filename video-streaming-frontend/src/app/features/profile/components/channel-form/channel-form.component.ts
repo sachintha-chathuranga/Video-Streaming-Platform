@@ -11,11 +11,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
+import { ChannelService } from '../../../../shared/services/channel.service';
 import { Channel } from '../../../channel/models/channel.dto';
-import { ChannelService } from '../../../channel/services/channel.service';
 import { BrandingComponent } from '../branding/branding.component';
 import { ChannelUpdateDto } from './models/channelUpdate.dto';
-import { environment } from '../../../../../environments/environment';
 
 @Component({
 	selector: 'app-channel-form',

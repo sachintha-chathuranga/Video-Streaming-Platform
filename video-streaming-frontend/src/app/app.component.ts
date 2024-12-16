@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { UserDto } from './core/models/user.dto';
-import { UserService } from './core/services/user.service';
+import { LoginResponse } from 'angular-auth-oidc-client';
 import { AuthService } from './core/services/auth.service';
+import { UserService } from './shared/services/user.service';
+import { UserDto } from './shared/models/user.dto';
 
 @Component({
 	selector: 'app-root',
@@ -17,10 +17,7 @@ import { AuthService } from './core/services/auth.service';
 export class AppComponent {
 	title = 'video-streaming-frontend';
 
-	constructor(
-		private oidcAuthService: AuthService,
-		private userService: UserService
-	) {}
+	constructor(private oidcAuthService: AuthService, private userService: UserService) {}
 
 	ngOnInit() {
 		let localUser = this.userService.getUser();

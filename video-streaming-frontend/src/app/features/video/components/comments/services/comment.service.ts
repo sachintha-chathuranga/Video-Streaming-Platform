@@ -2,8 +2,8 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
-import { PaginatedResponse } from '../../../../../core/models/pagination.dto';
 import { CommentDto } from '../models/comment.dto';
+import { PaginatedResponse } from '../../../../../shared/models/pagination.dto';
 
 @Injectable({
 	providedIn: 'root',

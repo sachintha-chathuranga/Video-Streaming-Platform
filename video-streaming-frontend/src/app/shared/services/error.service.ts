@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ErrorDto } from '../models/error.dto';
-
 @Injectable({
 	providedIn: 'root',
 })
@@ -29,7 +28,7 @@ export class ErrorService {
 			case 401:
 				this.errorObject = {
 					errorTitle: 'Unauthorized',
-					errorMessage: "Please Sign in to continue.",
+					errorMessage: 'Please Sign in to continue.',
 					errorIcon: 'assets/astroMan.png',
 				};
 				break;

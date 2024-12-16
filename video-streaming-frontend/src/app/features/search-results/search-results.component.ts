@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ErrorDto } from '../../core/models/error.dto';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { FilterToolbarComponent } from './components/filter-toolbar/filter-toolbar.component';
+import { ErrorDto } from '../../shared/models/error.dto';
 
 @Component({
 	selector: 'app-search-results',

@@ -1,21 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
-import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
-import { ErrorDto } from '../../core/models/error.dto';
+
 import { AuthService } from '../../core/services/auth.service';
-import { ErrorService } from '../../core/services/error.service';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { SliderToolbarComponent } from '../../shared/components/slider-toolbar/slider-toolbar.component';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
-import { VideoService } from '../video/services/video.service';
-import { PaginatedResponse } from '../../core/models/pagination.dto';
+import { ErrorService } from '../../shared/services/error.service';
+import { VideoService } from '../../shared/services/video.service';
+import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
+import { ErrorDto } from '../../shared/models/error.dto';
+import { PaginatedResponse } from '../../shared/models/pagination.dto';
 @Component({
 	selector: 'app-feature',
 	standalone: true,
@@ -44,7 +45,7 @@ export class FeatureComponent implements OnInit {
 			name: 'Save video',
 			icon: 'save',
 			isDisable: false,
-			action: 'save_to_playlist'
+			action: 'save_to_playlist',
 		},
 	];
 	categories = [

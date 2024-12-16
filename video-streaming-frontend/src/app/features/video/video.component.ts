@@ -10,22 +10,21 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ConfigService } from '../../config.service';
-import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
-import { ErrorDto } from '../../core/models/error.dto';
-import { LikeDislikeResponse } from '../../core/models/likeDislikeldto';
-import { VideoDto } from '../../core/models/video.dto';
-import { ErrorService } from '../../core/services/error.service';
-import { UserService } from '../../core/services/user.service';
+
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
 import { VideoPlayerComponent } from '../../shared/components/video-player/video-player.component';
-import { Channel } from '../channel/models/channel.dto';
-import { ChannelService } from '../channel/services/channel.service';
-import { CommentComponent } from './components/comments/comment.component';
-import { VideoService } from './services/video.service';
-import { LifetimePipe } from '../../shared/pipes/lifetime.pipe';
 import { Subscription } from '../../shared/models/subscription.dto';
-import { PaginatedResponse } from '../../core/models/pagination.dto';
+import { ChannelService } from '../../shared/services/channel.service';
+import { ErrorService } from '../../shared/services/error.service';
+import { UserService } from '../../shared/services/user.service';
+import { VideoService } from '../../shared/services/video.service';
+import { CommentComponent } from './components/comments/comment.component';
+import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
+import { ErrorDto } from '../../shared/models/error.dto';
+import { LikeDislikeResponse } from '../../shared/models/likeDislikeldto';
+import { PaginatedResponse } from '../../shared/models/pagination.dto';
+import { VideoDto } from '../../shared/models/video.dto';
 
 @Component({
 	selector: 'app-video',

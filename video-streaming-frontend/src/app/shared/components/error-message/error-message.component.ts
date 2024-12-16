@@ -1,7 +1,7 @@
 import { IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { ErrorDto } from '../../../core/models/error.dto';
+import { ErrorDto } from '../../models/error.dto';
 
 @Component({
 	selector: 'app-error-message',

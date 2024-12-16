@@ -8,8 +8,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { DialogBoxComponent } from '../../../../shared/components/dialog-box/dialog-box.component';
 import { DialogData } from '../../../../shared/components/dialog-box/models/dialogData.dto';
 import { Subscription } from '../../../../shared/models/subscription.dto';
+import { ChannelService } from '../../../../shared/services/channel.service';
 import { Channel } from '../../models/channel.dto';
-import { ChannelService } from '../../services/channel.service';
 
 @Component({
 	selector: 'channel-header',
@@ -20,7 +20,7 @@ import { ChannelService } from '../../services/channel.service';
 })
 export class ChannelHeaderComponent {
 	@Input()
-	channelId!:number;
+	channelId!: number;
 	@Input()
 	isAuthenticated: boolean = false;
 	channel!: Channel;
@@ -47,8 +47,8 @@ export class ChannelHeaderComponent {
 		private dialog: MatDialog
 	) {}
 
-	ngOnInit(){
-		this.getChannelDetails()
+	ngOnInit() {
+		this.getChannelDetails();
 	}
 
 	getChannelDetails() {

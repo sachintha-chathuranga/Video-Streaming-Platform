@@ -12,10 +12,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
-import { UserDto } from '../../../../core/models/user.dto';
-import { UserService } from '../../../../core/services/user.service';
+
+import { UserService } from '../../../../shared/services/user.service';
 import { UserUpdateDto } from '../../models/userUpdate.dto';
 import { BrandingComponent } from '../branding/branding.component';
+import { UserDto } from '../../../../shared/models/user.dto';
 
 @Component({
 	selector: 'app-user-form',
@@ -71,7 +72,7 @@ export class UserFormComponent {
 		});
 	}
 	ngOnInit() {
-		this.logginUser =  this.userService.getUser();
+		this.logginUser = this.userService.getUser();
 		this.productName = environment.productName;
 		this.setUserDetails();
 	}

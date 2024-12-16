@@ -17,13 +17,14 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { PaginatedResponse } from '../../core/models/pagination.dto';
-import { VideoDto } from '../../core/models/video.dto';
 
-import { UserService } from '../../core/services/user.service';
-import { ChannelService } from '../channel/services/channel.service';
+
+import { ChannelService } from '../../shared/services/channel.service';
+import { UserService } from '../../shared/services/user.service';
 import { VideoUploadStepperComponent } from '../upload/video-upload-stepper/video-upload-stepper.component';
 import { VideoUpdateDialogComponent } from '../video/components/video-update-dialog/video-update-dialog.component';
+import { PaginatedResponse } from '../../shared/models/pagination.dto';
+import { VideoDto } from '../../shared/models/video.dto';
 @Component({
 	selector: 'app-content',
 	standalone: true,

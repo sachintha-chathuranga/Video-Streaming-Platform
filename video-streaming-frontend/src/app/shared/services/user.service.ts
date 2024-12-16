@@ -4,7 +4,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Channel } from '../../features/channel/models/channel.dto';
 import { UserUpdateDto } from '../../features/profile/models/userUpdate.dto';
-import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
+import { VideoCardDto } from '../components/video-card/model/videoCard.dto';
 import { AuthUserDto } from '../models/auth.dto';
 import { PaginatedResponse } from '../models/pagination.dto';
 import { UserDto } from '../models/user.dto';
@@ -52,7 +52,7 @@ export class UserService {
 		}
 	}
 
-	getUserDetails(sub:string): Observable<UserDto>{
+	getUserDetails(sub: string): Observable<UserDto> {
 		return this.httpClient
 			.get<UserDto>(`${this.apiEndpoint}/users/loggin-user/${sub}`)
 			.pipe(catchError((error) => throwError(() => error)));

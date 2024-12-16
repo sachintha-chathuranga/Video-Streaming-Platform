@@ -21,6 +21,7 @@ import com.fourbit.sachintha.dto.ChannelUpdateDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoStaticDto;
 import com.fourbit.sachintha.service.ChannelService;
 
 import jakarta.validation.Valid;
@@ -68,6 +69,11 @@ public class ChannelController {
 			@RequestParam(defaultValue = "createdTime") String sortBy,
 			@RequestParam(defaultValue = "desc") String sortDirection) {
 		return ResponseEntity.ok(channelService.getPublicVideos(channelId, page, size, sortBy, sortDirection));
+	}
+
+	@GetMapping("/latest-video")
+	public ResponseEntity<VideoStaticDto> getLatestVideo() {
+		return ResponseEntity.ok(channelService.getLatestVideo());
 	}
 
 	@PutMapping("/update")

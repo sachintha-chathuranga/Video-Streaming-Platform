@@ -20,6 +20,7 @@ import com.fourbit.sachintha.dto.ChannelUpdateDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoStaticDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.User;
@@ -223,6 +224,12 @@ public class ChannelService {
 		channelRepository.save(channel);
 
 		return ChannelMapper.mapTochannelDto(channel);
+	}
+
+	public VideoStaticDto getLatestVideo() {
+		User user = userService.getRequestedUser();
+		Video video = videoRepository.findLatestVideoByChannelId(user.getChannel().getId());
+		return VideoMapper.mapToVideoStaticDto(video);
 	}
 
 }

@@ -1,6 +1,7 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -8,14 +9,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
-import { ErrorDto } from '../../core/models/error.dto';
-import { PaginatedResponse } from '../../core/models/pagination.dto';
-import { ErrorService } from '../../core/services/error.service';
-import { UserService } from '../../core/services/user.service';
+
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ErrorService } from '../../shared/services/error.service';
+import { UserService } from '../../shared/services/user.service';
+import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
+import { ErrorDto } from '../../shared/models/error.dto';
+import { PaginatedResponse } from '../../shared/models/pagination.dto';
 
 @Component({
 	selector: 'app-saved-videos',
@@ -128,5 +129,3 @@ export class SavedVideosComponent {
 		});
 	}
 }
-
-

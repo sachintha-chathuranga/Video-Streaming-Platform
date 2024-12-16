@@ -19,18 +19,18 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { VideoService } from '../../services/video.service';
+import { VideoService } from '../../../../shared/services/video.service';
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { ConfigService } from '../../../../config.service';
-import { VideoDto } from '../../../../core/models/video.dto';
 import { FileMetaDataComponent } from '../../../../shared/components/file-meta-data/file-meta-data.component';
 import { VideoPlayerComponent } from '../../../../shared/components/video-player/video-player.component';
 import { VideoUploadStepperComponent } from '../../../upload/video-upload-stepper/video-upload-stepper.component';
-import { VideoUpdateDialogComponent } from '../video-update-dialog/video-update-dialog.component';
 import { VideoUpdateDto } from '../../models/videoUpdate.dto';
+import { VideoUpdateDialogComponent } from '../video-update-dialog/video-update-dialog.component';
+import { VideoDto } from '../../../../shared/models/video.dto';
 
 @Component({
 	selector: 'app-video-form',
@@ -212,19 +212,15 @@ export class VideoFormComponent {
 					id: this.video.id,
 				};
 				if (this.video.title != this.videoDetails.get('title')?.value) {
-					
 					videoMetaData.title = this.videoDetails.get('title')?.value;
 				}
 				if (this.video.description != this.videoDetails.get('description')?.value) {
-	
 					videoMetaData.description = this.videoDetails.get('description')?.value;
 				}
 				if (this.video.videoStatus != this.videoDetails.get('videoStatus')?.value) {
-			
 					videoMetaData.videoStatus = this.videoDetails.get('videoStatus')?.value;
 				}
 				if (!this.config.isArraysEqual(this.video.tags, this.videoDetails.get('tags')?.value)) {
-			
 					videoMetaData.tags = this.videoDetails.get('tags')?.value;
 				}
 
@@ -233,11 +229,11 @@ export class VideoFormComponent {
 						this.video = data;
 						this.setVideoDetails();
 						this.videoChange.emit(this.video);
-						this.snackBar.open('Video Metadata Updated successfully','', {
-						duration: 3000,
-						horizontalPosition: 'right',
-						verticalPosition: 'top',
-					});
+						this.snackBar.open('Video Metadata Updated successfully', '', {
+							duration: 3000,
+							horizontalPosition: 'right',
+							verticalPosition: 'top',
+						});
 						if (!this.selectedFile) {
 							this.onLoadChange.emit(false);
 							if (this.isNew) {

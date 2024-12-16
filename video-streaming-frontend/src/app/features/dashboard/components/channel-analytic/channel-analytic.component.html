@@ -1,16 +1,20 @@
 <h2>Channel analytics</h2>
 <p>Current subscribers</p>
-<h1>3</h1>
+<h1>{{channel && channel.subscribersCount}}</h1>
 <hr />
 <h3>Summary</h3>
 <p class="special-text">Last 28 days</p>
 <div class="table-row">
 	<p>Views</p>
-	<p>0 —</p>
+	<p>{{channel && channel.subscribersCount}} —</p>
 </div>
-<div class="table-row">
+<!-- <div class="table-row">
 	<p>Watch time (hours)</p>
 	<p>0.0 —</p>
+</div> -->
+<div class="table-row">
+	<p>Videos</p>
+	<p>{{channel && channel.videoCount}} —</p>
 </div>
 <hr />
 <h3>Top videos</h3>

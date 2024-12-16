@@ -1,13 +1,14 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { environment } from '../../../../environments/environment';
-import { PaginatedResponse } from '../../../core/models/pagination.dto';
-import { VideoDto } from '../../../core/models/video.dto';
-import { VideoCardDto } from '../../../shared/components/video-card/model/videoCard.dto';
-import { Subscription } from '../../../shared/models/subscription.dto';
-import { Channel } from '../models/channel.dto';
-import { ChannelUpdateDto } from '../../profile/components/channel-form/models/channelUpdate.dto';
+import { environment } from '../../../environments/environment';
+import { Channel } from '../../features/channel/models/channel.dto';
+import { VideoStaticData } from '../../features/dashboard/components/video-analytic/models/videoStatistics.dto';
+import { ChannelUpdateDto } from '../../features/profile/components/channel-form/models/channelUpdate.dto';
+import { VideoCardDto } from '../components/video-card/model/videoCard.dto';
+import { PaginatedResponse } from '../models/pagination.dto';
+import { Subscription } from '../models/subscription.dto';
+import { VideoDto } from '../models/video.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -19,7 +20,8 @@ export class ChannelService {
 	updateChannel(channelData: ChannelUpdateDto): Observable<Channel> {
 		return this.httpClient
 			.put<Channel>(this.apiEndpoint + '/channels/update', channelData)
-			.pipe(catchError((error) => throwError(() => error)));}
+			.pipe(catchError((error) => throwError(() => error)));
+	}
 
 	getChannel(isAuth: boolean, channelId?: number): Observable<Channel> {
 		let params = new HttpParams().set('isAuth', isAuth);
@@ -59,7 +61,7 @@ export class ChannelService {
 			.get<PaginatedResponse<VideoDto>>(`${this.apiEndpoint}/channels/${channelId}/videos`, {
 				params,
 			})
-			.pipe(catchError(this.errorHandler));
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 	getChannelPublicVideos(
 		channelId: number
@@ -80,7 +82,12 @@ export class ChannelService {
 					// params,
 				}
 			)
-			.pipe(catchError(this.errorHandler));
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	getChannelLatestVideo(): Observable<VideoStaticData> {
+		return this.httpClient
+			.get<VideoStaticData>(`${this.apiEndpoint}/channels/latest-video`)
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 
 	deleteChannelVideos(channelId: number, videoIds: number[]): Observable<boolean> {
@@ -88,7 +95,7 @@ export class ChannelService {
 			.delete<boolean>(`${this.apiEndpoint}/channels/${channelId}/videos`, {
 				body: videoIds,
 			})
-			.pipe(catchError(this.errorHandler));
+			.pipe(catchError((error) => throwError(() => error)));
 	}
 
 	uploadChannelPicture(file: File): Observable<string> {
@@ -108,9 +115,5 @@ export class ChannelService {
 				responseType: 'text',
 			})
 			.pipe(catchError((error) => throwError(() => error)));
-	}
-	errorHandler(error: HttpErrorResponse) {
-		// return throwError(() => new Error(error.message || 'Server Error'));
-		return throwError(() => error);
 	}
 }

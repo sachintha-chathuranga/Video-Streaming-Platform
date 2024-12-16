@@ -7,15 +7,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { ConfigService } from '../../../config.service';
-import { VideoDto } from '../../../core/models/video.dto';
-import { ErrorMessageComponent } from '../../../shared/components/error-message/error-message.component';
 import { FileManagerComponent } from '../../../shared/components/file-manager/file-manager.component';
-import { FileMetaDataComponent } from '../../../shared/components/file-meta-data/file-meta-data.component';
-import { FileSelectorComponent } from '../../../shared/components/file-selector/file-selector.component';
-import { VideoPlayerComponent } from '../../../shared/components/video-player/video-player.component';
+import { VideoService } from '../../../shared/services/video.service';
 import { VideoFormComponent } from '../../video/components/video-form/video-form.component';
-import { VideoService } from '../../video/services/video.service';
+import { VideoDto } from '../../../shared/models/video.dto';
 
 @Component({
 	selector: 'app-video-upload-stepper',
@@ -41,12 +36,7 @@ export class VideoUploadStepperComponent {
 	video!: VideoDto;
 	currentStep: number = 0;
 
-	constructor(
-		private videoService: VideoService,
-		private snackbar: MatSnackBar
-	) {
-
-	}
+	constructor(private videoService: VideoService, private snackbar: MatSnackBar) {}
 	ngOnInit() {
 		// this.video = {
 		// 	id: 1,

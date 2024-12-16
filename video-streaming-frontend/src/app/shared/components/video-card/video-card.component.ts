@@ -7,10 +7,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterModule } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { CardMenuItem } from '../../../core/models/cardMenuItem.dto';
-import { UserService } from '../../../core/services/user.service';
+
 import { LifetimePipe } from '../../pipes/lifetime.pipe';
+import { UserService } from '../../services/user.service';
 import { VideoCardDto } from './model/videoCard.dto';
+import { CardMenuItem } from '../../models/cardMenuItem.dto';
 
 @Component({
 	selector: 'app-video-card',

@@ -10,10 +10,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CardMenuItem } from '../../../../../../core/models/cardMenuItem.dto';
-import { UserDto } from '../../../../../../core/models/user.dto';
+
 import { DialogBoxComponent } from '../../../../../../shared/components/dialog-box/dialog-box.component';
 import { DialogData } from '../../../../../../shared/components/dialog-box/models/dialogData.dto';
+import { CardMenuItem } from '../../../../../../shared/models/cardMenuItem.dto';
+import { UserDto } from '../../../../../../shared/models/user.dto';
 import { LifetimePipe } from '../../../../../../shared/pipes/lifetime.pipe';
 import { CommentDto } from '../../models/comment.dto';
 import { CommentService } from '../../services/comment.service';
@@ -165,7 +166,7 @@ export class CommentCardComponent {
 		dialogRef.afterClosed().subscribe((result: string) => {
 			console.log('After Close: ' + result);
 			if (result == 'delete-comment') {
-				console.log("trigger delte")
+				console.log('trigger delte');
 				this.deleteComment();
 			}
 		});

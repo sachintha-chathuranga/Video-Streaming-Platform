@@ -5,6 +5,7 @@ import java.util.List;
 import com.fourbit.sachintha.dto.UserLikeStatus;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
+import com.fourbit.sachintha.dto.VideoStaticDto;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 
@@ -61,6 +62,21 @@ public class VideoMapper {
 		VideoCardDto videoDto = new VideoCardDto(video.getId(), video.getTitle(), video.getDescription(),
 				video.getThumbnailUrl(), video.getChannel().getId(), video.getChannel().getName(),
 				video.getChannel().getChannelImage(), viewsCount, video.getCreatedTime());
+
+		return videoDto;
+
+	}
+
+	public static VideoStaticDto mapToVideoStaticDto(Video video) {
+		if (video == null) {
+			return null;
+		}
+		Long likesCount = Long.valueOf(video.getLikes().size());
+		Long dislikesCount = Long.valueOf(video.getDislikes().size());
+		Long commentsCount = Long.valueOf(video.getComments().size());
+		Long viewsCount = Long.valueOf(video.getViews().size());
+		VideoStaticDto videoDto = new VideoStaticDto(video.getId(), video.getTitle(), video.getThumbnailUrl(),
+				likesCount, dislikesCount, viewsCount, commentsCount, video.getCreatedTime());
 
 		return videoDto;
 

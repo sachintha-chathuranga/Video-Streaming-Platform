@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ChannelService } from './channel.service';
+import { ChannelService } from '../../../shared/services/channel.service';
 
 describe('ChannelService', () => {
-  let service: ChannelService;
+	let service: ChannelService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ChannelService);
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({});
+		service = TestBed.inject(ChannelService);
+	});
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+	it('should be created', () => {
+		expect(service).toBeTruthy();
+	});
 });

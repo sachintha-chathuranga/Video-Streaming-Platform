@@ -7,9 +7,9 @@ import { MatOption } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PaginatedResponse } from '../../../../core/models/pagination.dto';
-import { UserDto } from '../../../../core/models/user.dto';
-import { UserService } from '../../../../core/services/user.service';
+import { PaginatedResponse } from '../../../../shared/models/pagination.dto';
+import { UserDto } from '../../../../shared/models/user.dto';
+import { UserService } from '../../../../shared/services/user.service';
 import { CommentCardComponent } from './components/comment-card/comment-card.component';
 import { CommentInputComponent } from './components/comment-input/comment-input.component';
 import { CommentDto } from './models/comment.dto';
@@ -51,7 +51,7 @@ export class CommentComponent {
 	) {}
 
 	ngOnInit(): void {
-		this.logginUser = this.userService.getUser()
+		this.logginUser = this.userService.getUser();
 		this.getComments('createdDate');
 	}
 	sortCommentBy(sortBy: string) {

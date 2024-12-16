@@ -6,17 +6,17 @@ import { MatButton } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ErrorDto } from '../../core/models/error.dto';
-import { PaginatedResponse } from '../../core/models/pagination.dto';
-import { ErrorService } from '../../core/services/error.service';
-import { UserService } from '../../core/services/user.service';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { SliderToolbarComponent } from '../../shared/components/slider-toolbar/slider-toolbar.component';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
+import { ErrorService } from '../../shared/services/error.service';
+import { UserService } from '../../shared/services/user.service';
+import { VideoService } from '../../shared/services/video.service';
 import { Channel } from '../channel/models/channel.dto';
-import { VideoService } from '../video/services/video.service';
-import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
+import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
+import { ErrorDto } from '../../shared/models/error.dto';
+import { PaginatedResponse } from '../../shared/models/pagination.dto';
 
 @Component({
 	selector: 'app-subscriptions',

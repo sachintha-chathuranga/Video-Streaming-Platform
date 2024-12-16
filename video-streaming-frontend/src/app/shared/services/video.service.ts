@@ -2,12 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { LikeDislikeResponse } from '../../../core/models/likeDislikeldto';
-import { PaginatedResponse } from '../../../core/models/pagination.dto';
-import { VideoDto } from '../../../core/models/video.dto';
-import { VideoCardDto } from '../../../shared/components/video-card/model/videoCard.dto';
-import { VideoUpdateDto } from '../models/videoUpdate.dto';
+import { environment } from '../../../environments/environment';
+import { VideoUpdateDto } from '../../features/video/models/videoUpdate.dto';
+import { VideoCardDto } from '../components/video-card/model/videoCard.dto';
+import { LikeDislikeResponse } from '../models/likeDislikeldto';
+import { PaginatedResponse } from '../models/pagination.dto';
+import { VideoDto } from '../models/video.dto';
 
 @Injectable({
 	providedIn: 'root',

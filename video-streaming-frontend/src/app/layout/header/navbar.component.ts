@@ -15,10 +15,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { UserDto } from '../../core/models/user.dto';
 import { AuthService } from '../../core/services/auth.service';
-import { UserService } from '../../core/services/user.service';
 import { VideoUploadStepperComponent } from '../../features/upload/video-upload-stepper/video-upload-stepper.component';
+import { UserService } from '../../shared/services/user.service';
+import { UserDto } from '../../shared/models/user.dto';
 
 @Component({
 	selector: 'navbar',

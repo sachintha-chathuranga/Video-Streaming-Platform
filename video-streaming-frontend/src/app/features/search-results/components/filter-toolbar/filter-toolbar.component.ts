@@ -1,11 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Output } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ErrorService } from '../../../../core/services/error.service';
-import { VideoCardDto } from '../../../../shared/components/video-card/model/videoCard.dto';
-import { VideoService } from '../../../video/services/video.service';
-import { ErrorDto } from '../../../../core/models/error.dto';
-import {FilterOptions } from './models/filterOptions.dto';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -13,8 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CommonModule } from '@angular/common';
-import { PaginatedResponse } from '../../../../core/models/pagination.dto';
+import { ActivatedRoute } from '@angular/router';
+import { VideoCardDto } from '../../../../shared/components/video-card/model/videoCard.dto';
+import { ErrorService } from '../../../../shared/services/error.service';
+import { VideoService } from '../../../../shared/services/video.service';
+import { FilterOptions } from './models/filterOptions.dto';
+import { ErrorDto } from '../../../../shared/models/error.dto';
+import { PaginatedResponse } from '../../../../shared/models/pagination.dto';
 
 @Component({
 	selector: 'app-filter-toolbar',

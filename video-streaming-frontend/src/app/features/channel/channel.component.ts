@@ -4,13 +4,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
-import { CardMenuItem } from '../../core/models/cardMenuItem.dto';
-import { PaginatedResponse } from '../../core/models/pagination.dto';
+
 import { AuthService } from '../../core/services/auth.service';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
+import { ChannelService } from '../../shared/services/channel.service';
 import { ChannelHeaderComponent } from './components/channel-header/channel-header.component';
-import { ChannelService } from './services/channel.service';
+import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
+import { PaginatedResponse } from '../../shared/models/pagination.dto';
 
 @Component({
 	selector: 'app-channel',
