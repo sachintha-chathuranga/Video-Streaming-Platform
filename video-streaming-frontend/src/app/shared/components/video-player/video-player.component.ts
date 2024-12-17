@@ -11,6 +11,7 @@ import { VideoDto } from '../../models/video.dto';
 import { ViewsResponse } from '../../models/views.dto';
 import { VideoService } from '../../services/video.service';
 import { QualitySelectorComponent } from './components/quality-selector/quality-selector.component';
+import { AuthService } from '../../../core/services/auth.service';
 @Component({
 	selector: 'app-video-player',
 	standalone: true,
@@ -41,10 +42,15 @@ export class VideoPlayerComponent implements OnInit {
 	private hasWatchedFor30Seconds = false;
 	private watchStartTime = 0;
 	private subscriptions: any[] = [];
-	constructor(private vgApi: VgApiService, private videoService: VideoService) {}
+
+	isAuth: boolean = false;
+
+	constructor(private vgApi: VgApiService, private videoService: VideoService, private authService: AuthService) {}
 
 	ngOnInit(): void {
-		console.log('Player Rendered!');
+		this.authService.isAuthenticated().subscribe(authObj=>{
+		 this.isAuth = authObj.isAuthenticated;
+		})
 	}
 
 	onPlayerReady(api: VgApiService) {
@@ -58,7 +64,7 @@ export class VideoPlayerComponent implements OnInit {
 		const playSubscription = media.subscriptions.play.subscribe((e) => {
 			console.log("Video start playing")
 			console.log("isUserVide: "+ this.video?.isUserViewed)
-			if (this.video && !this.video?.isUserViewed) {
+			if (this.video && !this.video?.isUserViewed && this.isAuth) {
 				this.startTrackingPlayback();
 			}
 		});
