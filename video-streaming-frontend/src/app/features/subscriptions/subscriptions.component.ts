@@ -83,6 +83,9 @@ export class SubscriptionsComponent {
 				next: (response: PaginatedResponse<Channel>) => {
 					this.subcribeChannels = response.content;
 					this.getChannelLoading = false;
+					if (this.subcribeChannels.length == 0) {
+						this.errorObject = this.errorService.generateError(new HttpErrorResponse({status: 1}));
+					}
 				},
 				error: (error: HttpErrorResponse) => {
 					this.errorObject = this.errorService.generateError(error);

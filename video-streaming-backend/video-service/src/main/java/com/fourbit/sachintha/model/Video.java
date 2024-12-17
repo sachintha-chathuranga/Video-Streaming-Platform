@@ -62,12 +62,8 @@ public class Video {
 	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
-	@ManyToMany
-	@JoinTable(name = "video_views", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-	private List<User> views = new ArrayList<>();
-
-//	@Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
-//	private Long viewsCount = Long.valueOf(0);
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<View> views = new ArrayList<>();
 
 	@ManyToMany(mappedBy = "saveVideos", cascade = CascadeType.DETACH) // this field not create in table
 	private List<User> saveUsers = new ArrayList<>();
@@ -89,6 +85,10 @@ public class Video {
 		this.thumbnailUrl = thumbnailUrl;
 		this.createdTime = createdTime;
 		this.duration = duration;
+	}
+
+	public Long getViewsCount() {
+		return Long.valueOf(this.views.size());
 	}
 
 	public void addTag(Tag tag) {

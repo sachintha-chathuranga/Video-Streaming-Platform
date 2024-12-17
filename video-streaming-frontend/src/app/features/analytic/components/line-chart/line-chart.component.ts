@@ -12,40 +12,63 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 })
 export class LineChartComponent {
 	chart: any;
-	chartOptions = {
-		animationEnabled: true,
-		theme: 'light2',
-		axisX: {
-			valueFormatString: 'D MMM, YYYY',
-		},
-		toolTip: {
-			shared: true,
-		},
-		legend: {
-			cursor: 'pointer',
-			itemclick: function (e: any) {
-				if (typeof e.dataSeries.visible === 'undefined' || e.dataSeries.visible) {
-					e.dataSeries.visible = false;
-				} else {
-					e.dataSeries.visible = true;
-				}
-				e.chart.render();
+	chartOptions!: any;
+	ngOnInit(){
+		this.chartOptions = {
+			
+			animationEnabled: true,
+			zoomEnabled: true,
+			theme: 'light2',
+			axisX: {
+				valueFormatString: 'D MMM, YYYY',
 			},
-		},
-		data: [
-			{
-				type: 'line',
-				xValueFormatString: 'MMM DD, YYYY',
-				dataPoints: [
-					{ x: new Date(2021, 8, 1), y: 63 },
-					{ x: new Date(2021, 8, 2), y: 69 },
-					{ x: new Date(2021, 8, 3), y: 65 },
-					{ x: new Date(2021, 8, 4), y: 70 },
-					{ x: new Date(2021, 8, 5), y: 71 },
-					{ x: new Date(2021, 8, 6), y: 65 },
-					{ x: new Date(2021, 8, 7), y: 73 },
-				],
+			toolTip: {
+				shared: true,
 			},
-		],
+			legend: {
+				cursor: 'pointer',
+				itemclick: function (e: any) {
+					if (typeof e.dataSeries.visible === 'undefined' || e.dataSeries.visible) {
+						e.dataSeries.visible = false;
+					} else {
+						e.dataSeries.visible = true;
+					}
+					e.chart.render();
+				},
+			},
+			data: [
+				{
+					type: 'line',
+					xValueFormatString: 'MMM DD, YYYY',
+					dataPoints: [
+						{ x: new Date(2021, 8, 1), y: 63 },
+						{ x: new Date(2021, 8, 2), y: 69 },
+						{ x: new Date(2021, 8, 3), y: 65 },
+						{ x: new Date(2021, 8, 4), y: 70 },
+						{ x: new Date(2021, 8, 5), y: 71 },
+						{ x: new Date(2021, 8, 6), y: 65 },
+						{ x: new Date(2021, 8, 7), y: 73 },
+					],
+				},
+			],
+		};
+	}
+	getChartInstance(chart: object) {
+		this.chart = chart;
+		this.updateData();
+	}
+	updateData = () => {
+		// this.http
+		//   .get(
+		//     'https://canvasjs.com/services/data/datapoints.php?xstart=' +
+		//       this.xValue +
+		//       '&ystart=' +
+		//       this.yValue +
+		//       '&length=' +
+		//       this.newDataCount +
+		//       'type=json',
+		//     { responseType: 'json' }
+		//   )
+		//   .subscribe(this.addData);
 	};
 }

@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -34,8 +33,8 @@ public class Channel {
 	@OneToOne(mappedBy = "channel") // this field not create in table
 	private User user;
 
-	@ManyToMany(mappedBy = "subscriptions") // this field not create in table
-	private List<User> subscribers = new ArrayList<>();
+	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Subscribe> subscribers = new ArrayList<>();
 
 	// One-to-many relationship with Video
 	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true) // this field not create in table
@@ -48,5 +47,9 @@ public class Channel {
 		this.email = email;
 		this.bannerImage = banner;
 		this.channelImage = img;
+	}
+
+	public Long getSubscribersCount() {
+		return Long.valueOf(this.subscribers.size());
 	}
 }

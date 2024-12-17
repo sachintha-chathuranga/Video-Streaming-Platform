@@ -1,5 +1,6 @@
 package com.fourbit.sachintha.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
@@ -23,10 +25,11 @@ import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoStaticDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
+import com.fourbit.sachintha.model.Subscribe;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.repository.ChannelRepository;
-import com.fourbit.sachintha.repository.UserRepository;
+import com.fourbit.sachintha.repository.UserSubscribeRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
 import com.fourbit.sachintha.util.mapper.ChannelMapper;
 import com.fourbit.sachintha.util.mapper.VideoMapper;
@@ -38,32 +41,47 @@ import lombok.RequiredArgsConstructor;
 public class ChannelService {
 	private final ChannelRepository channelRepository;
 	private final VideoRepository videoRepository;
-	private final UserRepository userRepository;
+	private final UserSubscribeRepository subscribeRepository;
 	private final AwsS3Service awsS3Service;
 	private final UserService userService;
 	private final Logger logger = LoggerFactory.getLogger(ChannelService.class);
 
+	@Transactional
 	public SubscriptionResponse subscribe(Long channelId) {
-		User subscriber = userService.getRequestedUser();
-		Channel channel = channelRepository.findById(channelId)
+		logger.info("Invoke Subscribe channel function");
+		User subscriber = this.userService.getRequestedUser();
+		boolean isUserSubscribe = this.subscribeRepository.existsBySubscriberIdAndChannelId(subscriber.getId(),
+				channelId);
+		Channel channel = this.channelRepository.findById(channelId)
 				.orElseThrow(() -> new CustomException("Channel not found!", HttpStatus.NOT_FOUND));
-		List<Channel> channels = subscriber.getSubscriptions();
-		if (!channels.contains(channel)) {
-			channels.add(channel);
-			userRepository.save(subscriber);
+		if (!isUserSubscribe) {
+			logger.info("add new subscription");
+			Subscribe subscribe = new Subscribe();
+			subscribe.setSubscriber(subscriber);
+			subscribe.setChannel(channel);
+			subscribe.setSubscribeTime(LocalDateTime.now());
+			channel.getSubscribers().add(subscribe);
+			this.subscribeRepository.save(subscribe);
+			isUserSubscribe = true;
 		}
-		return ChannelMapper.mapToSubscriptionResponse(channel, subscriber);
+		return ChannelMapper.mapToSubscriptionResponse(channel, isUserSubscribe);
 	}
 
+	@Transactional
 	public SubscriptionResponse unsubscribe(Long channelId) {
+		logger.info("Invoke unsbscribe function");
 		User subscriber = userService.getRequestedUser();
 		Channel channel = channelRepository.findById(channelId)
 				.orElseThrow(() -> new CustomException("Channel not found!", HttpStatus.NOT_FOUND));
-		;
-		List<Channel> channels = subscriber.getSubscriptions();
-		channels.remove(channel);
-		userRepository.save(subscriber);
-		return ChannelMapper.mapToSubscriptionResponse(channel, subscriber);
+
+		boolean isUserSubscribe = subscribeRepository.existsBySubscriberIdAndChannelId(subscriber.getId(), channelId);
+		if (isUserSubscribe) {
+			logger.info("remove user from subscription");
+			subscribeRepository.deleteBySubscriberIdAndChannelId(subscriber.getId(), channelId);
+			isUserSubscribe = false;
+		}
+
+		return ChannelMapper.mapToSubscriptionResponse(channel, isUserSubscribe);
 	}
 
 	public Page<VideoDto> getVideos(Long channelId, String page, String size, String sortField, String sortDirection) {
@@ -151,6 +169,7 @@ public class ChannelService {
 		return ChannelMapper.mapTochannelDto(channel);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<VideoCardDto> getPublicVideos(Long channelId, String page, String size, String sortField,
 			String sortDirection) {
 		logger.info("Invoke get All public videos form channel");
@@ -171,6 +190,13 @@ public class ChannelService {
 		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
 		videos = videoRepository.findPublicVideosByChannelId(channelId, pageable);
 		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
+	}
+
+	@Transactional(readOnly = true)
+	public VideoStaticDto getLatestVideo() {
+		User user = userService.getRequestedUser();
+		Video video = videoRepository.findLatestVideoByChannelId(user.getChannel().getId());
+		return VideoMapper.mapToVideoStaticDto(video);
 	}
 
 	public String uploadChannelPicture(MultipartFile file) {
@@ -224,12 +250,6 @@ public class ChannelService {
 		channelRepository.save(channel);
 
 		return ChannelMapper.mapTochannelDto(channel);
-	}
-
-	public VideoStaticDto getLatestVideo() {
-		User user = userService.getRequestedUser();
-		Video video = videoRepository.findLatestVideoByChannelId(user.getChannel().getId());
-		return VideoMapper.mapToVideoStaticDto(video);
 	}
 
 }

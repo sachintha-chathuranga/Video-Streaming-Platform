@@ -7,7 +7,7 @@
 		[ngStyle]="{
 			'background-image': isLoading
 				? 'none'
-				: comment.user.pictureUrl || 'url(\'/assets/no-person.png\')'
+				: 'url('+(comment.user.pictureUrl || 'assets/no-person.png')+')'
 		}"
 	></div>
 	<div

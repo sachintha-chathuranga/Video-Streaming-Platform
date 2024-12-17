@@ -8,6 +8,7 @@ import { VideoCardDto } from '../components/video-card/model/videoCard.dto';
 import { LikeDislikeResponse } from '../models/likeDislikeldto';
 import { PaginatedResponse } from '../models/pagination.dto';
 import { VideoDto } from '../models/video.dto';
+import { ViewsResponse } from '../models/views.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -91,6 +92,11 @@ export class VideoService {
 		// .set('sortDirection', sortDirection);
 		return this.httpClient
 			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/videos/search`, { params })
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+	updateVideoViews(videoId?: number): Observable<ViewsResponse> {
+		return this.httpClient
+			.put<ViewsResponse>(`${this.apiEndpoint}/videos/${videoId}/views`,{})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 }

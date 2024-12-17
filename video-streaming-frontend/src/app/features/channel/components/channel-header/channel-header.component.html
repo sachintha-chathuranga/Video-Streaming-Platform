@@ -2,7 +2,7 @@
 	<div [ngClass]="{ skeleton: isLoading }" class="cover-image-container">
 		<img
 			*ngIf="!isLoading"
-			[src]="(channel && channel.bannerImage) || 'assets/rect5365.png'"
+			[src]="(channel && channel.bannerImage) || 'assets/no-baner.png'"
 			alt="cover image"
 			class="cover-image"
 		/>

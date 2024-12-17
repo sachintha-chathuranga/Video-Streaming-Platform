@@ -18,6 +18,13 @@ export class ErrorService {
 					errorIcon: 'assets/astroMan.png',
 				};
 				break;
+			case 1:
+				this.errorObject = {
+					errorTitle:  "You Don't have any subscriptions", 
+					errorMessage: "Subscribe channels for keep update",
+					errorIcon: 'assets/astroMan.png'
+				}
+				break;
 			case 404:
 				this.errorObject = {
 					errorTitle: 'Page Not Found!',

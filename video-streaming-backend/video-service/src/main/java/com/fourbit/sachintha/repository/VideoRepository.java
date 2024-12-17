@@ -46,8 +46,8 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 	@Query("""
 			SELECT v FROM Video v
 			        JOIN v.channel c
-			        JOIN c.subscribers u
-			        WHERE u.id = :userId AND v.videoStatus = 'PUBLIC'
+			        JOIN c.subscribers s
+			        WHERE s.subscriber.id = :userId AND v.videoStatus = 'PUBLIC'
 			""")
 	Page<Video> findLatestSubscriptionVideos(Long userId, Pageable pageable);
 

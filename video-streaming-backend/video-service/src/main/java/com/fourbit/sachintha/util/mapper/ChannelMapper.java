@@ -7,21 +7,12 @@ import com.fourbit.sachintha.model.User;
 
 public class ChannelMapper {
 
-	public static Channel mapTochannel(ChannelDto channelDto) {
-		if (channelDto == null) {
-			return null;
-		}
-		Channel channel = new Channel(channelDto.getId(), channelDto.getName(), channelDto.getDescription(),
-				channelDto.getEmail(), channelDto.getBannerImage(), channelDto.getChannelImage());
-		return channel;
-	}
-
 	public static ChannelDto mapTochannelDto(Channel channel) {
 		if (channel == null) {
 			return null;
 		}
 		Boolean isUserSubscribe = false;
-		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
+		Long subscribersCount = channel.getSubscribersCount();
 		Long videoCount = Long.valueOf(channel.getVideos().size());
 		ChannelDto channelDto = new ChannelDto(channel.getId(), channel.getName(), channel.getDescription(),
 				channel.getEmail(), channel.getBannerImage(), channel.getChannelImage(), subscribersCount,
@@ -29,12 +20,13 @@ public class ChannelMapper {
 		return channelDto;
 	}
 
-	public static ChannelDto mapTochannelDto(Channel channel, User requestedUser) {
+	public static ChannelDto mapTochannelDto(Channel channel, User user) {
 		if (channel == null) {
 			return null;
 		}
-		Boolean isUserSubscribe = channel.getSubscribers().contains(requestedUser);
-		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
+		Boolean isUserSubscribe = user.getSubscriptions().stream()
+				.anyMatch(subscription -> subscription.getChannel().getId() == channel.getId());
+		Long subscribersCount = channel.getSubscribersCount();
 		Long videoCount = Long.valueOf(channel.getVideos().size());
 		ChannelDto channelDto = new ChannelDto(channel.getId(), channel.getName(), channel.getDescription(),
 				channel.getEmail(), channel.getBannerImage(), channel.getChannelImage(), subscribersCount,
@@ -42,13 +34,9 @@ public class ChannelMapper {
 		return channelDto;
 	}
 
-	public static SubscriptionResponse mapToSubscriptionResponse(Channel channel, User requestedUser) {
-		if (channel == null) {
-			return null;
-		}
-		Boolean isUserSubscribe = channel.getSubscribers().contains(requestedUser);
-		Long subscribersCount = Long.valueOf(channel.getSubscribers().size());
-		SubscriptionResponse channelDto = new SubscriptionResponse(subscribersCount, isUserSubscribe);
+	public static SubscriptionResponse mapToSubscriptionResponse(Channel channel, Boolean isSubscribe) {
+		Long subscribersCount = channel.getSubscribersCount();
+		SubscriptionResponse channelDto = new SubscriptionResponse(subscribersCount, isSubscribe);
 		return channelDto;
 	}
 }

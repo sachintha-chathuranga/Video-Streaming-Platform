@@ -27,6 +27,7 @@ import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoHistory;
 import com.fourbit.sachintha.repository.ChannelRepository;
 import com.fourbit.sachintha.repository.UserRepository;
+import com.fourbit.sachintha.repository.UserSubscribeRepository;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
 import com.fourbit.sachintha.util.SecurityUtil;
@@ -52,6 +53,8 @@ public class UserService {
 	private final VideoRepository videoRepository;
 	@Autowired
 	private final ChannelRepository channelRepository;
+	@Autowired
+	private final UserSubscribeRepository subscribeRepository;
 
 	private final SecurityUtil securityUtil;
 
@@ -152,13 +155,6 @@ public class UserService {
 		Video video = this.videoRepository.findById(videoId)
 				.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
 
-		// increament video views count by one
-		List<User> views = video.getViews();
-		if (!views.contains(user)) {
-			logger.info("Create new Views");
-			views.add(user);
-			videoRepository.save(video);
-		}
 		if (user.getIsRecordHistory()) {
 			VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), videoId);
 			LocalDateTime watchTime = LocalDateTime.now();
@@ -227,6 +223,7 @@ public class UserService {
 //	Use @Transactional(readOnly = true) for methods that only fetch data.
 	@Transactional(readOnly = true)
 	public Page<ChannelDto> getUserSubscriptions(String page, String size, String sortField, String sortDirection) {
+
 		logger.info("Invoke get user subscriptions function");
 		User user = this.getRequestedUser();
 
@@ -236,15 +233,11 @@ public class UserService {
 		logger.info("Direction: " + sortDirection);
 		Pageable pageable;
 		Page<Channel> channels;
-		if (sortField.equals("name")) {
-			Sort sort = Sort.by(sortField);
-			sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-			pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
-		} else {
-			pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
-		}
-		channels = this.channelRepository.findChannelsBySubscribedUser(user.getId(), pageable);
-		return channels.map(video -> ChannelMapper.mapTochannelDto(video, user));
+
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
+
+		channels = this.subscribeRepository.findChannelsBySubscribedUser(user.getId(), pageable);
+		return channels.map(channel -> ChannelMapper.mapTochannelDto(channel, user));
 	}
 
 	@Transactional(readOnly = true)

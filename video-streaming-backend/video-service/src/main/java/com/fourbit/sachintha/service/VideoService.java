@@ -12,20 +12,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoUpdateMetaData;
+import com.fourbit.sachintha.dto.ViewsResponse;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.Tag;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoStatus;
+import com.fourbit.sachintha.model.View;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
+import com.fourbit.sachintha.repository.ViewRepository;
 import com.fourbit.sachintha.util.mapper.VideoMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +40,7 @@ public class VideoService {
 	private final AwsS3Service awsS3Service;
 	private final UserService userService;
 	private final VideoRepository videoRepository;
+	private final ViewRepository viewRepository;
 	private final VideoHistoryRepository historyRepository;
 	private final Logger logger = LoggerFactory.getLogger(VideoService.class);
 
@@ -242,6 +247,26 @@ public class VideoService {
 		VideoDto videoDto = VideoMapper.mapToVideoDto(video, user);
 		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
 				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
+	}
+
+	@Transactional
+	public ViewsResponse addViews(Long videoId) {
+		logger.info("Invoke add views function");
+		User viewer = userService.getRequestedUser();
+		boolean isAlreadyView = this.viewRepository.existsByViewerIdAndVideoId(viewer.getId(), videoId);
+		Video video = videoRepository.findById(videoId)
+				.orElseThrow(() -> new CustomException("Video not found!", HttpStatus.NOT_FOUND));
+		if (!isAlreadyView) {
+			logger.info("Add new Views to video");
+			View newView = new View();
+			newView.setVideo(video);
+			newView.setViewer(viewer);
+			newView.setViewTime(LocalDateTime.now());
+			video.getViews().add(newView);
+			isAlreadyView = true;
+			viewRepository.save(newView);
+		}
+		return VideoMapper.mapToViewResponse(video, isAlreadyView);
 	}
 
 }

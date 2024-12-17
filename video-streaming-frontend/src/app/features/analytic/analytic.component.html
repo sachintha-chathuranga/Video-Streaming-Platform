@@ -14,11 +14,12 @@
         </div>
         <div fxFlex="30%" class="selection-div">
           <mat-form-field>
-            <mat-label>Select an option</mat-label>
-            <mat-select [(value)]="selected">
-              <mat-option value="1">Option 1</mat-option>
-              <mat-option value="2">Option 2</mat-option>
-              <mat-option value="3">Option 3</mat-option>
+            <mat-label > {{+selectedDateRange >= 365 ? (startDate | date) : (startDate | date:'MMM d')}} - {{currentDate | date}}</mat-label>
+            <mat-select [(value)]="selectedDateRange" (selectionChange)="handleSelection($event.value)">
+              <mat-option value="7">Last 7 days</mat-option>
+              <mat-option value="28">Last 28 days</mat-option>
+              <mat-option value="90">Last 90 days</mat-option>
+              <mat-option value="365">Last 365 days</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

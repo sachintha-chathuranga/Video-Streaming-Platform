@@ -2,8 +2,6 @@ package com.fourbit.sachintha.dto;
 
 import java.time.LocalDateTime;
 
-import com.fourbit.sachintha.model.VideoStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

@@ -59,12 +59,20 @@
 	</div>
 
 	<span
-		*ngIf="!isLoading"
+		*ngIf="
+			!isLoading ||
+			(mode == 'chips' && items.length != 0) ||
+			(mode == 'cards' && channels.length != 0)
+		"
 		class="btn-cover right-btn"
 		[ngClass]="{ hidden: !rightButton || isWindowView }"
 	></span>
 	<button
-		*ngIf="!isLoading"
+		*ngIf="
+			!isLoading &&
+			(mode == 'chips' && items.length != 0) ||
+			(mode == 'cards' && channels.length != 0)
+		"
 		[ngClass]="{ hidden: !rightButton || isWindowView }"
 		class="mat-button right-btn"
 		mat-icon-button

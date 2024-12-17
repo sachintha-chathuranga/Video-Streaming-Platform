@@ -25,5 +25,22 @@ import { SplineChartComponent } from './components/spline-chart/spline-chart.com
 	styleUrl: './analytic.component.css',
 })
 export class AnalyticComponent {
-	selected = '2';
+	startDate!: string;
+	currentDate!: number;
+	selectedDateRange = '7';
+
+	constructor() {
+		this.changeStartDate();
+		this.currentDate = Date.now();
+	}
+
+	handleSelection(days: string) {
+		this.changeStartDate();
+	}
+	changeStartDate() {
+		let startDay = new Date();
+		let now = new Date();
+		startDay.setDate(now.getDate() - parseInt(this.selectedDateRange));
+		this.startDate = startDay.toDateString();
+	}
 }

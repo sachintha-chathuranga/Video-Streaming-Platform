@@ -3,6 +3,7 @@
 		<app-video-player
 			[isLoading]="isLoading"
 			[videoSource]="video?.videoUrl || ''"
+			[video]="video"
 			class="video-player"
 		></app-video-player>
 		<div class="meta-data">
@@ -20,9 +21,7 @@
 							[ngStyle]="{
 								'background-image': isLoading
 									? 'none'
-									: video?.channel?.channelImage
-									? video?.channel?.channelImage
-									: 'url(\'/assets/no-person.png\')'
+									: 'url('+(video?.channel?.channelImage || 'assets/no-person.png')+')'
 							}"
 							[ngClass]="{ skeleton: isLoading }"
 						></div>

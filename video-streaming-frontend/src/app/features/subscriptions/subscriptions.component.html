@@ -1,6 +1,6 @@
 <div class="title-section">
 	<h3>Channels</h3>
-	<button mat-button (click)="toggleView()">{{ changeView ? 'Show less' : 'View all' }}</button>
+	<button 	*ngIf="subcribeChannels.length !=0" mat-button (click)="toggleView()">{{ changeView ? 'Show less' : 'View all' }}</button>
 </div>
 <slider-toolbar
 	id="slider-toolbar"
@@ -10,7 +10,7 @@
 	[isLoading]="getChannelLoading"
 ></slider-toolbar>
 
-<div class="title-section">
+<div 	*ngIf="subcribeChannels.length !=0" class="title-section">
 	<h3>Latest</h3>
 </div>
 <ng-container *ngIf="getVideoLoading; then loadingTemplate; else contentTemplate"></ng-container>

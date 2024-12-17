@@ -17,6 +17,7 @@ import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoUpdateMetaData;
+import com.fourbit.sachintha.dto.ViewsResponse;
 import com.fourbit.sachintha.service.VideoService;
 
 import jakarta.validation.Valid;
@@ -88,4 +89,8 @@ public class VideoController {
 		return ResponseEntity.ok(videoService.addDislikeToVideo(videoId));
 	}
 
+	@PutMapping("/{videoId}/views")
+	public ResponseEntity<ViewsResponse> updateVideoViews(@PathVariable Long videoId) {
+		return ResponseEntity.ok(videoService.addViews(videoId));
+	}
 }
