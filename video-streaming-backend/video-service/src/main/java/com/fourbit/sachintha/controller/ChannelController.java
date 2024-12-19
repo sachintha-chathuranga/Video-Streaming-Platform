@@ -1,9 +1,11 @@
 package com.fourbit.sachintha.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fourbit.sachintha.dto.AnalyticsDto;
 import com.fourbit.sachintha.dto.ChannelDto;
+import com.fourbit.sachintha.dto.ChannelStaticDto;
 import com.fourbit.sachintha.dto.ChannelUpdateDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
@@ -97,4 +101,17 @@ public class ChannelController {
 		String url = channelService.uploadBannerImage(file);
 		return ResponseEntity.ok(url);
 	}
+
+	@GetMapping("/analytics/views")
+	public ResponseEntity<List<AnalyticsDto>> getViewsAnalytics(
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+		return ResponseEntity.ok(channelService.getViewsAnalytics(startDate, endDate));
+	}
+
+	@GetMapping("/statistics")
+	public ResponseEntity<ChannelStaticDto> getChannelStatistics() {
+		return ResponseEntity.ok(channelService.getChannelStatistics());
+	}
+
 }

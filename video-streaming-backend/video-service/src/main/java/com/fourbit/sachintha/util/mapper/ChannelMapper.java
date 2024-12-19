@@ -1,6 +1,7 @@
 package com.fourbit.sachintha.util.mapper;
 
 import com.fourbit.sachintha.dto.ChannelDto;
+import com.fourbit.sachintha.dto.ChannelStaticDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.model.Channel;
 import com.fourbit.sachintha.model.User;
@@ -38,5 +39,10 @@ public class ChannelMapper {
 		Long subscribersCount = channel.getSubscribersCount();
 		SubscriptionResponse channelDto = new SubscriptionResponse(subscribersCount, isSubscribe);
 		return channelDto;
+	}
+
+	public static ChannelStaticDto mapToChannelStaticDto(Long subCount, Long viewsCount) {
+		ChannelStaticDto staticDto = new ChannelStaticDto(subCount, viewsCount);
+		return staticDto;
 	}
 }

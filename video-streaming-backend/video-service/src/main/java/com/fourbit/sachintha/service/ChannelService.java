@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fourbit.sachintha.dto.AnalyticsDto;
 import com.fourbit.sachintha.dto.ChannelDto;
+import com.fourbit.sachintha.dto.ChannelStaticDto;
 import com.fourbit.sachintha.dto.ChannelUpdateDto;
 import com.fourbit.sachintha.dto.SubscriptionResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
@@ -31,6 +33,7 @@ import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.repository.ChannelRepository;
 import com.fourbit.sachintha.repository.UserSubscribeRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
+import com.fourbit.sachintha.repository.ViewRepository;
 import com.fourbit.sachintha.util.mapper.ChannelMapper;
 import com.fourbit.sachintha.util.mapper.VideoMapper;
 
@@ -42,6 +45,7 @@ public class ChannelService {
 	private final ChannelRepository channelRepository;
 	private final VideoRepository videoRepository;
 	private final UserSubscribeRepository subscribeRepository;
+	private final ViewRepository viewRepository;
 	private final AwsS3Service awsS3Service;
 	private final UserService userService;
 	private final Logger logger = LoggerFactory.getLogger(ChannelService.class);
@@ -250,6 +254,19 @@ public class ChannelService {
 		channelRepository.save(channel);
 
 		return ChannelMapper.mapTochannelDto(channel);
+	}
+
+	public List<AnalyticsDto> getViewsAnalytics(LocalDateTime startDate, LocalDateTime endDate) {
+		User user = userService.getRequestedUser();
+		return viewRepository.findChannelViewAnalytics(user.getId(), startDate.toLocalDate().atStartOfDay(),
+				endDate.toLocalDate().atTime(23, 59, 59, 999_999_999));
+	}
+
+	public ChannelStaticDto getChannelStatistics() {
+		User user = userService.getRequestedUser();
+		Long channelViewsCount = viewRepository.getViewsCountByChannelId(user.getId());
+		Long subscribersCount = user.getChannel().getSubscribersCount();
+		return ChannelMapper.mapToChannelStaticDto(subscribersCount, channelViewsCount);
 	}
 
 }
