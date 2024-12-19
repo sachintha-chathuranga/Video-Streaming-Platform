@@ -31,6 +31,8 @@ import { VideoUploadStepperComponent } from '../../../upload/video-upload-steppe
 import { VideoUpdateDto } from '../../models/videoUpdate.dto';
 import { VideoUpdateDialogComponent } from '../video-update-dialog/video-update-dialog.component';
 import { VideoDto } from '../../../../shared/models/video.dto';
+import { BaseComponent } from '../../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-video-form',
@@ -65,7 +67,7 @@ import { VideoDto } from '../../../../shared/models/video.dto';
 	templateUrl: './video-form.component.html',
 	styleUrl: './video-form.component.css',
 })
-export class VideoFormComponent {
+export class VideoFormComponent extends BaseComponent{
 	@Input()
 	isNew: boolean = false;
 	@Input()
@@ -108,6 +110,7 @@ export class VideoFormComponent {
 		private uploadDialogRef: MatDialogRef<VideoUploadStepperComponent>,
 		private router: Router
 	) {
+		super()
 		this.allowedImageExtensions = config.SUPPORTED_IMAGE_FORMATS;
 		this.imageExtensions = config.convertToExtentions(this.allowedImageExtensions);
 		this.videoDetails = new FormGroup({
@@ -186,22 +189,25 @@ export class VideoFormComponent {
 	uploadThumbnail() {
 		if (this.selectedFile) {
 			this.onLoadChange.emit(true);
-			this.videoService.uploadThumbnail(this.selectedFile, this.video?.id).subscribe({
-				next: (data: string) => {
-					this.video.thumbnailUrl = data;
-					this.snackBar.open('Thumbnail Upload Successfull', 'OK');
-					this.removeFile();
-					this.onLoadChange.emit(false);
-					if (this.isNew) {
-						this.uploadDialogRef.close(this.video);
-					}
-				},
-				error: (errorResponse: HttpErrorResponse) => {
-					this.snackBar.open(errorResponse.error.title, 'OK');
-					console.log(errorResponse.error);
-					this.onLoadChange.emit(false);
-				},
-			});
+			this.videoService
+				.uploadThumbnail(this.selectedFile, this.video?.id)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe({
+					next: (data: string) => {
+						this.video.thumbnailUrl = data;
+						this.snackBar.open('Thumbnail Upload Successfull', 'OK');
+						this.removeFile();
+						this.onLoadChange.emit(false);
+						if (this.isNew) {
+							this.uploadDialogRef.close(this.video);
+						}
+					},
+					error: (errorResponse: HttpErrorResponse) => {
+						this.snackBar.open(errorResponse.error.title, 'OK');
+						console.log(errorResponse.error);
+						this.onLoadChange.emit(false);
+					},
+				});
 		}
 	}
 	saveVideo() {
@@ -224,32 +230,37 @@ export class VideoFormComponent {
 					videoMetaData.tags = this.videoDetails.get('tags')?.value;
 				}
 
-				this.videoService.saveVideo(videoMetaData).subscribe({
-					next: (data: VideoDto) => {
-						this.video = data;
-						this.setVideoDetails();
-						this.videoChange.emit(this.video);
-						this.snackBar.open('Video Metadata Updated successfully', '', {
-							duration: 3000,
-							horizontalPosition: 'right',
-							verticalPosition: 'top',
-						});
-						if (!this.selectedFile) {
-							this.onLoadChange.emit(false);
-							if (this.isNew) {
-								this.router.navigate(['profile/content'], { state: { data: this.video } });
-								this.uploadDialogRef.close();
+				this.videoService
+					.saveVideo(videoMetaData)
+					.pipe(takeUntil(this.destroy$))
+					.subscribe({
+						next: (data: VideoDto) => {
+							this.video = data;
+							this.setVideoDetails();
+							this.videoChange.emit(this.video);
+							this.snackBar.open('Video Metadata Updated successfully', '', {
+								duration: 3000,
+								horizontalPosition: 'right',
+								verticalPosition: 'top',
+							});
+							if (!this.selectedFile) {
+								this.onLoadChange.emit(false);
+								if (this.isNew) {
+									this.router.navigate(['profile/content'], {
+										state: { data: this.video },
+									});
+									this.uploadDialogRef.close();
+								}
+							} else {
+								this.removeFile();
 							}
-						} else {
-							this.removeFile();
-						}
-					},
-					error: (errorResponse: HttpErrorResponse) => {
-						this.snackBar.open(errorResponse.error.title, 'OK');
-						console.log(errorResponse.error);
-						this.onLoadChange.emit(false);
-					},
-				});
+						},
+						error: (errorResponse: HttpErrorResponse) => {
+							this.snackBar.open(errorResponse.error.title, 'OK');
+							console.log(errorResponse.error);
+							this.onLoadChange.emit(false);
+						},
+					});
 			} else {
 				this.markAllAsTouched();
 			}

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AnalyticDto } from '../../features/analytic/models/analytic.dto';
 import { Channel } from '../../features/channel/models/channel.dto';
 import { VideoStaticData } from '../../features/dashboard/components/video-analytic/models/videoStatistics.dto';
 import { ChannelUpdateDto } from '../../features/profile/components/channel-form/models/channelUpdate.dto';
@@ -9,6 +10,7 @@ import { VideoCardDto } from '../components/video-card/model/videoCard.dto';
 import { PaginatedResponse } from '../models/pagination.dto';
 import { Subscription } from '../models/subscription.dto';
 import { VideoDto } from '../models/video.dto';
+import { ChannelStatisticsDto } from '../../features/analytic/models/channelStatistics.dto';
 
 @Injectable({
 	providedIn: 'root',
@@ -87,6 +89,22 @@ export class ChannelService {
 	getChannelLatestVideo(): Observable<VideoStaticData> {
 		return this.httpClient
 			.get<VideoStaticData>(`${this.apiEndpoint}/channels/latest-video`)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+
+	getChannelViewsAnalytics(startDate: string, endDate: string): Observable<AnalyticDto[]> {
+		const params = new HttpParams()
+			.set('startDate',startDate)
+			.set('endDate', endDate);
+		return this.httpClient
+			.get<AnalyticDto[]>(`${this.apiEndpoint}/channels/analytics/views`, { params,  responseType: 'json' })
+			.pipe(catchError((error) => throwError(() => error)));
+	}
+
+	getChannelStatistics(): Observable<ChannelStatisticsDto> {
+
+		return this.httpClient
+			.get<ChannelStatisticsDto>(`${this.apiEndpoint}/channels/statistics`)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 

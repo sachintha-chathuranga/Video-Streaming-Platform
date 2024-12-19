@@ -17,6 +17,9 @@ import { Channel } from '../channel/models/channel.dto';
 import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
 import { ErrorDto } from '../../shared/models/error.dto';
 import { PaginatedResponse } from '../../shared/models/pagination.dto';
+import { BaseCdkCell } from '@angular/cdk/table';
+import { BaseComponent } from '../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-subscriptions',
@@ -34,13 +37,12 @@ import { PaginatedResponse } from '../../shared/models/pagination.dto';
 	templateUrl: './subscriptions.component.html',
 	styleUrl: './subscriptions.component.css',
 })
-export class SubscriptionsComponent {
+export class SubscriptionsComponent extends BaseComponent {
 	subcribeVideos: VideoCardDto[] = [];
 	subcribeChannels: Channel[] = [];
 	errorObject!: ErrorDto;
 	getVideoLoading: boolean = false;
 	getChannelLoading: boolean = false;
-	private timeoutId: any;
 	changeView: boolean = false;
 	cardMenuItems: CardMenuItem[] = [
 		{
@@ -61,7 +63,7 @@ export class SubscriptionsComponent {
 		private snackBar: MatSnackBar,
 		private errorService: ErrorService,
 		private userService: UserService
-	) {}
+	) {super()}
 
 	ngOnInit(): void {
 		this.fetchChannels();
@@ -79,12 +81,15 @@ export class SubscriptionsComponent {
 				this.channelSortBy,
 				this.channelSortDirection
 			)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response: PaginatedResponse<Channel>) => {
 					this.subcribeChannels = response.content;
 					this.getChannelLoading = false;
 					if (this.subcribeChannels.length == 0) {
-						this.errorObject = this.errorService.generateError(new HttpErrorResponse({status: 1}));
+						this.errorObject = this.errorService.generateError(
+							new HttpErrorResponse({ status: 1 })
+						);
 					}
 				},
 				error: (error: HttpErrorResponse) => {
@@ -95,21 +100,19 @@ export class SubscriptionsComponent {
 	}
 	fetchVideos() {
 		this.getVideoLoading = true;
-		this.userService.getLatestVideoFromSubscriptions().subscribe({
-			next: (data: PaginatedResponse<VideoCardDto>) => {
-				this.subcribeVideos = data.content;
-				this.getVideoLoading = false;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.errorObject = this.errorService.generateError(error);
-				this.getVideoLoading = false;
-			},
-		});
+		this.userService
+			.getLatestVideoFromSubscriptions()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: PaginatedResponse<VideoCardDto>) => {
+					this.subcribeVideos = data.content;
+					this.getVideoLoading = false;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.errorObject = this.errorService.generateError(error);
+					this.getVideoLoading = false;
+				},
+			});
 	}
-	ngOnDestroy() {
-		// Clear the timeout when the component is destroyed
-		if (this.timeoutId) {
-			clearTimeout(this.timeoutId);
-		}
-	}
+
 }

@@ -15,6 +15,8 @@ import { VideoService } from '../../../../shared/services/video.service';
 import { FilterOptions } from './models/filterOptions.dto';
 import { ErrorDto } from '../../../../shared/models/error.dto';
 import { PaginatedResponse } from '../../../../shared/models/pagination.dto';
+import { BaseComponent } from '../../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-filter-toolbar',
@@ -32,7 +34,7 @@ import { PaginatedResponse } from '../../../../shared/models/pagination.dto';
 	templateUrl: './filter-toolbar.component.html',
 	styleUrl: './filter-toolbar.component.css',
 })
-export class FilterToolbarComponent {
+export class FilterToolbarComponent extends BaseComponent {
 	@Output()
 	onLoading: EventEmitter<boolean> = new EventEmitter();
 	@Output()
@@ -77,10 +79,10 @@ export class FilterToolbarComponent {
 		private videoService: VideoService,
 		private errorService: ErrorService,
 		private activatedRoute: ActivatedRoute
-	) {}
+	) {super()}
 
 	ngOnInit(): void {
-		this.activatedRoute.queryParams.subscribe((params) => {
+		this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
 			this.searchQuery = params['search_query'];
 			this.fetchData();
 		});
@@ -90,6 +92,7 @@ export class FilterToolbarComponent {
 		this.isLoading = true;
 		this.videoService
 			.searchVideos(this.searchQuery, this.dateFilter, this.durationFilter, this.sortBy)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (data: PaginatedResponse<VideoCardDto>) => {
 					this.onVideoListChange.emit(data.content);

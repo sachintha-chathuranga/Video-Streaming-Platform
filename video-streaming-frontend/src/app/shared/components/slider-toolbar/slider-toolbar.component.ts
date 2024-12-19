@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChannelCardComponent } from '../../../features/channel/components/channel-card/channel-card.component';
@@ -11,6 +11,7 @@ import { Channel } from '../../../features/channel/models/channel.dto';
 	imports: [CommonModule, MatIconModule, MatButtonModule, ChannelCardComponent],
 	templateUrl: './slider-toolbar.component.html',
 	styleUrl: './slider-toolbar.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SliderToolbarComponent {
 	@Input()

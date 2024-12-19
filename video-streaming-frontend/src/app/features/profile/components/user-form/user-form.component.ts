@@ -17,6 +17,8 @@ import { UserService } from '../../../../shared/services/user.service';
 import { UserUpdateDto } from '../../models/userUpdate.dto';
 import { BrandingComponent } from '../branding/branding.component';
 import { UserDto } from '../../../../shared/models/user.dto';
+import { BaseComponent } from '../../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-user-form',
@@ -37,7 +39,7 @@ import { UserDto } from '../../../../shared/models/user.dto';
 	templateUrl: './user-form.component.html',
 	styleUrl: './user-form.component.css',
 })
-export class UserFormComponent {
+export class UserFormComponent extends BaseComponent {
 	logginUser: UserDto | null = null;
 	userDetails: FormGroup;
 	firstName: FormControl = new FormControl('', [Validators.required]);
@@ -64,6 +66,7 @@ export class UserFormComponent {
 		private snackBar: MatSnackBar,
 		private userService: UserService
 	) {
+		super()
 		this.userDetails = new FormGroup({
 			firstName: this.firstName,
 			lastName: this.lastName,
@@ -104,23 +107,26 @@ export class UserFormComponent {
 
 	uploadProfilePicture(file: File) {
 		this.isLoading = true;
-		this.userService.uploadProfilePicture(file).subscribe({
-			next: (data: string) => {
-				this.isLoading = false;
-				if (this.logginUser) this.logginUser.pictureUrl = data;
-				this.userService.setProfilePicture(data);
-				this.brandingComponent.clearPictureFile();
-				this.snackBar.open('Picture Upload Successfully', '', {
-					duration: 3000,
-				});
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				this.isLoading = false;
-				this.snackBar.open(errorResponse.error.detail, '', {
-					duration: 3000,
-				});
-			},
-		});
+		this.userService
+			.uploadProfilePicture(file)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: string) => {
+					this.isLoading = false;
+					if (this.logginUser) this.logginUser.pictureUrl = data;
+					this.userService.setProfilePicture(data);
+					this.brandingComponent.clearPictureFile();
+					this.snackBar.open('Picture Upload Successfully', '', {
+						duration: 3000,
+					});
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.isLoading = false;
+					this.snackBar.open(errorResponse.error.detail, '', {
+						duration: 3000,
+					});
+				},
+			});
 	}
 
 	publishChanges() {
@@ -138,24 +144,27 @@ export class UserFormComponent {
 			}
 			console.log(updatedUser);
 			this.isLoading = true;
-			this.userService.updateUser(updatedUser).subscribe({
-				next: (data: UserDto) => {
-					this.logginUser = data;
-					this.userService.setUser(data);
-					this.isLoading = false;
-					this.hasAnyChanges = false;
-					this.snackBar.open('Update Successfully', '', {
-						duration: 3000,
-					});
-				},
-				error: (errorResponse: HttpErrorResponse) => {
-					if (errorResponse.status == 400) {
-						this.errorMessage = errorResponse.error;
-					}
-					console.log(errorResponse.error);
-					this.isLoading = false;
-				},
-			});
+			this.userService
+				.updateUser(updatedUser)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe({
+					next: (data: UserDto) => {
+						this.logginUser = data;
+						this.userService.setUser(data);
+						this.isLoading = false;
+						this.hasAnyChanges = false;
+						this.snackBar.open('Update Successfully', '', {
+							duration: 3000,
+						});
+					},
+					error: (errorResponse: HttpErrorResponse) => {
+						if (errorResponse.status == 400) {
+							this.errorMessage = errorResponse.error;
+						}
+						console.log(errorResponse.error);
+						this.isLoading = false;
+					},
+				});
 		} else {
 			this.markAllAsTouched();
 		}

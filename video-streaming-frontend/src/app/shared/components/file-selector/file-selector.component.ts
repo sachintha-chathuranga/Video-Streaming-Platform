@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,6 +19,7 @@ import { ErrorMessageComponent } from '../error-message/error-message.component'
 	],
 	templateUrl: './file-selector.component.html',
 	styleUrl: './file-selector.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileSelectorComponent {
 	@Input()

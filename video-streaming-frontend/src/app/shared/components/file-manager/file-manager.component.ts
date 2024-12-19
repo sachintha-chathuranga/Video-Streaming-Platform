@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfigService } from '../../../config.service';
 import { FileSelectorComponent } from '../file-selector/file-selector.component';
@@ -12,6 +12,7 @@ import { FileSystemFileEntry } from 'ngx-file-drop';
 	imports: [CommonModule, FileSelectorComponent, FileViewerComponent],
 	templateUrl: './file-manager.component.html',
 	styleUrl: './file-manager.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileManagerComponent {
 	@Input()
@@ -35,7 +36,7 @@ export class FileManagerComponent {
 			this.extensions = this.config.convertToExtentions(this.allowedImageExtensions);
 		}
 	}
-	removeFile(url:string) {
+	removeFile(url: string) {
 		this.fileUrl = url;
 	}
 	setFile(fileEntry: FileSystemFileEntry) {
@@ -51,7 +52,7 @@ export class FileManagerComponent {
 			}
 			if (isSupportedFile) {
 				this.file = file;
-        this.onFileChange.emit(file);
+				this.onFileChange.emit(file);
 				this.fileUrl = URL.createObjectURL(file);
 			} else {
 				this.snackbar.open('Unsuported File format!', 'OK');

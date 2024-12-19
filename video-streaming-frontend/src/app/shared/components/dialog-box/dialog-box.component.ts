@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DialogData } from './models/dialogData.dto';
@@ -10,6 +10,7 @@ import { DialogData } from './models/dialogData.dto';
 	imports: [CommonModule, MatDialogModule, MatButtonModule],
 	templateUrl: './dialog-box.component.html',
 	styleUrl: './dialog-box.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DialogBoxComponent {
 	// @Input()

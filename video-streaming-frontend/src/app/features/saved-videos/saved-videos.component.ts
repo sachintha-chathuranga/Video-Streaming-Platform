@@ -17,6 +17,8 @@ import { UserService } from '../../shared/services/user.service';
 import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
 import { ErrorDto } from '../../shared/models/error.dto';
 import { PaginatedResponse } from '../../shared/models/pagination.dto';
+import { BaseComponent } from '../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-saved-videos',
@@ -35,7 +37,7 @@ import { PaginatedResponse } from '../../shared/models/pagination.dto';
 	templateUrl: './saved-videos.component.html',
 	styleUrl: './saved-videos.component.css',
 })
-export class SavedVideosComponent {
+export class SavedVideosComponent extends BaseComponent{
 	videoList?: Array<VideoCardDto> = [];
 	isLoading: boolean = false;
 	isDeleting: boolean = false;
@@ -56,12 +58,13 @@ export class SavedVideosComponent {
 		private errorService: ErrorService,
 		private snackBar: MatSnackBar,
 		private breakpointObserver: BreakpointObserver
-	) {}
+	) {super()}
 
 	ngOnInit(): void {
 		this.fetchSavedVideos();
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((result) => {
 				if (result.matches) {
 					if (result.breakpoints[Breakpoints.XSmall]) {
@@ -82,21 +85,24 @@ export class SavedVideosComponent {
 
 	fetchSavedVideos() {
 		this.isLoading = true;
-		this.userService.getUserPlaylist(this.searchInput).subscribe({
-			next: (response: PaginatedResponse<VideoCardDto>) => {
-				this.videoList = response.content;
-				this.isLoading = false;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.snackBar.open(error.message, '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.errorObject = this.errorService.generateError(error);
-				this.isLoading = false;
-			},
-		});
+		this.userService
+			.getUserPlaylist(this.searchInput)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response: PaginatedResponse<VideoCardDto>) => {
+					this.videoList = response.content;
+					this.isLoading = false;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.snackBar.open(error.message, '', {
+						duration: 3000,
+						horizontalPosition: 'right',
+						verticalPosition: 'top',
+					});
+					this.errorObject = this.errorService.generateError(error);
+					this.isLoading = false;
+				},
+			});
 	}
 
 	clearInput() {
@@ -106,26 +112,29 @@ export class SavedVideosComponent {
 
 	clearPlayList() {
 		this.isDeleting = true;
-		this.userService.deletePlaylist().subscribe({
-			next: (data: boolean) => {
-				this.videoList = [];
+		this.userService
+			.deletePlaylist()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: boolean) => {
+					this.videoList = [];
 
-				this.snackBar.open('Playlist Deleted successfully', '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.isDeleting = false;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.snackBar.open(error.message, '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.errorObject = this.errorService.generateError(error);
-				this.isDeleting = false;
-			},
-		});
+					this.snackBar.open('Playlist Deleted successfully', '', {
+						duration: 3000,
+						horizontalPosition: 'right',
+						verticalPosition: 'top',
+					});
+					this.isDeleting = false;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.snackBar.open(error.message, '', {
+						duration: 3000,
+						horizontalPosition: 'right',
+						verticalPosition: 'top',
+					});
+					this.errorObject = this.errorService.generateError(error);
+					this.isDeleting = false;
+				},
+			});
 	}
 }

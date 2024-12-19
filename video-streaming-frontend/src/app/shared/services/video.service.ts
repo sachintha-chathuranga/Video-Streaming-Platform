@@ -70,10 +70,10 @@ export class VideoService {
 	}
 
 	getFeatureVideos(tagName: string): Observable<PaginatedResponse<VideoCardDto>> {
+		console.log('Invoke getFeaturesVideos function');
+		let params = new HttpParams().set('tagName', tagName);
 		return this.httpClient
-			.get<PaginatedResponse<VideoCardDto>>(
-				`${this.apiEndpoint}/videos/feature?tagName=${tagName}`
-			)
+			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/videos/feature`, { params })
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 	searchVideos(
@@ -96,7 +96,7 @@ export class VideoService {
 	}
 	updateVideoViews(videoId?: number): Observable<ViewsResponse> {
 		return this.httpClient
-			.put<ViewsResponse>(`${this.apiEndpoint}/videos/${videoId}/views`,{})
+			.put<ViewsResponse>(`${this.apiEndpoint}/videos/${videoId}/views`, {})
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 }

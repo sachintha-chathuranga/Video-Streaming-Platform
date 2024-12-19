@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,6 +29,7 @@ import { SidebarComponent } from '../../sidebar/sidebar.component';
 	],
 	templateUrl: './home.component.html',
 	styleUrl: './home.component.css',
+	// changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
 	items: SideBarItem[] = itemList;

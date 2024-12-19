@@ -1,0 +1,41 @@
+h2 {
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 24px;
+	margin-bottom: 15px;
+}
+hr {
+	margin: 15px 0;
+}
+ h1 {
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 24px;
+}
+p {
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 20px;
+	margin-bottom: 10px;
+}
+.live-text {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+.live-text p{
+	margin-bottom: 0;
+}
+.special-text {
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 20px;
+	margin-bottom: 10px;
+	color: var(--theme-font-shadow);
+}
+.total-stat{
+	display: flex;
+}
+.total-stat div{
+	flex: 1;
+}

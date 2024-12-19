@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FileMetaDataComponent } from '../file-meta-data/file-meta-data.component';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 	imports: [CommonModule, FileMetaDataComponent, VideoPlayerComponent],
 	templateUrl: './file-viewer.component.html',
 	styleUrl: './file-viewer.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileViewerComponent {
 	@Input()
@@ -20,7 +21,7 @@ export class FileViewerComponent {
 	@Output()
 	onFileRemove = new EventEmitter<string>();
 	removeFile() {
-		this.fileUrl= '';
+		this.fileUrl = '';
 		this.onFileRemove.emit(this.fileUrl);
 	}
 }

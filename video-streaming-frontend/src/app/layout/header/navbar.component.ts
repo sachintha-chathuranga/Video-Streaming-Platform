@@ -1,7 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,11 +14,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntil } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
 import { VideoUploadStepperComponent } from '../../features/upload/video-upload-stepper/video-upload-stepper.component';
-import { UserService } from '../../shared/services/user.service';
+import { DotAnimationComponent } from '../../shared/animations/dot-animation/dot-animation.component';
+import { BaseComponent } from '../../shared/components/base/base.component';
 import { UserDto } from '../../shared/models/user.dto';
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
 	selector: 'navbar',
@@ -36,11 +39,12 @@ import { UserDto } from '../../shared/models/user.dto';
 		MatTooltipModule,
 		MatMenuModule,
 		MatDivider,
+		DotAnimationComponent,
 	],
 	templateUrl: './navbar.component.html',
 	styleUrl: './navbar.component.css',
 })
-export class NavbarComponent {
+export class NavbarComponent extends BaseComponent implements OnInit {
 	@ViewChild('searchBox', { static: false })
 	searchBox!: ElementRef;
 	@ViewChild('inputField', { static: false })
@@ -65,34 +69,43 @@ export class NavbarComponent {
 		private userService: UserService,
 		private activatedRoute: ActivatedRoute,
 		private breakpointObserver: BreakpointObserver
-	) {}
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
 		this.productName = environment.productName;
 		let localUser = this.userService.getUser();
 
-		this.authService.getAuthState().subscribe(({ authResult, userDataResult }) => {
-			this.isAuthenticated = authResult.isAuthenticated;
-			if (this.isAuthenticated) {
-				if (!localUser && userDataResult.userData) {
-					this.userService.getUserDetails(userDataResult.userData.sub).subscribe({
-						next: (user: UserDto) => {
-							this.logginUser = user;
-						},
-						error: (errorResponse: HttpErrorResponse) => {
-							console.log(errorResponse.error);
-						},
-					});
-				} else {
-					this.logginUser = localUser;
+		this.authService
+			.getAuthState()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(({ authResult, userDataResult }) => {
+				this.isAuthenticated = authResult.isAuthenticated;
+				if (this.isAuthenticated) {
+					if (!localUser && userDataResult.userData) {
+						this.userService
+							.getUserDetails(userDataResult.userData.sub)
+							.pipe(takeUntil(this.destroy$))
+							.subscribe({
+								next: (user: UserDto) => {
+									this.logginUser = user;
+								},
+								error: (errorResponse: HttpErrorResponse) => {
+									console.log(errorResponse.error);
+								},
+							});
+					} else {
+						this.logginUser = localUser;
+					}
 				}
-			}
-		});
-		this.activatedRoute.queryParams.subscribe((params) => {
+			});
+		this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
 			this.value = params['search_query'];
 		});
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((result) => {
 				if (result.matches) {
 					if (result.breakpoints[Breakpoints.XSmall]) {
@@ -137,8 +150,11 @@ export class NavbarComponent {
 			disableClose: true,
 		});
 
-		dialogRef.afterClosed().subscribe((result) => {
-			this.router.navigate(['/profile/content'], { state: { data: result } });
-		});
+		dialogRef
+			.afterClosed()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((result) => {
+				this.router.navigate(['/profile/content'], { state: { data: result } });
+			});
 	}
 }

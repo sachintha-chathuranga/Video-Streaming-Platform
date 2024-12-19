@@ -9,7 +9,7 @@
       <div class="fxLayout" fxLayout="row" fxLayoutGap="20px grid">
         <div fxFlex="70%">
           <h1 class="graph-title">
-            Your channel didn’t get any views in the last 90 days
+            Your channel {{totalViews!=0 ? 'got '+totalViews : 'didn’t get any'}} views in the last {{selectedDateRange}} days
           </h1>
         </div>
         <div fxFlex="30%" class="selection-div">
@@ -27,7 +27,7 @@
       <div class="fxLayout" fxLayout="row wrap" fxLayoutGap="20px grid">
         <div fxFlex="70%" fxFlex.lt-md="100%" class="no-padding-lt-md">
           <div class="chart-container">
-            <app-line-chart></app-line-chart>
+            <app-line-chart (onTotalViewChange)="setTotalViews($event)" [startDate]="startDate" [endDate]="currentDate"></app-line-chart>
           </div>
         </div>
         <div fxFlex="30%" fxFlex.lt-md="100%" class="no-padding" >
@@ -40,17 +40,9 @@
             fxLayoutGap="20px"
           >
             <div class="chart-container" fxFlex="100%" fxFlex.lt-md="50%">
-              <h2 style="margin: 0">Realtime</h2>
-              <p class="special-text">Updating live</p>
-              <hr />
-              <h1>3</h1>
-              <p class="special-text">subscribers</p>
-              <hr />
-              <h1>0</h1>
-              <p class="special-text">views:last 48 hours</p>
-              <app-spline-chart></app-spline-chart>
-              <button mat-button>See more</button>
+              <app-realtime-statistics *ngIf="statistics" [totalSubscribers]="statistics.subscribersCount" [totalViews]="statistics.viewsCount"></app-realtime-statistics>
             </div>
+
             <div class="chart-container" fxFlex="100%" fxFlex.lt-md="50%">
               <h2>Latest content</h2>
               <div class="img-container">

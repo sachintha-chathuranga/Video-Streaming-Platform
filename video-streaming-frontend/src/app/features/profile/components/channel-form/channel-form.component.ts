@@ -16,6 +16,8 @@ import { ChannelService } from '../../../../shared/services/channel.service';
 import { Channel } from '../../../channel/models/channel.dto';
 import { BrandingComponent } from '../branding/branding.component';
 import { ChannelUpdateDto } from './models/channelUpdate.dto';
+import { BaseComponent } from '../../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-channel-form',
@@ -36,7 +38,7 @@ import { ChannelUpdateDto } from './models/channelUpdate.dto';
 	templateUrl: './channel-form.component.html',
 	styleUrl: './channel-form.component.css',
 })
-export class ChannelFormComponent {
+export class ChannelFormComponent extends BaseComponent {
 	channel!: Channel;
 	channelDetails: FormGroup;
 	name: FormControl = new FormControl('', [Validators.required]);
@@ -67,6 +69,7 @@ export class ChannelFormComponent {
 		private snackBar: MatSnackBar,
 		private router: Router
 	) {
+		super()
 		this.hostUrl = window.location.origin;
 		this.channelDetails = new FormGroup({
 			name: this.name,
@@ -91,19 +94,22 @@ export class ChannelFormComponent {
 	}
 	fetchChannelDetails() {
 		this.isLoading = true;
-		this.channelService.getUserChannel().subscribe({
-			next: (channel: Channel) => {
-				console.log(channel);
-				this.channel = channel;
-				this.generatedUrl = this.router.createUrlTree([`/channel/${channel.id}`]).toString();
-				this.setChannelDetails();
-				this.isLoading = false;
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				console.log(errorResponse);
-				this.isLoading = false;
-			},
-		});
+		this.channelService
+			.getUserChannel()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (channel: Channel) => {
+					console.log(channel);
+					this.channel = channel;
+					this.generatedUrl = this.router.createUrlTree([`/channel/${channel.id}`]).toString();
+					this.setChannelDetails();
+					this.isLoading = false;
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					console.log(errorResponse);
+					this.isLoading = false;
+				},
+			});
 	}
 	setChannelDetails(): void {
 		this.channelDetails.setValue({
@@ -141,72 +147,81 @@ export class ChannelFormComponent {
 				updatedChannel.email = this.channelDetails.get('email')?.value;
 			}
 			this.isLoading = true;
-			this.channelService.updateChannel(updatedChannel).subscribe({
-				next: (data: Channel) => {
-					this.channel = data;
-					this.isLoading = false;
-					this.hasAnyChanges = false;
-					this.snackBar.open('Update Successfully', '', {
-						duration: 3000,
-					});
-				},
-				error: (errorResponse) => {
-					if (errorResponse.status == 400) {
-						let message = '';
-						if (errorResponse.error.errors.name) {
-							message = errorResponse.error.errors.name;
-						} else if (errorResponse.error.errors.description) {
-							message = errorResponse.error.errors.description;
-						} else {
-							message = errorResponse.error.errors.email;
+			this.channelService
+				.updateChannel(updatedChannel)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe({
+					next: (data: Channel) => {
+						this.channel = data;
+						this.isLoading = false;
+						this.hasAnyChanges = false;
+						this.snackBar.open('Update Successfully', '', {
+							duration: 3000,
+						});
+					},
+					error: (errorResponse) => {
+						if (errorResponse.status == 400) {
+							let message = '';
+							if (errorResponse.error.errors.name) {
+								message = errorResponse.error.errors.name;
+							} else if (errorResponse.error.errors.description) {
+								message = errorResponse.error.errors.description;
+							} else {
+								message = errorResponse.error.errors.email;
+							}
+							this.snackBar.open(message, 'Ok');
 						}
-						this.snackBar.open(message, 'Ok');
-					}
 
-					this.isLoading = false;
-				},
-			});
+						this.isLoading = false;
+					},
+				});
 		} else {
 			this.markAllAsTouched();
 		}
 	}
 	uploadChannelPicture(file: File) {
 		this.isLoading = true;
-		this.channelService.uploadChannelPicture(file).subscribe({
-			next: (data: string) => {
-				this.isLoading = false;
-				this.channel.channelImage = data;
-				this.brandingComponent.clearPictureFile();
-				this.snackBar.open('Picture Upload Successfully', '', {
-					duration: 3000,
-				});
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				this.isLoading = false;
-				this.snackBar.open(errorResponse.error.detail, '', {
-					duration: 3000,
-				});
-			},
-		});
+		this.channelService
+			.uploadChannelPicture(file)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: string) => {
+					this.isLoading = false;
+					this.channel.channelImage = data;
+					this.brandingComponent.clearPictureFile();
+					this.snackBar.open('Picture Upload Successfully', '', {
+						duration: 3000,
+					});
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.isLoading = false;
+					this.snackBar.open(errorResponse.error.detail, '', {
+						duration: 3000,
+					});
+				},
+			});
 	}
 	uploadBannerImage(file: File) {
 		this.isLoading = true;
-		this.channelService.uploadBannerImage(file).subscribe({
-			next: (data: string) => {
-				this.isLoading = false;
-				this.channel.bannerImage = data;
-				this.brandingComponent.clearBannerFile();
-				this.snackBar.open('Banner Upload Successfully', '', {
-					duration: 3000,
-				});
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				this.isLoading = false;
-				this.snackBar.open(errorResponse.error.detail, '', {
-					duration: 3000,
-				});
-			},
-		});
+		this.channelService
+			.uploadBannerImage(file)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: string) => {
+					this.isLoading = false;
+					this.channel.bannerImage = data;
+					this.brandingComponent.clearBannerFile();
+					this.snackBar.open('Banner Upload Successfully', '', {
+						duration: 3000,
+					});
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.isLoading = false;
+					this.snackBar.open(errorResponse.error.detail, '', {
+						duration: 3000,
+					});
+				},
+			});
 	}
 
 	updateErrorMessage(controlName: string): void {

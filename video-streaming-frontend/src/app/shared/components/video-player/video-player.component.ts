@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { BitrateOptions, VgApiService, VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgStreamingModule } from '@videogular/ngx-videogular/streaming';
+import { take, takeUntil } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 import { VideoDto } from '../../models/video.dto';
 import { ViewsResponse } from '../../models/views.dto';
 import { VideoService } from '../../services/video.service';
+import { BaseComponent } from '../base/base.component';
 import { QualitySelectorComponent } from './components/quality-selector/quality-selector.component';
-import { AuthService } from '../../../core/services/auth.service';
 @Component({
 	selector: 'app-video-player',
 	standalone: true,
@@ -27,8 +29,9 @@ import { AuthService } from '../../../core/services/auth.service';
 	],
 	templateUrl: './video-player.component.html',
 	styleUrl: './video-player.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VideoPlayerComponent implements OnInit {
+export class VideoPlayerComponent extends BaseComponent implements OnInit {
 	@Input()
 	videoSource!: string;
 	@Input()
@@ -41,40 +44,45 @@ export class VideoPlayerComponent implements OnInit {
 	borderRadius!: string;
 	private hasWatchedFor30Seconds = false;
 	private watchStartTime = 0;
-	private subscriptions: any[] = [];
 
 	isAuth: boolean = false;
 
-	constructor(private vgApi: VgApiService, private videoService: VideoService, private authService: AuthService) {}
+	constructor(
+		private vgApi: VgApiService,
+		private videoService: VideoService,
+		private authService: AuthService
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
-		this.authService.isAuthenticated().subscribe(authObj=>{
-		 this.isAuth = authObj.isAuthenticated;
-		})
+		this.authService
+			.isAuthenticated()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((authObj) => {
+				this.isAuth = authObj.isAuthenticated;
+			});
 	}
 
 	onPlayerReady(api: VgApiService) {
 		this.vgApi = api;
 		const media = this.vgApi.getDefaultMedia();
-		const abortSubscription = media.subscriptions.abort.subscribe(() => {
-			console.log('Abord Loading!');
+		media.subscriptions.abort.pipe(takeUntil(this.destroy$)).subscribe(() => {
+			console.log('Video Abord Loading!');
 		});
-		this.subscriptions.push(abortSubscription);
 
-		const playSubscription = media.subscriptions.play.subscribe((e) => {
-			console.log("Video start playing")
-			console.log("isUserVide: "+ this.video?.isUserViewed)
+		media.subscriptions.play.pipe(takeUntil(this.destroy$)).subscribe((e) => {
+			console.log('Video start playing');
+			console.log('isUserVide: ' + this.video?.isUserViewed);
 			if (this.video && !this.video?.isUserViewed && this.isAuth) {
 				this.startTrackingPlayback();
 			}
 		});
-		this.subscriptions.push(playSubscription);
 
-		const pauseSubscription = media.subscriptions.pause.subscribe((e) => {
+		media.subscriptions.pause.pipe(takeUntil(this.destroy$)).subscribe((e) => {
 			console.log('Video paused');
 			this.stopTrackingPlayback();
 		});
-		this.subscriptions.push(pauseSubscription);
 	}
 
 	startTrackingPlayback(): void {
@@ -85,7 +93,7 @@ export class VideoPlayerComponent implements OnInit {
 		this.watchStartTime = media.currentTime;
 
 		// Listen for the timeupdate event to track playback progress
-		const timeUpdateSubscription =  media.subscriptions.timeUpdate.subscribe(() => {
+		media.subscriptions.timeUpdate.pipe(takeUntil(this.destroy$)).subscribe(() => {
 			console.log('current time: ' + media.currentTime);
 			if (
 				media.currentTime - this.watchStartTime >= 2.9 &&
@@ -97,29 +105,26 @@ export class VideoPlayerComponent implements OnInit {
 				this.updateVideoViews();
 			}
 		});
-		this.subscriptions.push(timeUpdateSubscription);
 	}
 	updateVideoViews() {
-		this.videoService.updateVideoViews(this.video?.id).subscribe({
-			next: (data: ViewsResponse) => {
-				if (this.video) {
-					this.video.isUserViewed = data.isUserViewed;
-					this.video.viewsCount = data.viewsCount;
-				}
-				this.subscriptions.pop().unsubscribe();
-				console.log(data);
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				console.log(errorResponse);
-			},
-		});
+		this.videoService
+			.updateVideoViews(this.video?.id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: ViewsResponse) => {
+					if (this.video) {
+						this.video.isUserViewed = data.isUserViewed;
+						this.video.viewsCount = data.viewsCount;
+					}
+					console.log(data);
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					console.log(errorResponse);
+				},
+			});
 	}
 	stopTrackingPlayback(): void {
 		// If the user pauses the video, reset tracking flags
 		this.hasWatchedFor30Seconds = false;
-	}
-
-	ngOnDestroy(): void {
-		this.subscriptions.forEach((subscription) => subscription.unsubscribe());
 	}
 }

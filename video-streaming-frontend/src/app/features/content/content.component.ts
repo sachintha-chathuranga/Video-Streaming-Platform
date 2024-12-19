@@ -16,7 +16,7 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs';
 
 
 import { ChannelService } from '../../shared/services/channel.service';
@@ -25,6 +25,7 @@ import { VideoUploadStepperComponent } from '../upload/video-upload-stepper/vide
 import { VideoUpdateDialogComponent } from '../video/components/video-update-dialog/video-update-dialog.component';
 import { PaginatedResponse } from '../../shared/models/pagination.dto';
 import { VideoDto } from '../../shared/models/video.dto';
+import { BaseComponent } from '../../shared/components/base/base.component';
 @Component({
 	selector: 'app-content',
 	standalone: true,
@@ -53,7 +54,7 @@ import { VideoDto } from '../../shared/models/video.dto';
 	templateUrl: './content.component.html',
 	styleUrl: './content.component.css',
 })
-export class ContentComponent implements OnInit {
+export class ContentComponent extends BaseComponent implements OnInit {
 	@ViewChild(MatPaginator)
 	paginator!: MatPaginator;
 	@ViewChild(MatSort)
@@ -87,15 +88,19 @@ export class ContentComponent implements OnInit {
 		private activatedRoute: ActivatedRoute,
 		private breakpointObserver: BreakpointObserver,
 		private snackBar: MatSnackBar
-	) {}
+	) {
+		super()
+	}
 
 	ngOnInit(): void {
 		// if navigate state has value this trigger
 		this.router.events
 			.pipe(
 				filter((event) => event instanceof NavigationEnd),
-				map(() => this.router.getCurrentNavigation()?.extras.state?.['data'])
+				map(() => this.router.getCurrentNavigation()?.extras.state?.['data']),
+				takeUntil(this.destroy$)
 			)
+		
 			.subscribe((data: VideoDto) => {
 				if (data) {
 					console.log('Data from navigation as observable:', data);
@@ -109,6 +114,7 @@ export class ContentComponent implements OnInit {
 
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((result) => {
 				if (result.matches) {
 					if (result.breakpoints[Breakpoints.XSmall]) {
@@ -156,6 +162,7 @@ export class ContentComponent implements OnInit {
 				this.sortField,
 				this.sortDirection
 			)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (data: PaginatedResponse<VideoDto>) => {
 					this.dataSource.data = data.content;
@@ -188,20 +195,23 @@ export class ContentComponent implements OnInit {
 	}
 
 	deleteVideo(videoIds: number[]) {
-		this.channelService.deleteChannelVideos(this.channelId, videoIds).subscribe({
-			next: (data: boolean) => {
-				if (this.dataSource && data) {
-					this.dataSource.data = this.dataSource?.data.filter(
-						(row) => !videoIds.includes(row.id)
-					);
-					this.selection.clear();
-					this.snackBar.open('Video delete successfully', '', {
-						duration: 3000,
-						horizontalPosition: 'left',
-					});
-				}
-			},
-		});
+		this.channelService
+			.deleteChannelVideos(this.channelId, videoIds)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: boolean) => {
+					if (this.dataSource && data) {
+						this.dataSource.data = this.dataSource?.data.filter(
+							(row) => !videoIds.includes(row.id)
+						);
+						this.selection.clear();
+						this.snackBar.open('Video delete successfully', '', {
+							duration: 3000,
+							horizontalPosition: 'left',
+						});
+					}
+				},
+			});
 	}
 
 	/** Selects all rows if they are not all selected; otherwise clear selection. */
@@ -223,10 +233,13 @@ export class ContentComponent implements OnInit {
 			disableClose: true,
 		});
 
-		dialogRef.afterClosed().subscribe((result: VideoDto) => {
-			console.log(result);
-			this.updateVideoInDataSource(result);
-		});
+		dialogRef
+			.afterClosed()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((result: VideoDto) => {
+				console.log(result);
+				this.updateVideoInDataSource(result);
+			});
 	}
 	openDialog(video: VideoDto) {
 		const dialogRef = this.dialog.open(VideoUpdateDialogComponent, {
@@ -237,9 +250,12 @@ export class ContentComponent implements OnInit {
 			data: video,
 		});
 
-		dialogRef.afterClosed().subscribe((result: VideoDto) => {
-			this.updateVideoInDataSource(result);
-		});
+		dialogRef
+			.afterClosed()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((result: VideoDto) => {
+				this.updateVideoInDataSource(result);
+			});
 	}
 	updateVideoInDataSource(updatedVideo: VideoDto): void {
 		const currentData = this.dataSource.data; // Get current data

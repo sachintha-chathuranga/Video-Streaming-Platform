@@ -93,7 +93,9 @@ img{
 	width: 100%;
 	object-fit: cover;
 }
-
+a.canvasjs-chart-credit{
+  display: none !important;
+}
 @media screen and (max-width: 600px) {
   .fxItem {
     padding: 10px 0;

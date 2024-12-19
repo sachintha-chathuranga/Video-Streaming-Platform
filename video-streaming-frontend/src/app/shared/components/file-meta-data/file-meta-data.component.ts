@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
 	selector: 'app-file-meta-data',
@@ -6,6 +6,7 @@ import { Component, Input } from '@angular/core';
 	imports: [],
 	templateUrl: './file-meta-data.component.html',
 	styleUrl: './file-meta-data.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileMetaDataComponent {
 	@Input()

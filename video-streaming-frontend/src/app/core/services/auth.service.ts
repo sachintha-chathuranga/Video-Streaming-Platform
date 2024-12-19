@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthenticatedResult, LoginResponse, OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Observable, combineLatest, map, take } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root',
@@ -12,10 +12,11 @@ export class AuthService {
 		this.oidcAuthService.authorize();
 	}
 	logout() {
-		this.oidcAuthService.logoffAndRevokeTokens().subscribe();
+		this.oidcAuthService.logoffAndRevokeTokens().pipe(take(1)).subscribe();
+		// this.oidcAuthService.logoffAndRevokeTokens();
 	}
 
-	isAuthenticated() {
+	isAuthenticated(): Observable<AuthenticatedResult> {
 		return this.oidcAuthService.isAuthenticated$;
 	}
 	checkAuth(): Observable<LoginResponse> {

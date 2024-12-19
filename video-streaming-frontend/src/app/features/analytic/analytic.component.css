@@ -89,10 +89,10 @@
 .no-padding {
 	padding-right: 0 !important;
 }
-mat-form-field{
-  height: 75px;
+mat-form-field {
+	height: 75px;
 }
-::ng-deep .mdc-text-field{
+::ng-deep .mdc-text-field {
 	background-color: #ffffff !important;
 }
 ::ng-deep .mat-mdc-select-panel {

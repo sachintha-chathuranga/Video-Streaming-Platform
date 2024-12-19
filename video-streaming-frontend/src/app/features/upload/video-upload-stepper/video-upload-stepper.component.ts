@@ -11,6 +11,8 @@ import { FileManagerComponent } from '../../../shared/components/file-manager/fi
 import { VideoService } from '../../../shared/services/video.service';
 import { VideoFormComponent } from '../../video/components/video-form/video-form.component';
 import { VideoDto } from '../../../shared/models/video.dto';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-video-upload-stepper',
@@ -28,7 +30,7 @@ import { VideoDto } from '../../../shared/models/video.dto';
 	templateUrl: './video-upload-stepper.component.html',
 	styleUrl: './video-upload-stepper.component.css',
 })
-export class VideoUploadStepperComponent {
+export class VideoUploadStepperComponent extends BaseComponent {
 	@ViewChild(VideoFormComponent) formComponent!: VideoFormComponent;
 	isLoading: boolean = false;
 	isAnyChange: boolean = false;
@@ -36,7 +38,7 @@ export class VideoUploadStepperComponent {
 	video!: VideoDto;
 	currentStep: number = 0;
 
-	constructor(private videoService: VideoService, private snackbar: MatSnackBar) {}
+	constructor(private videoService: VideoService, private snackbar: MatSnackBar) { super()}
 	ngOnInit() {
 		// this.video = {
 		// 	id: 1,
@@ -68,31 +70,37 @@ export class VideoUploadStepperComponent {
 	}
 	uploadThumbnail(stepper: MatStepper) {
 		this.isLoading = true;
-		this.videoService.uploadThumbnail(this.file, this.video.id).subscribe({
-			next: (data: string) => {
-				this.isLoading = false;
-				this.video.thumbnailUrl = data;
-				stepper.next();
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				this.isLoading = false;
-				this.snackbar.open(errorResponse.error.detail, 'OK');
-			},
-		});
+		this.videoService
+			.uploadThumbnail(this.file, this.video.id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: string) => {
+					this.isLoading = false;
+					this.video.thumbnailUrl = data;
+					stepper.next();
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.isLoading = false;
+					this.snackbar.open(errorResponse.error.detail, 'OK');
+				},
+			});
 	}
 	uploadVideo(stepper: MatStepper) {
 		this.isLoading = true;
-		this.videoService.uploadVideo(this.file).subscribe({
-			next: (data: VideoDto) => {
-				this.isLoading = false;
-				this.video = data;
-				stepper.next();
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				this.snackbar.open(errorResponse.error.detail, 'OK');
-				this.isLoading = false;
-				console.log(errorResponse.error);
-			},
-		});
+		this.videoService
+			.uploadVideo(this.file)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: VideoDto) => {
+					this.isLoading = false;
+					this.video = data;
+					stepper.next();
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.snackbar.open(errorResponse.error.detail, 'OK');
+					this.isLoading = false;
+					console.log(errorResponse.error);
+				},
+			});
 	}
 }

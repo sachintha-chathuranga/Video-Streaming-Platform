@@ -18,6 +18,8 @@ import { VideoService } from '../../shared/services/video.service';
 import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
 import { ErrorDto } from '../../shared/models/error.dto';
 import { PaginatedResponse } from '../../shared/models/pagination.dto';
+import { BaseComponent } from '../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-history',
@@ -36,7 +38,7 @@ import { PaginatedResponse } from '../../shared/models/pagination.dto';
 	templateUrl: './history.component.html',
 	styleUrl: './history.component.css',
 })
-export class HistoryComponent implements OnInit {
+export class HistoryComponent extends BaseComponent implements OnInit {
 	videoList?: Array<VideoCardDto> = [];
 	isLoading: boolean = false;
 	isDeleting: boolean = false;
@@ -68,7 +70,7 @@ export class HistoryComponent implements OnInit {
 		private errorService: ErrorService,
 		private snackBar: MatSnackBar,
 		private breakpointObserver: BreakpointObserver
-	) {}
+	) {super()}
 	ngOnInit(): void {
 		let user = this.userService.getUser();
 		if (user) {
@@ -78,6 +80,7 @@ export class HistoryComponent implements OnInit {
 		this.fetchVideoHistory();
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((result) => {
 				if (result.matches) {
 					if (result.breakpoints[Breakpoints.XSmall]) {
@@ -122,58 +125,64 @@ export class HistoryComponent implements OnInit {
 	}
 	clearHistory() {
 		this.isDeleting = true;
-		this.userService.clearHistory().subscribe({
-			next: (data: boolean) => {
-				this.videoList = [];
+		this.userService
+			.clearHistory()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: boolean) => {
+					this.videoList = [];
 
-				this.snackBar.open('Clear history successfully', '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.isDeleting = false;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.snackBar.open(error.message, '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.errorObject = this.errorService.generateError(error);
-				this.isDeleting = false;
-			},
-		});
+					this.snackBar.open('Clear history successfully', '', {
+						duration: 3000,
+						horizontalPosition: 'right',
+						verticalPosition: 'top',
+					});
+					this.isDeleting = false;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.snackBar.open(error.message, '', {
+						duration: 3000,
+						horizontalPosition: 'right',
+						verticalPosition: 'top',
+					});
+					this.errorObject = this.errorService.generateError(error);
+					this.isDeleting = false;
+				},
+			});
 	}
 	togglePauseHistory() {
 		this.isDeleting = true;
-		this.userService.pauseVideoHistory().subscribe({
-			next: (data: boolean) => {
-				this.isRecordHistory = data;
-				this.userService.setIsRecordHistory(data);
-				if (data) {
-					this.snackBar.open('You turn on history recording', '', {
+		this.userService
+			.pauseVideoHistory()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: boolean) => {
+					this.isRecordHistory = data;
+					this.userService.setIsRecordHistory(data);
+					if (data) {
+						this.snackBar.open('You turn on history recording', '', {
+							duration: 3000,
+							horizontalPosition: 'right',
+							verticalPosition: 'top',
+						});
+					} else {
+						this.snackBar.open('You turn off history recording', '', {
+							duration: 3000,
+							horizontalPosition: 'right',
+							verticalPosition: 'top',
+						});
+					}
+					this.isDeleting = false;
+				},
+				error: (error: HttpErrorResponse) => {
+					this.snackBar.open(error.message, '', {
 						duration: 3000,
 						horizontalPosition: 'right',
 						verticalPosition: 'top',
 					});
-				} else {
-					this.snackBar.open('You turn off history recording', '', {
-						duration: 3000,
-						horizontalPosition: 'right',
-						verticalPosition: 'top',
-					});
-				}
-				this.isDeleting = false;
-			},
-			error: (error: HttpErrorResponse) => {
-				this.snackBar.open(error.message, '', {
-					duration: 3000,
-					horizontalPosition: 'right',
-					verticalPosition: 'top',
-				});
-				this.errorObject = this.errorService.generateError(error);
-				this.isDeleting = false;
-			},
-		});
+					this.errorObject = this.errorService.generateError(error);
+					this.isDeleting = false;
+				},
+			});
 	}
 }

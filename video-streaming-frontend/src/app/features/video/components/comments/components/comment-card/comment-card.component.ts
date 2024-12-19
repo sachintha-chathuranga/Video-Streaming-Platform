@@ -20,6 +20,8 @@ import { CommentDto } from '../../models/comment.dto';
 import { CommentService } from '../../services/comment.service';
 import { CommentInputComponent } from '../comment-input/comment-input.component';
 import { ReportCommentComponent } from '../report-comment/report-comment.component';
+import { BaseComponent } from '../../../../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-comment-card',
@@ -40,7 +42,7 @@ import { ReportCommentComponent } from '../report-comment/report-comment.compone
 	templateUrl: './comment-card.component.html',
 	styleUrl: './comment-card.component.css',
 })
-export class CommentCardComponent {
+export class CommentCardComponent extends BaseComponent {
 	@Input()
 	comment!: CommentDto;
 	@Input()
@@ -94,44 +96,50 @@ export class CommentCardComponent {
 		private dialog: MatDialog,
 		private commentService: CommentService,
 		private matSnackBar: MatSnackBar
-	) {}
+	) {super()}
 	toggleExpand() {
 		this.isExpanded = !this.isExpanded;
 	}
 	toggleLike() {
-		this.commentService.toggleLike(this.comment.id, this.videoId).subscribe({
-			next: (data: CommentDto) => {
-				this.matSnackBar.open('Comment Liked Successfully', '', {
-					verticalPosition: 'bottom',
-					horizontalPosition: 'left',
-					duration: 2000,
-				});
+		this.commentService
+			.toggleLike(this.comment.id, this.videoId)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: CommentDto) => {
+					this.matSnackBar.open('Comment Liked Successfully', '', {
+						verticalPosition: 'bottom',
+						horizontalPosition: 'left',
+						duration: 2000,
+					});
 
-				this.comment.likesCount = data.likesCount;
-				this.comment.dislikesCount = data.dislikesCount;
-				this.comment.userLikeStatus = data.userLikeStatus;
-			},
-			error: (error: HttpErrorResponse) => {
-				console.log(error.error.detail);
-			},
-		});
+					this.comment.likesCount = data.likesCount;
+					this.comment.dislikesCount = data.dislikesCount;
+					this.comment.userLikeStatus = data.userLikeStatus;
+				},
+				error: (error: HttpErrorResponse) => {
+					console.log(error.error.detail);
+				},
+			});
 	}
 	toggledisLike() {
-		this.commentService.toggledisLike(this.comment.id, this.videoId).subscribe({
-			next: (data: CommentDto) => {
-				this.matSnackBar.open('Comment disliked Successfully', '', {
-					verticalPosition: 'bottom',
-					horizontalPosition: 'left',
-					duration: 2000,
-				});
-				this.comment.likesCount = data.likesCount;
-				this.comment.dislikesCount = data.dislikesCount;
-				this.comment.userLikeStatus = data.userLikeStatus;
-			},
-			error: (error: HttpErrorResponse) => {
-				console.log(error.error.detail);
-			},
-		});
+		this.commentService
+			.toggledisLike(this.comment.id, this.videoId)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: CommentDto) => {
+					this.matSnackBar.open('Comment disliked Successfully', '', {
+						verticalPosition: 'bottom',
+						horizontalPosition: 'left',
+						duration: 2000,
+					});
+					this.comment.likesCount = data.likesCount;
+					this.comment.dislikesCount = data.dislikesCount;
+					this.comment.userLikeStatus = data.userLikeStatus;
+				},
+				error: (error: HttpErrorResponse) => {
+					console.log(error.error.detail);
+				},
+			});
 	}
 	saveComment(comment: string) {
 		this.showInputField = false;
@@ -163,13 +171,16 @@ export class CommentCardComponent {
 			data: this.deleteDialogData,
 		});
 
-		dialogRef.afterClosed().subscribe((result: string) => {
-			console.log('After Close: ' + result);
-			if (result == 'delete-comment') {
-				console.log('trigger delte');
-				this.deleteComment();
-			}
-		});
+		dialogRef
+			.afterClosed()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((result: string) => {
+				console.log('After Close: ' + result);
+				if (result == 'delete-comment') {
+					console.log('trigger delte');
+					this.deleteComment();
+				}
+			});
 	}
 	deleteComment() {
 		this.onDelete.emit(this.comment.id);
@@ -181,8 +192,11 @@ export class CommentCardComponent {
 	reportComment() {
 		const dialogRef = this.dialog.open(ReportCommentComponent);
 
-		dialogRef.afterClosed().subscribe((result) => {
-			console.log(`Dialog result: ${result}`);
-		});
+		dialogRef
+			.afterClosed()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((result) => {
+				console.log(`Dialog result: ${result}`);
+			});
 	}
 }

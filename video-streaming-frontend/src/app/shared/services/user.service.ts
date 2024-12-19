@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -62,7 +62,8 @@ export class UserService {
 			.put<UserDto>(this.apiEndpoint + '/users/update', userData)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-	registerUser(userData: any, token: any): Observable<UserDto> {
+	registerUser(userData: any, token: any) {
+		console.log('Request Send to Backend for get User!');
 		let newUser: AuthUserDto = {
 			firstName: userData?.given_name,
 			lastName: userData?.family_name,
@@ -72,9 +73,19 @@ export class UserService {
 		const headers = new HttpHeaders({
 			Authorization: `Bearer ${token}`,
 		});
-		return this.httpClient
-			.post<UserDto>(this.apiEndpoint + '/users/signUp', newUser, { headers })
-			.pipe(catchError((error) => throwError(() => error)));
+
+		this.httpClient
+			.post<UserDto>(`${this.apiEndpoint}/users/signUp`, newUser, {
+				headers,
+			})
+			.subscribe({
+				next: (user) => {
+					this.setUser(user);
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					console.log(errorResponse.error);
+				},
+			});
 	}
 
 	// User Plalist API calls

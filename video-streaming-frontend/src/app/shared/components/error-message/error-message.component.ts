@@ -1,5 +1,5 @@
 import { IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorDto } from '../../models/error.dto';
 
@@ -17,6 +17,7 @@ import { ErrorDto } from '../../models/error.dto';
 	imports: [MatButtonModule, NgOptimizedImage],
 	templateUrl: './error-message.component.html',
 	styleUrl: './error-message.component.css',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ErrorMessageComponent {
 	@Output()
