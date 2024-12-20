@@ -39,6 +39,7 @@ mat-card-header {
 .example-header-image {
 	background-size: cover;
 	margin: 0;
+	cursor: pointer;
 }
 
 mat-card-header .details {
@@ -54,11 +55,7 @@ mat-card-title a {
 	font-size: 16px;
 	font-weight: 500;
 	line-height: normal;
-	overflow: hidden;
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	
 }
 
 mat-card-subtitle {

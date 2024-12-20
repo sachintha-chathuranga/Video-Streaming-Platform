@@ -1,15 +1,22 @@
-<div class="scroll-container">
+<div class="slider-container">
 	<span
-		*ngIf="!isLoading"
+		*ngIf="
+			!isLoading &&
+			((mode == 'chips' && items.length != 0) || (mode == 'cards' && channels.length != 0))
+		"
 		class="btn-cover left-btn"
 		[ngClass]="{ hidden: !leftButton || isWindowView }"
 	></span>
 	<button
-		*ngIf="!isLoading"
+		*ngIf="
+			!isLoading &&
+			((mode == 'chips' && items.length != 0) || (mode == 'cards' && channels.length != 0))
+		"
 		[ngClass]="{ hidden: !leftButton || isWindowView }"
 		class="mat-button left-btn"
 		mat-icon-button
 		(click)="scrollTo(false)"
+		[disabled]="isLoading"
 		aria-label="Scroll Left"
 	>
 		<mat-icon style="right: -2px">arrow_back_ios</mat-icon>
@@ -60,9 +67,8 @@
 
 	<span
 		*ngIf="
-			!isLoading ||
-			(mode == 'chips' && items.length != 0) ||
-			(mode == 'cards' && channels.length != 0)
+			!isLoading &&
+			((mode == 'chips' && items.length != 0) || (mode == 'cards' && channels.length != 0))
 		"
 		class="btn-cover right-btn"
 		[ngClass]="{ hidden: !rightButton || isWindowView }"
@@ -70,13 +76,13 @@
 	<button
 		*ngIf="
 			!isLoading &&
-			(mode == 'chips' && items.length != 0) ||
-			(mode == 'cards' && channels.length != 0)
+			((mode == 'chips' && items.length != 0) || (mode == 'cards' && channels.length != 0))
 		"
 		[ngClass]="{ hidden: !rightButton || isWindowView }"
 		class="mat-button right-btn"
 		mat-icon-button
 		(click)="scrollTo(true)"
+		[disabled]="isLoading"
 		aria-label="Scroll Right"
 	>
 		<mat-icon>arrow_forward_ios</mat-icon>

@@ -14,6 +14,7 @@ import { ChannelStatisticsDto } from './models/channelStatistics.dto';
 import { RealtimeStatisticsComponent } from './components/realtime-statistics/realtime-statistics.component';
 import { BaseComponent } from '../../shared/components/base/base.component';
 import { takeUntil } from 'rxjs';
+import { VideoAnalyticComponent } from '../dashboard/components/video-analytic/video-analytic.component';
 
 
 @Component({
@@ -27,7 +28,8 @@ import { takeUntil } from 'rxjs';
 		FlexLayoutModule,
 		MatButtonModule,
 		LineChartComponent,
-		RealtimeStatisticsComponent
+		RealtimeStatisticsComponent,
+		VideoAnalyticComponent
 	],
 	templateUrl: './analytic.component.html',
 	styleUrl: './analytic.component.css',

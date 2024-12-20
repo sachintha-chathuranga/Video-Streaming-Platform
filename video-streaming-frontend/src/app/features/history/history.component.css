@@ -26,6 +26,7 @@ h1 {
 ::ng-deep .mdc-text-field {
 	padding: 0 !important;
 }
+
 @media screen and (max-width: 1280px) {
 	.setting-container {
 		position: static;
@@ -45,4 +46,8 @@ h1 {
 	.fxItem{
 		margin-bottom: 0 !important;
 	}
+	.scroll-container {
+		padding: 0 10px;
+	}
 }
+

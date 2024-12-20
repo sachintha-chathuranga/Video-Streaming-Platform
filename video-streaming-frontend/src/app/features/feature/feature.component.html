@@ -1,43 +1,51 @@
-<slider-toolbar [isLoading]="isLoading" mode="chips" [items]="categories" (onChangeCategory)="setCategory($event)"></slider-toolbar>
-<ng-container
-  *ngIf="isLoading; then loadingTemplate; else contentTemplate"
-></ng-container>
+<div (scroll)="onScroll($event)" class="scroll-container">
+	<slider-toolbar
+		[isLoading]="isPageLoading"
+		mode="chips"
+		[items]="categories"
+		(onChangeCategory)="setCategory($event)"
+	></slider-toolbar>
+	<ng-container *ngIf="isPageLoading; then loadingTemplate; else contentTemplate"></ng-container>
 
-<ng-template #loadingTemplate>
-  <div fxLayout="row wrap" class="fxLayout">
-    <div
-      class="fxItem"
-      fxFlex="25%"
-      fxFlex.lg="33.33%"
-      fxFlex.lt-lg="50%"
-      fxFlex.xs="100%"
-      *ngFor="let skelton of [1, 2, 3, 4, 5, 6]"
-    >
-      <app-video-card cardSize="large" [isLoading]="isLoading"></app-video-card>
-    </div>
-  </div>
-</ng-template>
+	<ng-template #loadingTemplate>
+		<div fxLayout="row wrap" class="fxLayout">
+			<div
+				class="fxItem"
+				fxFlex="25%"
+				fxFlex.lg="33.33%"
+				fxFlex.lt-lg="50%"
+				fxFlex.xs="100%"
+				*ngFor="let skelton of [1, 2, 3, 4, 5, 6]"
+			>
+				<app-video-card cardSize="large" [isLoading]="isPageLoading"></app-video-card>
+			</div>
+		</div>
+	</ng-template>
 
-<ng-template #contentTemplate>
-  <div fxLayout="row wrap" class="fxLayout">
-    <div
-      class="fxItem"
-      fxFlex="25%"
-      fxFlex.lg="33.33%"
-      fxFlex.lt-lg="50%"
-      fxFlex.xs="100%"
-      *ngFor="let featuredVideo of featuredVideos"
-    >
-      <app-video-card
-        [video]="featuredVideo"
-        [cardMenuItems]="cardMenuItems"
-        cardSize="large"
-      ></app-video-card>
-    </div>
-  </div>
-  <app-error-message
-    *ngIf="errorObject"
-    [errorObject]="errorObject"
-    (onRetryClick)="fetchData()"
-  ></app-error-message>
-</ng-template>
+	<ng-template #contentTemplate>
+		<div fxLayout="row wrap">
+			<div
+				class="fxItem"
+				fxFlex="25%"
+				fxFlex.lg="33.33%"
+				fxFlex.lt-lg="50%"
+				fxFlex.xs="100%"
+				*ngFor="let featuredVideo of featuredVideos"
+			>
+				<app-video-card
+					[video]="featuredVideo"
+					[cardMenuItems]="cardMenuItems"
+					cardSize="large"
+				></app-video-card>
+			</div>
+			<div class="progress-spinner"  *ngIf="isDataFetching" fxFlex="25%" fxFlex.lg="33.33%" fxFlex.lt-lg="50%" fxFlex.xs="100%">
+				<mat-spinner diameter="50"></mat-spinner>
+			</div>
+		</div>
+		<app-error-message
+			*ngIf="errorObject"
+			[errorObject]="errorObject"
+			(onRetryClick)="fetchData(false)"
+		></app-error-message>
+	</ng-template>
+</div>

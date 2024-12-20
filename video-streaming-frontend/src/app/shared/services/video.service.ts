@@ -69,9 +69,12 @@ export class VideoService {
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 
-	getFeatureVideos(tagName: string): Observable<PaginatedResponse<VideoCardDto>> {
+	getFeatureVideos(tagName: string, page:number, size:number): Observable<PaginatedResponse<VideoCardDto>> {
 		console.log('Invoke getFeaturesVideos function');
-		let params = new HttpParams().set('tagName', tagName);
+		let params = new HttpParams()
+			.set('page', page)
+			.set('size', size)
+			.set('tagName', tagName);
 		return this.httpClient
 			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/videos/feature`, { params })
 			.pipe(catchError((error) => throwError(() => error)));

@@ -63,7 +63,9 @@ export class SubscriptionsComponent extends BaseComponent {
 		private snackBar: MatSnackBar,
 		private errorService: ErrorService,
 		private userService: UserService
-	) {super()}
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
 		this.fetchChannels();
@@ -98,6 +100,14 @@ export class SubscriptionsComponent extends BaseComponent {
 				},
 			});
 	}
+	onScroll(event?: any) {
+		const { offsetHeight, scrollTop, scrollHeight } = event.target;
+
+		if (scrollHeight - scrollTop === offsetHeight) {
+			console.log('fetch data');
+			// this.fetchData();
+		}
+	}
 	fetchVideos() {
 		this.getVideoLoading = true;
 		this.userService
@@ -114,5 +124,4 @@ export class SubscriptionsComponent extends BaseComponent {
 				},
 			});
 	}
-
 }

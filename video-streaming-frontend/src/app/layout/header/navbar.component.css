@@ -9,9 +9,18 @@
 	justify-content: center;
 	align-items: center;
 }
+.img-container {
+	cursor: pointer;
+	margin-left: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+}
 h1.example-app-name {
 	margin-left: 8px;
 	cursor: pointer;
+	display: inline-block;
 }
 .search-container {
 	display: flex;
@@ -86,6 +95,7 @@ h1.example-app-name {
 	border: 1px solid rgb(22, 104, 211);
 }
 .profile-img-cover {
+	min-width: 36px;
 	width: 36px;
 	height: 36px;
 	overflow: hidden;
@@ -126,9 +136,12 @@ h1.example-app-name {
 	color: gray;
 }
 @media screen and (max-width: 600px) {
-	h1.example-app-name {
-		display: none;
+	.img-container {
+		margin-left: 0;
 	}
+	/* h1.example-app-name {
+		display: none;
+	} */
 	.search-toggle-btn {
 		display: block;
 	}

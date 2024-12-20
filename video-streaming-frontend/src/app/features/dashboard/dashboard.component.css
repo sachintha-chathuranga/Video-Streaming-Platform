@@ -46,4 +46,9 @@ p {
 	.fxCol {
 		padding-right: 0 !important;
 	}
+	.scroll-container {
+		padding: 0 10px;
+	}
 }
+
+

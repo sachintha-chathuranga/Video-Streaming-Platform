@@ -53,7 +53,10 @@ mat-form-field button {
 		font-weight: 500;
 		padding: 6px;
 	}
-	.fxItem{
+	.fxItem {
 		margin-bottom: 0 !important;
+	}
+	.scroll-container {
+		padding: 0 10px;
 	}
 }

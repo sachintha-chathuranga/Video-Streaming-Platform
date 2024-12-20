@@ -1,53 +1,55 @@
-<div class="title-section">
-	<h3>Channels</h3>
-	<button 	*ngIf="subcribeChannels.length !=0" mat-button (click)="toggleView()">{{ changeView ? 'Show less' : 'View all' }}</button>
-</div>
-<slider-toolbar
-	id="slider-toolbar"
-	[channels]="subcribeChannels"
-	mode="cards"
-	[isWindowView]="changeView"
-	[isLoading]="getChannelLoading"
-></slider-toolbar>
-
-<div 	*ngIf="subcribeChannels.length !=0" class="title-section">
-	<h3>Latest</h3>
-</div>
-<ng-container *ngIf="getVideoLoading; then loadingTemplate; else contentTemplate"></ng-container>
-<ng-template #loadingTemplate>
-	<div fxLayout="row wrap" class="fxLayout">
-		<div
-			class="fxItem"
-			fxFlex="25%"
-			fxFlex.lg="33.33%"
-			fxFlex.lt-lg="50%"
-			fxFlex.xs="100%"
-			*ngFor="let skelton of [1, 2, 3, 4, 5]"
-		>
-			<app-video-card cardSize="large" [isLoading]="getVideoLoading"></app-video-card>
-		</div>
+<div (scroll)="onScroll($event)" class="scroll-container">
+	<div class="title-section">
+		<h3>Channels</h3>
+		<button 	*ngIf="subcribeChannels.length !=0" mat-button (click)="toggleView()">{{ changeView ? 'Show less' : 'View all' }}</button>
 	</div>
-</ng-template>
-<ng-template #contentTemplate>
-	<div fxLayout="row wrap" class="fxLayout">
-		<div
-			class="fxItem"
-			fxFlex="25%"
-			fxFlex.lg="33.33%"
-			fxFlex.lt-lg="50%"
-			fxFlex.xs="100%"
-			*ngFor="let subcribeVideo of subcribeVideos"
-		>
-			<app-video-card
-				[video]="subcribeVideo"
-				cardSize="large"
-				[cardMenuItems]="cardMenuItems"
-			></app-video-card>
-		</div>
+	<slider-toolbar
+		id="slider-toolbar"
+		[channels]="subcribeChannels"
+		mode="cards"
+		[isWindowView]="changeView"
+		[isLoading]="getChannelLoading"
+	></slider-toolbar>
+	
+	<div 	*ngIf="subcribeChannels.length !=0" class="title-section">
+		<h3>Latest</h3>
 	</div>
-	<app-error-message
-		*ngIf="errorObject"
-		[errorObject]="errorObject"
-		(onRetryClick)="fetchVideos()"
-	></app-error-message>
-</ng-template>
+	<ng-container *ngIf="getVideoLoading; then loadingTemplate; else contentTemplate"></ng-container>
+	<ng-template #loadingTemplate>
+		<div fxLayout="row wrap" class="fxLayout">
+			<div
+				class="fxItem"
+				fxFlex="25%"
+				fxFlex.lg="33.33%"
+				fxFlex.lt-lg="50%"
+				fxFlex.xs="100%"
+				*ngFor="let skelton of [1, 2, 3, 4, 5]"
+			>
+				<app-video-card cardSize="large" [isLoading]="getVideoLoading"></app-video-card>
+			</div>
+		</div>
+	</ng-template>
+	<ng-template #contentTemplate>
+		<div fxLayout="row wrap" >
+			<div
+				class="fxItem"
+				fxFlex="25%"
+				fxFlex.lg="33.33%"
+				fxFlex.lt-lg="50%"
+				fxFlex.xs="100%"
+				*ngFor="let subcribeVideo of subcribeVideos"
+			>
+				<app-video-card
+					[video]="subcribeVideo"
+					cardSize="large"
+					[cardMenuItems]="cardMenuItems"
+				></app-video-card>
+			</div>
+		</div>
+		<app-error-message
+			*ngIf="errorObject"
+			[errorObject]="errorObject"
+			(onRetryClick)="fetchVideos()"
+		></app-error-message>
+	</ng-template>
+</div>

@@ -18,3 +18,8 @@
 	margin-top: 10px;
 }
 
+@media screen and (max-width: 600px) {
+	.scroll-container {
+		padding: 0;
+	}
+}

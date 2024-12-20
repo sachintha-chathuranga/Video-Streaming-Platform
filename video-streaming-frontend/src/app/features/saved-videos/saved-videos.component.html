@@ -1,60 +1,61 @@
-<h1>Saved Videos</h1>
-
-<div fxLayout="row wrap" fxLayout.lt-lg="column">
-	<div fxFlex="58%" fxFlex.lt-lg="100%" fxFlexOrder.lt-lg="2">
-		<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
-		<ng-template #loadingTemplate>
-			<div fxLayout="column" fxLayoutGap="10px">
-				<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
-					<app-video-card [cardSize]="windowSize" [isLoading]="isLoading"></app-video-card>
+<div (scroll)="onScroll($event)" class="scroll-container">
+	<h1>Saved Videos</h1>
+	<div fxLayout="row wrap" fxLayout.lt-lg="column">
+		<div fxFlex="58%" fxFlex.lt-lg="100%" fxFlexOrder.lt-lg="2">
+			<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+			<ng-template #loadingTemplate>
+				<div fxLayout="column" fxLayoutGap="10px">
+					<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
+						<app-video-card [cardSize]="windowSize" [isLoading]="isLoading"></app-video-card>
+					</div>
 				</div>
-			</div>
-		</ng-template>
-		<ng-template #contentTemplate>
-			<div fxLayout="column" fxLayoutGap="10px">
-				<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
-					<app-video-card
-						[video]="video"
-						[cardMenuItems]="cardMenuItems"
-						(onDelete)="handleDelete($event)"
-						[cardSize]="windowSize"
-					></app-video-card>
+			</ng-template>
+			<ng-template #contentTemplate>
+				<div fxLayout="column" fxLayoutGap="10px">
+					<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
+						<app-video-card
+							[video]="video"
+							[cardMenuItems]="cardMenuItems"
+							(onDelete)="handleDelete($event)"
+							[cardSize]="windowSize"
+						></app-video-card>
+					</div>
 				</div>
-			</div>
-		</ng-template>
-	</div>
-	<div
-		fxFlex="42%"
-		fxLayoutAlign="center"
-		fxFlex.lt-lg="100%"
-		fxFlexOrder.lt-lg="1"
-		fxLayoutAlign.lt-lg="start"
-		fxLayoutAlign.lt-sm="center"
-	>
-		<div class="setting-container">
-			<mat-form-field [autofocus]="true" class="mat-form-field">
-				<mat-icon>search</mat-icon>
-				<input
-					matInput
-					placeholder="Search save videos"
-					(input)="onSearch()"
-					[(ngModel)]="searchInput"
-					autofocus
-				/>
-	
-				<button *ngIf="searchInput" matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
-					<mat-icon>close</mat-icon>
-				</button>
+			</ng-template>
+		</div>
+		<div
+			fxFlex="42%"
+			fxLayoutAlign="center"
+			fxFlex.lt-lg="100%"
+			fxFlexOrder.lt-lg="1"
+			fxLayoutAlign.lt-lg="start"
+			fxLayoutAlign.lt-sm="center"
+		>
+			<div class="setting-container">
+				<mat-form-field [autofocus]="true" class="mat-form-field">
+					<mat-icon>search</mat-icon>
+					<input
+						matInput
+						placeholder="Search save videos"
+						(input)="onSearch()"
+						[(ngModel)]="searchInput"
+						autofocus
+					/>
 		
-			</mat-form-field>
-			<button
-				mat-flat-button
-				[disabled]="isDeleting || isLoading"
-				(click)="clearPlayList()"
-			>
-				<mat-icon>delete</mat-icon>
-				Clear all saved videos
-			</button>
+					<button *ngIf="searchInput" matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+						<mat-icon>close</mat-icon>
+					</button>
+			
+				</mat-form-field>
+				<button
+					mat-flat-button
+					[disabled]="isDeleting || isLoading"
+					(click)="clearPlayList()"
+				>
+					<mat-icon>delete</mat-icon>
+					Clear all saved videos
+				</button>
+			</div>
 		</div>
 	</div>
 </div>

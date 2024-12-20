@@ -1,18 +1,24 @@
-<h2 class="main-title">Customizations</h2>
-
-<div>
-
+<div class="scroll-container"> 
+	<h2 class="main-title">Customizations</h2>
+	
+	<div>
 		<div class="view-btn-container">
-			<button mat-button (click)="navigateToChannel()" >View Channel</button>
+			<button mat-button (click)="navigateToChannel()">View Channel</button>
 		</div>
-
-	<mat-tab-group [selectedIndex]="selected.value"
-               (selectedIndexChange)="selected.setValue($event)" animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
-		<mat-tab label="Account">
-			<app-user-form></app-user-form>
-		</mat-tab>
-		<mat-tab label="Channel" >
-			<app-channel-form></app-channel-form>
-		</mat-tab>
-	</mat-tab-group>
+	
+		<mat-tab-group
+			[selectedIndex]="selected.value"
+			(selectedIndexChange)="selected.setValue($event)"
+			animationDuration="0ms"
+			mat-stretch-tabs="false"
+			mat-align-tabs="start"
+		>
+			<mat-tab label="Account">
+				<app-user-form></app-user-form>
+			</mat-tab>
+			<mat-tab label="Channel">
+				<app-channel-form></app-channel-form>
+			</mat-tab>
+		</mat-tab-group>
+	</div>
 </div>

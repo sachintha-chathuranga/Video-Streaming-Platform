@@ -37,7 +37,7 @@ import { takeUntil } from 'rxjs';
 	templateUrl: './saved-videos.component.html',
 	styleUrl: './saved-videos.component.css',
 })
-export class SavedVideosComponent extends BaseComponent{
+export class SavedVideosComponent extends BaseComponent {
 	videoList?: Array<VideoCardDto> = [];
 	isLoading: boolean = false;
 	isDeleting: boolean = false;
@@ -58,7 +58,9 @@ export class SavedVideosComponent extends BaseComponent{
 		private errorService: ErrorService,
 		private snackBar: MatSnackBar,
 		private breakpointObserver: BreakpointObserver
-	) {super()}
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
 		this.fetchSavedVideos();
@@ -109,7 +111,14 @@ export class SavedVideosComponent extends BaseComponent{
 		this.searchInput = '';
 		this.fetchSavedVideos();
 	}
+	onScroll(event?: any) {
+		const { offsetHeight, scrollTop, scrollHeight } = event.target;
 
+		if (scrollHeight - scrollTop === offsetHeight) {
+			console.log('fetch data');
+			// this.fetchData();
+		}
+	}
 	clearPlayList() {
 		this.isDeleting = true;
 		this.userService

@@ -8,7 +8,12 @@
 		>
 			<mat-icon>menu</mat-icon>
 		</button>
-		<h1 class="example-app-name" (click)="navigate('/')">{{ productName }}</h1>
+		<div style="display: flex;">
+			<div class="img-container" (click)="navigate('/')">
+				<img src="assets/brand-image.png" alt="image">
+			</div>
+			<h1 class="example-app-name" (click)="navigate('/')">{{ productName }}</h1>
+		</div>
 
 		<span class="example-spacer">
 			<div class="search-container hide" #searchBox>

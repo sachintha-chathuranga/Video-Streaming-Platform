@@ -21,8 +21,12 @@
 .view-btn-container button{
 	top: 44px;
 }
+
 @media screen and (max-width: 600px) {
 	.main-title {
 		margin: 0;
+	}
+	.scroll-container {
+		padding: 0 10px;
 	}
 }

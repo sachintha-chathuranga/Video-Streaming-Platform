@@ -32,8 +32,7 @@
   border-radius: 50%;
 }
 .img-container img {
-  width: 100%;
-  object-fit: contain;
+  height: 100%;
 }
 .card-container.window-view .details {
   flex: 1;

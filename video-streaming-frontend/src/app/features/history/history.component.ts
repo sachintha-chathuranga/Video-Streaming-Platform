@@ -70,7 +70,9 @@ export class HistoryComponent extends BaseComponent implements OnInit {
 		private errorService: ErrorService,
 		private snackBar: MatSnackBar,
 		private breakpointObserver: BreakpointObserver
-	) {super()}
+	) {
+		super();
+	}
 	ngOnInit(): void {
 		let user = this.userService.getUser();
 		if (user) {
@@ -184,5 +186,13 @@ export class HistoryComponent extends BaseComponent implements OnInit {
 					this.isDeleting = false;
 				},
 			});
+	}
+	onScroll(event?: any) {
+		const { offsetHeight, scrollTop, scrollHeight } = event.target;
+
+		if (scrollHeight - scrollTop === offsetHeight) {
+			console.log('fetch data');
+			// this.fetchData();
+		}
 	}
 }

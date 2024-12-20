@@ -5,7 +5,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
 
-import { Observable, catchError, finalize, map, takeUntil, tap } from 'rxjs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { takeUntil } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { BaseComponent } from '../../shared/components/base/base.component';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
@@ -25,6 +27,8 @@ import { VideoService } from '../../shared/services/video.service';
 		FlexLayoutModule,
 		MatTabsModule,
 		MatChipsModule,
+		ScrollingModule,
+		MatProgressSpinner,
 		ErrorMessageComponent,
 		VideoCardComponent,
 		SliderToolbarComponent,
@@ -35,7 +39,8 @@ import { VideoService } from '../../shared/services/video.service';
 export class FeatureComponent extends BaseComponent implements OnInit {
 	featuredVideos: Array<VideoCardDto> = [];
 	errorObject!: ErrorDto | null;
-	isLoading: boolean = false;
+	isPageLoading: boolean = false;
+	isDataFetching: boolean = false;
 	searchQuery: string = '';
 	tagName: string = '';
 	isAuth: boolean = false;
@@ -60,6 +65,9 @@ export class FeatureComponent extends BaseComponent implements OnInit {
 		'Movies',
 		'TV Series',
 	];
+	page: number = 0;
+	pageSize: number = 10;
+	isLastPageFetched: boolean = false;
 
 	constructor(
 		private videoService: VideoService,
@@ -79,27 +87,49 @@ export class FeatureComponent extends BaseComponent implements OnInit {
 					this.cardMenuItems[0].isDisable = !this.isAuth;
 				},
 			});
-		this.fetchData();
+		this.fetchData(false);
 	}
-	fetchData() {
-		this.isLoading = true;
+	onScroll(event?: any) {
+		const { offsetHeight, scrollTop, scrollHeight } = event.target;
+
+		if (scrollHeight - scrollTop === offsetHeight) {
+			this.fetchData(true);
+		}
+	}
+	fetchData(isScrolling: boolean) {
+		if (this.isLastPageFetched || this.isDataFetching) return;
+		console.log('fetch data');
+		this.isDataFetching = isScrolling;
+		this.isPageLoading = !isScrolling;
 		this.videoService
-			.getFeatureVideos(this.tagName)
+			.getFeatureVideos(this.tagName, this.page, this.pageSize)
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (data: PaginatedResponse<VideoCardDto>) => {
+					this.page++;
 					this.errorObject = null;
-					this.featuredVideos = data.content;
-					this.isLoading = false;
+					this.featuredVideos = [...this.featuredVideos, ...data.content];
+					console.log(data);
+					this.isLastPageFetched = data.last;
+					this.isDataFetching = false;
+					this.isPageLoading = false;
 				},
 				error: (error: HttpErrorResponse) => {
 					this.errorObject = this.errorService.generateError(error);
-					this.isLoading = false;
+					this.isPageLoading = false;
+					this.isDataFetching = false;
 				},
 			});
 	}
 	setCategory(category: string) {
+		this.resetToDefalt();
 		this.tagName = category;
-		this.fetchData();
+		this.fetchData(false);
+	}
+
+	resetToDefalt() {
+		this.featuredVideos = [];
+		this.page = 0;
+		this.isLastPageFetched = false;
 	}
 }

@@ -7,7 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ConfigService } from '../../config.service';
 
@@ -84,7 +84,8 @@ export class VideoComponent implements OnInit {
 		private snackBar: MatSnackBar,
 		private errorService: ErrorService,
 		private config: ConfigService,
-		private channelService: ChannelService
+		private channelService: ChannelService,
+		private router: Router
 	) {}
 	ngOnInit(): void {
 		this.oidcSecurityService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
@@ -121,7 +122,9 @@ export class VideoComponent implements OnInit {
 			});
 		}
 	}
-
+	gotoChannel() {
+		window.open(`/channel/${this.video?.channel?.id}`, '_blank');
+	}
 	toggleExpand() {
 		this.isExpanded = !this.isExpanded;
 	}
@@ -144,7 +147,7 @@ export class VideoComponent implements OnInit {
 	}
 	fetchVideoList() {
 		this.isVideoListLoading = true;
-		this.videoService.getFeatureVideos('').subscribe({
+		this.videoService.getFeatureVideos('', 0, 10).subscribe({
 			next: (response: PaginatedResponse<VideoCardDto>) => {
 				this.videoList = response.content;
 				this.isVideoListLoading = false;

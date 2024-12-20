@@ -10,6 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FeatureComponent } from '../../../features/feature/feature.component';
 import { SideBarItem } from '../../sidebar/models/sidebarItem.dto';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
 	selector: 'app-home',

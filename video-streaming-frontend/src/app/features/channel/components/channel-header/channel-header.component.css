@@ -20,11 +20,14 @@
 	border-radius: 50%;
 	width: 170px;
 	height: 170px;
+	background-color: #cdd9e79c;
+	overflow: hidden;
 }
 
 .profile-image {
 	width: 100%;
 	object-fit: cover;
+	height: 100%;
 }
 .header-details {
 	flex: 1;
@@ -50,20 +53,20 @@
 	.details-container {
 		margin: 10px 0;
 	}
-	.channel-name{
+	.channel-name {
 		font-size: 20px;
 		font-weight: 500;
 	}
-	.btn-container{
+	.btn-container {
 		margin-top: 5px;
 	}
-	#hashTag{
+	#hashTag {
 		display: none;
 	}
-	.channel-description{
+	.channel-description {
 		display: none !important;
 	}
-	.header-details{
+	.header-details {
 		font-size: 14px;
 	}
 	.profile-image-container {

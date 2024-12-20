@@ -6,8 +6,8 @@ mat-sidenav {
   border-radius: 0;
 }
 mat-sidenav-content {
-  padding: 0 33px;
-
+  height: auto;
+  overflow: hidden;
 }
 
 mat-list {
@@ -64,9 +64,6 @@ h1.example-app-name {
 @media screen and (max-width: 900px) {
   mat-list {
     padding: 0 13px;
-  }
-  mat-sidenav-content {
-    padding: 0 20px;
   }
 }
 @media screen and (max-width: 600px) {

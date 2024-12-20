@@ -103,4 +103,8 @@ mat-form-field {
 	.no-padding-lt-md {
 		padding-right: 0 !important;
 	}
+	.scroll-container {
+		padding: 0 10px;
+	}
 }
+
