@@ -2,11 +2,16 @@
 	<h1>Watch History</h1>
 	<div fxLayout="row wrap" fxLayout.lt-lg="column">
 		<div fxFlex="58%" fxFlex.lt-lg="100%" fxFlexOrder.lt-lg="2">
-			<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+			<ng-container
+				*ngIf="isPageLoading; then loadingTemplate; else contentTemplate"
+			></ng-container>
 			<ng-template #loadingTemplate>
 				<div fxLayout="column" fxLayoutGap="10px">
 					<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
-						<app-video-card [cardSize]="windowSize" [isLoading]="isLoading"></app-video-card>
+						<app-video-card
+							[cardSize]="windowSize"
+							[isLoading]="isPageLoading"
+						></app-video-card>
 					</div>
 				</div>
 			</ng-template>
@@ -19,6 +24,9 @@
 							(onDelete)="handleDelete($event)"
 							[cardMenuItems]="cardMenuItems"
 						></app-video-card>
+					</div>
+					<div class="fxItem progress-spinner" *ngIf="isDataFetching" fxFlex="100%">
+						<mat-spinner diameter="50"></mat-spinner>
 					</div>
 				</div>
 			</ng-template>
@@ -52,13 +60,17 @@
 						<mat-icon>close</mat-icon>
 					</button>
 				</mat-form-field>
-				<button mat-flat-button (click)="clearHistory()" [disabled]="isDeleting || isLoading">
+				<button
+					mat-flat-button
+					(click)="clearHistory()"
+					[disabled]="isDeleting || isPageLoading"
+				>
 					<mat-icon>delete</mat-icon>
 					Clear all watch history
 				</button>
 				<button
 					mat-flat-button
-					[disabled]="isLoading || isDeleting"
+					[disabled]="isPageLoading || isDeleting"
 					(click)="togglePauseHistory()"
 				>
 					<mat-icon>{{ isRecordHistory ? 'pause' : 'play_arrow' }}</mat-icon>

@@ -24,7 +24,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 					opacity: 0;
 				}
 				100% {
-					opcity: 1;
+					opacity: 1;
 				}
 			}
 		`,

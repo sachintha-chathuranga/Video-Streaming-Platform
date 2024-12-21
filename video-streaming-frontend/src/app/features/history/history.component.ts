@@ -10,16 +10,17 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { takeUntil } from 'rxjs';
+import { BaseComponent } from '../../shared/components/base/base.component';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
-import { ErrorService } from '../../shared/services/error.service';
-import { UserService } from '../../shared/services/user.service';
-import { VideoService } from '../../shared/services/video.service';
 import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
 import { ErrorDto } from '../../shared/models/error.dto';
 import { PaginatedResponse } from '../../shared/models/pagination.dto';
-import { BaseComponent } from '../../shared/components/base/base.component';
-import { takeUntil } from 'rxjs';
+import { ErrorService } from '../../shared/services/error.service';
+import { UserService } from '../../shared/services/user.service';
+import { VideoService } from '../../shared/services/video.service';
 
 @Component({
 	selector: 'app-history',
@@ -30,6 +31,7 @@ import { takeUntil } from 'rxjs';
 		MatFormFieldModule,
 		MatInputModule,
 		MatIcon,
+		MatProgressSpinner,
 		MatButton,
 		FormsModule,
 		MatIconButton,
@@ -39,15 +41,11 @@ import { takeUntil } from 'rxjs';
 	styleUrl: './history.component.css',
 })
 export class HistoryComponent extends BaseComponent implements OnInit {
-	videoList?: Array<VideoCardDto> = [];
-	isLoading: boolean = false;
+	videoList: VideoCardDto[] = [];
+	isPageLoading: boolean = false;
 	isDeleting: boolean = false;
-	errorObject!: ErrorDto;
+	errorObject: ErrorDto | null = null;
 	searchInput = '';
-	page: number = 0;
-	pageSize: number = 10;
-	sortBy: string = 'watchTime';
-	sortDirection: string = 'desc';
 	isRecordHistory: boolean = false;
 	windowSize: string = 'meadium';
 	cardMenuItems: CardMenuItem[] = [
@@ -64,6 +62,14 @@ export class HistoryComponent extends BaseComponent implements OnInit {
 			action: 'remove_from_history',
 		},
 	];
+
+	page: number = 0;
+	pageSize: number = 10;
+	sortBy: string = 'watchTime';
+	sortDirection: string = 'desc';
+	isLastPageFetched: boolean = false;
+	isDataFetching: boolean = false;
+
 	constructor(
 		private videoService: VideoService,
 		private userService: UserService,
@@ -79,7 +85,7 @@ export class HistoryComponent extends BaseComponent implements OnInit {
 			this.isRecordHistory = user.isRecordHistory;
 		}
 
-		this.fetchVideoHistory();
+		this.fetchVideoHistory(false);
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
 			.pipe(takeUntil(this.destroy$))
@@ -94,14 +100,18 @@ export class HistoryComponent extends BaseComponent implements OnInit {
 			});
 	}
 	onSearch(): void {
-		this.fetchVideoHistory();
+		this.resetToDefault();
+		this.fetchVideoHistory(false);
 	}
 	handleDelete(videoId: number) {
 		this.videoList = this.videoList?.filter((video) => video.id !== videoId);
 		console.log(this.videoList);
 	}
-	fetchVideoHistory() {
-		this.isLoading = true;
+	fetchVideoHistory(isScrolling: boolean) {
+		if (this.isLastPageFetched || this.isDataFetching) return;
+		console.log('fetch data');
+		this.isDataFetching = isScrolling;
+		this.isPageLoading = !isScrolling;
 		this.userService
 			.getVideoHistory(
 				this.page,
@@ -112,18 +122,25 @@ export class HistoryComponent extends BaseComponent implements OnInit {
 			)
 			.subscribe({
 				next: (response: PaginatedResponse<VideoCardDto>) => {
-					this.videoList = response.content;
-					this.isLoading = false;
+					this.page++;
+					this.errorObject = null;
+					this.videoList = [...this.videoList, ...response.content];
+					console.log(response);
+					this.isLastPageFetched = response.last;
+					this.isPageLoading = false;
+					this.isDataFetching = false;
 				},
 				error: (error: HttpErrorResponse) => {
 					this.errorObject = this.errorService.generateError(error);
-					this.isLoading = false;
+					this.isPageLoading = false;
+					this.isDataFetching = false;
 				},
 			});
 	}
 	clearInput() {
 		this.searchInput = '';
-		this.fetchVideoHistory();
+		this.resetToDefault();
+		this.fetchVideoHistory(false);
 	}
 	clearHistory() {
 		this.isDeleting = true;
@@ -191,8 +208,12 @@ export class HistoryComponent extends BaseComponent implements OnInit {
 		const { offsetHeight, scrollTop, scrollHeight } = event.target;
 
 		if (scrollHeight - scrollTop === offsetHeight) {
-			console.log('fetch data');
-			// this.fetchData();
+			this.fetchVideoHistory(true);
 		}
+	}
+	resetToDefault() {
+		this.videoList = [];
+		this.page = 0;
+		this.isLastPageFetched = false;
 	}
 }

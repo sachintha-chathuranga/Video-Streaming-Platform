@@ -13,10 +13,9 @@ import { DialogData } from './models/dialogData.dto';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DialogBoxComponent {
-	// @Input()
+
 	dialogData!: DialogData;
-	// @Output()
-	// onDelete = new EventEmitter;
+
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public data: DialogData,
 		private dialogBoxRef: MatDialogRef<DialogBoxComponent>

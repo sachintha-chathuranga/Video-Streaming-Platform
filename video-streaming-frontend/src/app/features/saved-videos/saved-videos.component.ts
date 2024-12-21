@@ -10,15 +10,16 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { takeUntil } from 'rxjs';
+import { BaseComponent } from '../../shared/components/base/base.component';
 import { VideoCardDto } from '../../shared/components/video-card/model/videoCard.dto';
 import { VideoCardComponent } from '../../shared/components/video-card/video-card.component';
-import { ErrorService } from '../../shared/services/error.service';
-import { UserService } from '../../shared/services/user.service';
 import { CardMenuItem } from '../../shared/models/cardMenuItem.dto';
 import { ErrorDto } from '../../shared/models/error.dto';
 import { PaginatedResponse } from '../../shared/models/pagination.dto';
-import { BaseComponent } from '../../shared/components/base/base.component';
-import { takeUntil } from 'rxjs';
+import { ErrorService } from '../../shared/services/error.service';
+import { UserService } from '../../shared/services/user.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
 	selector: 'app-saved-videos',
@@ -28,6 +29,7 @@ import { takeUntil } from 'rxjs';
 		FlexLayoutModule,
 		MatFormFieldModule,
 		MatInputModule,
+		MatProgressSpinner,
 		MatIcon,
 		MatButton,
 		FormsModule,
@@ -38,10 +40,10 @@ import { takeUntil } from 'rxjs';
 	styleUrl: './saved-videos.component.css',
 })
 export class SavedVideosComponent extends BaseComponent {
-	videoList?: Array<VideoCardDto> = [];
-	isLoading: boolean = false;
+	videoList: VideoCardDto[] = [];
+	isPageLoading: boolean = false;
 	isDeleting: boolean = false;
-	errorObject!: ErrorDto;
+	errorObject: ErrorDto | null = null;
 	searchInput = '';
 	windowSize: string = 'meadium';
 	cardMenuItems: CardMenuItem[] = [
@@ -52,6 +54,10 @@ export class SavedVideosComponent extends BaseComponent {
 			action: 'delete_from_playlist',
 		},
 	];
+	page: number = 0;
+	pageSize: number = 10;
+	isLastPageFetched: boolean = false;
+	isDataFetching: boolean = false;
 
 	constructor(
 		private userService: UserService,
@@ -63,7 +69,7 @@ export class SavedVideosComponent extends BaseComponent {
 	}
 
 	ngOnInit(): void {
-		this.fetchSavedVideos();
+		this.fetchSavedVideos(false);
 		this.breakpointObserver
 			.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
 			.pipe(takeUntil(this.destroy$))
@@ -82,41 +88,46 @@ export class SavedVideosComponent extends BaseComponent {
 		console.log(this.videoList);
 	}
 	onSearch(): void {
-		this.fetchSavedVideos();
+		this.resetToDefault();
+		this.fetchSavedVideos(false);
 	}
 
-	fetchSavedVideos() {
-		this.isLoading = true;
+	fetchSavedVideos(isScrolling: boolean) {
+		if (this.isLastPageFetched || this.isDataFetching) return;
+		console.log('fetch data');
+		this.isDataFetching = isScrolling;
+		this.isPageLoading = !isScrolling;
 		this.userService
-			.getUserPlaylist(this.searchInput)
+			.getUserPlaylist(this.searchInput, this.page, this.pageSize)
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response: PaginatedResponse<VideoCardDto>) => {
-					this.videoList = response.content;
-					this.isLoading = false;
+					this.page++;
+					this.errorObject = null;
+					this.videoList = [...this.videoList, ...response.content];
+					console.log(response);
+					this.isLastPageFetched = response.last;
+					this.isPageLoading = false;
+					this.isDataFetching = false;
 				},
 				error: (error: HttpErrorResponse) => {
-					this.snackBar.open(error.message, '', {
-						duration: 3000,
-						horizontalPosition: 'right',
-						verticalPosition: 'top',
-					});
 					this.errorObject = this.errorService.generateError(error);
-					this.isLoading = false;
+					this.isDataFetching = false;
+					this.isPageLoading = false;
 				},
 			});
 	}
 
 	clearInput() {
+		this.resetToDefault();
 		this.searchInput = '';
-		this.fetchSavedVideos();
+		this.fetchSavedVideos(false);
 	}
 	onScroll(event?: any) {
 		const { offsetHeight, scrollTop, scrollHeight } = event.target;
 
 		if (scrollHeight - scrollTop === offsetHeight) {
-			console.log('fetch data');
-			// this.fetchData();
+			this.fetchSavedVideos(true);
 		}
 	}
 	clearPlayList() {
@@ -126,7 +137,7 @@ export class SavedVideosComponent extends BaseComponent {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (data: boolean) => {
-					this.videoList = [];
+					this.resetToDefault();
 
 					this.snackBar.open('Playlist Deleted successfully', '', {
 						duration: 3000,
@@ -136,14 +147,14 @@ export class SavedVideosComponent extends BaseComponent {
 					this.isDeleting = false;
 				},
 				error: (error: HttpErrorResponse) => {
-					this.snackBar.open(error.message, '', {
-						duration: 3000,
-						horizontalPosition: 'right',
-						verticalPosition: 'top',
-					});
 					this.errorObject = this.errorService.generateError(error);
 					this.isDeleting = false;
 				},
 			});
+	}
+	resetToDefault() {
+		this.videoList = [];
+		this.page = 0;
+		this.isLastPageFetched = false;
 	}
 }

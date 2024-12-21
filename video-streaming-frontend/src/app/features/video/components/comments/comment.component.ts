@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatOption } from '@angular/material/core';
@@ -39,6 +39,9 @@ export class CommentComponent  extends BaseComponent{
 	@Input()
 	isAuth: boolean = false;
 
+	@Output()
+	onUnauthAction: EventEmitter<{action:string, type: string}> = new EventEmitter()
+
 	commentsDto: CommentDto[] = [];
 	totalComments!: number;
 	logginUser: UserDto | null = null;
@@ -61,24 +64,28 @@ export class CommentComponent  extends BaseComponent{
 		this.getComments(sortBy);
 	}
 	postComment(comment: string) {
-		if (comment) {
-			this.commentService
-				.postComment(comment, this.videoId)
-				.pipe(takeUntil(this.destroy$))
-				.subscribe({
-					next: (data) => {
-						this.matSnackBar.open('Comment Created Successfully', '', {
-							verticalPosition: 'bottom',
-							horizontalPosition: 'left',
-							duration: 2000,
-						});
-						this.commentsDto = [data, ...this.commentsDto];
-						this.totalComments += 1;
-					},
-					error: (error: HttpErrorResponse) => {
-						console.log(error.error);
-					},
-				});
+		if (this.isAuth) {
+			if (comment) {
+				this.commentService
+					.postComment(comment, this.videoId)
+					.pipe(takeUntil(this.destroy$))
+					.subscribe({
+						next: (data) => {
+							this.matSnackBar.open('Comment Created Successfully', '', {
+								verticalPosition: 'bottom',
+								horizontalPosition: 'left',
+								duration: 2000,
+							});
+							this.commentsDto = [data, ...this.commentsDto];
+							this.totalComments += 1;
+						},
+						error: (error: HttpErrorResponse) => {
+							console.log(error.error);
+						},
+					});
+			}	
+		} else {
+			this.onUnauthAction.emit({action:'comment',type: 'video'})
 		}
 	}
 	saveComment(comment: CommentDto) {

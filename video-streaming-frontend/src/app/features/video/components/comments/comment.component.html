@@ -53,7 +53,7 @@
 <ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
 
 <ng-template #loadingTemplate>
-	<div >
+	<div>
 		<div class="view-comments" *ngFor="let skelton of [1, 2, 3, 4, 5]">
 			<app-comment-card [isLoading]="isLoading"></app-comment-card>
 		</div>
@@ -63,11 +63,13 @@
 <ng-template #contentTemplate>
 	<div class="view-comments" *ngFor="let comment of commentsDto">
 		<app-comment-card
+			[isAuth]="isAuth"
 			[comment]="comment"
 			[videoId]="videoId"
 			[logginUser]="logginUser"
 			(onDelete)="deleteComment($event)"
 			(onUpdate)="saveComment($event)"
+			(onUnauthAction)="onUnauthAction.emit($event)"
 		></app-comment-card>
 	</div>
 </ng-template>

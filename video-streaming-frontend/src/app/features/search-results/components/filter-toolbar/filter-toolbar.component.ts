@@ -9,14 +9,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs';
+import { BaseComponent } from '../../../../shared/components/base/base.component';
 import { VideoCardDto } from '../../../../shared/components/video-card/model/videoCard.dto';
+import { ErrorDto } from '../../../../shared/models/error.dto';
+import { PaginatedResponse } from '../../../../shared/models/pagination.dto';
 import { ErrorService } from '../../../../shared/services/error.service';
 import { VideoService } from '../../../../shared/services/video.service';
 import { FilterOptions } from './models/filterOptions.dto';
-import { ErrorDto } from '../../../../shared/models/error.dto';
-import { PaginatedResponse } from '../../../../shared/models/pagination.dto';
-import { BaseComponent } from '../../../../shared/components/base/base.component';
-import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-filter-toolbar',
@@ -38,9 +38,14 @@ export class FilterToolbarComponent extends BaseComponent {
 	@Output()
 	onLoading: EventEmitter<boolean> = new EventEmitter();
 	@Output()
+	onDataFetching: EventEmitter<boolean> = new EventEmitter();
+	@Output()
 	onError: EventEmitter<ErrorDto | null> = new EventEmitter();
 	@Output()
 	onVideoListChange: EventEmitter<VideoCardDto[]> = new EventEmitter();
+
+	@Output()
+	onVideoListReset: EventEmitter<VideoCardDto[]> = new EventEmitter();
 
 	sortOptions: FilterOptions[] = [
 		{ value: '', viewValue: 'Relevance' },
@@ -75,39 +80,75 @@ export class FilterToolbarComponent extends BaseComponent {
 	isFilters: boolean = false;
 	isLoading: boolean = false;
 
+	page: number = 0;
+	pageSize: number = 10;
+	isLastPageFetched: boolean = false;
+	isDataFetching: boolean = false;
+
 	constructor(
 		private videoService: VideoService,
 		private errorService: ErrorService,
 		private activatedRoute: ActivatedRoute
-	) {super()}
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
 		this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
 			this.searchQuery = params['search_query'];
-			this.fetchData();
+			console.log("render onInit")
+			this.resetToDefault();
+			this.fetchData(false);
 		});
 	}
-	fetchData() {
-		this.onLoading.emit(true);
-		this.isLoading = true;
+	onFilterChange() {
+		this.resetToDefault();
+		this.fetchData(false);
+	}
+	fetchData(isScrolling: boolean) {
+		if (this.isLastPageFetched || this.isDataFetching) return;
+		console.log('fetch data');
+		this.isDataFetching = isScrolling;
+		this.isLoading = !isScrolling;
+		this.onLoading.emit(this.isLoading);
+		this.onDataFetching.emit(this.isDataFetching);
 		this.videoService
-			.searchVideos(this.searchQuery, this.dateFilter, this.durationFilter, this.sortBy)
+			.searchVideos(
+				this.searchQuery,
+				this.dateFilter,
+				this.durationFilter,
+				this.sortBy,
+				this.page,
+				this.pageSize
+			)
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (data: PaginatedResponse<VideoCardDto>) => {
-					this.onVideoListChange.emit(data.content);
 					this.onError.emit(null);
+					this.onVideoListChange.emit(data.content);
 					this.onLoading.emit(false);
+					this.onDataFetching.emit(false);
 					this.isLoading = false;
+					this.page++;
+					console.log(data);
+					this.isLastPageFetched = data.last;
+					this.isDataFetching = false;
 				},
 				error: (error: HttpErrorResponse) => {
 					this.onError.emit(this.errorService.generateError(error));
 					this.onLoading.emit(false);
+					this.onDataFetching.emit(false);
 					this.isLoading = false;
+					this.isDataFetching = false;
 				},
 			});
 	}
 	toogleFilter() {
 		this.isFilters = !this.isFilters;
+	}
+	resetToDefault() {
+		this.onVideoListReset.emit([]);
+		this.page = 0;
+		this.isLastPageFetched = false;
 	}
 }

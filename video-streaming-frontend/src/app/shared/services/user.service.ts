@@ -99,11 +99,19 @@ export class UserService {
 			.delete<boolean>(`${this.apiEndpoint}/users/playlist/${videoId}`)
 			.pipe(catchError((error) => throwError(() => error)));
 	}
-	getUserPlaylist(searchQuery: string): Observable<PaginatedResponse<VideoCardDto>> {
+	getUserPlaylist(
+		searchQuery: string,
+		page: number,
+		size: number
+	): Observable<PaginatedResponse<VideoCardDto>> {
+		let params = new HttpParams()
+		.set('page', page)
+		.set('size', size)
+		.set('searchQuery', searchQuery);
+		// .set('sortBy', sortBy)
+		// .set('sortDirection', sortDirection);
 		return this.httpClient
-			.get<PaginatedResponse<VideoCardDto>>(
-				this.apiEndpoint + '/users/playlist' + `?searchQuery=${searchQuery}`
-			)
+			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/users/playlist`, { params })
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 	deletePlaylist(): Observable<boolean> {
@@ -131,16 +139,17 @@ export class UserService {
 			.pipe(catchError((error) => throwError(() => error)));
 	}
 
-	getLatestVideoFromSubscriptions(): Observable<PaginatedResponse<VideoCardDto>> {
-		// let params = new HttpParams()
-		// 	.set('page', page)
-		// 	.set('size', size)
-		// 	.set('sortBy', sortBy)
-		// 	.set('sortDirection', sortDirection);
+	getLatestVideoFromSubscriptions(
+		page: number,
+		size: number
+	): Observable<PaginatedResponse<VideoCardDto>> {
+		let params = new HttpParams().set('page', page).set('size', size);
+		// .set('sortBy', sortBy)
+		// .set('sortDirection', sortDirection);
 
 		return this.httpClient
 			.get<PaginatedResponse<VideoCardDto>>(`${this.apiEndpoint}/users/subscriptions/videos`, {
-				// params,
+				params,
 			})
 			.pipe(catchError((error) => throwError(() => error)));
 	}

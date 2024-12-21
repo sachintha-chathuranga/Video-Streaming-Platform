@@ -141,6 +141,12 @@ mat-card-subtitle {
 	font-weight: 500;
 	cursor: pointer;
 }
+.progress-spinner {
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 @media screen and (max-width: 1180px) {
 	.video-details-container {
 		margin-left: 0;
@@ -149,6 +155,11 @@ mat-card-subtitle {
 		margin-right: 0;
 		flex: 1 1 100% !important;
 		min-width: 0 !important;
+	}
+}
+@media screen and (max-width: 600px) {
+	.scroll-container {
+		padding: 0 10px;
 	}
 }
 @media screen and (max-width: 1026px) {

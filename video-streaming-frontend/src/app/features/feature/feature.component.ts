@@ -27,7 +27,6 @@ import { VideoService } from '../../shared/services/video.service';
 		FlexLayoutModule,
 		MatTabsModule,
 		MatChipsModule,
-		ScrollingModule,
 		MatProgressSpinner,
 		ErrorMessageComponent,
 		VideoCardComponent,
@@ -81,11 +80,9 @@ export class FeatureComponent extends BaseComponent implements OnInit {
 		this.authService
 			.isAuthenticated()
 			.pipe(takeUntil(this.destroy$))
-			.subscribe({
-				next: (data) => {
-					this.isAuth = data.isAuthenticated;
-					this.cardMenuItems[0].isDisable = !this.isAuth;
-				},
+			.subscribe(({ isAuthenticated }) => {
+				this.isAuth = isAuthenticated;
+				this.cardMenuItems[0].isDisable = !this.isAuth;
 			});
 		this.fetchData(false);
 	}
@@ -122,12 +119,12 @@ export class FeatureComponent extends BaseComponent implements OnInit {
 			});
 	}
 	setCategory(category: string) {
-		this.resetToDefalt();
+		this.resetToDefault();
 		this.tagName = category;
 		this.fetchData(false);
 	}
 
-	resetToDefalt() {
+	resetToDefault() {
 		this.featuredVideos = [];
 		this.page = 0;
 		this.isLastPageFetched = false;

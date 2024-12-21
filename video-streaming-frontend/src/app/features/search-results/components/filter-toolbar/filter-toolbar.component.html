@@ -6,7 +6,7 @@
 	<div class="filter-container" [ngClass]="{ hide: !isFilters }">
 		<mat-form-field>
 			<mat-label>Upload Date</mat-label>
-			<mat-select [disabled]="isLoading" [(value)]="dateFilter" (selectionChange)="fetchData()">
+			<mat-select [disabled]="isLoading" [(value)]="dateFilter" (selectionChange)="onFilterChange()">
 				<mat-option *ngFor="let option of dateOptions" [value]="option.value">
 					{{ option.viewValue }}
 				</mat-option>
@@ -14,7 +14,7 @@
 		</mat-form-field>
 		<!-- <mat-form-field>
 			<mat-label>Type</mat-label>
-			<mat-select [disabled]="isLoading"  [(value)]="typeFilter" (selectionChange)="fetchData()">
+			<mat-select [disabled]="isLoading"  [(value)]="typeFilter" (selectionChange)="onFilterChange()">
 				<mat-option *ngFor="let option of typeOptions" [value]="option.value">
 					{{ option.viewValue }}
 				</mat-option>
@@ -22,7 +22,7 @@
 		</mat-form-field> -->
 		<mat-form-field>
 			<mat-label>Duration</mat-label>
-			<mat-select [disabled]="isLoading" [(value)]="durationFilter" (selectionChange)="fetchData()">
+			<mat-select [disabled]="isLoading" [(value)]="durationFilter" (selectionChange)="onFilterChange()">
 				<mat-option *ngFor="let option of durationOptions" [value]="option.value">
 					{{ option.viewValue }}
 				</mat-option>
@@ -30,7 +30,7 @@
 		</mat-form-field>
 		<mat-form-field>
 			<mat-label>Sort By</mat-label>
-			<mat-select [disabled]="isLoading"  [(value)]="sortBy" (selectionChange)="fetchData()">
+			<mat-select [disabled]="isLoading"  [(value)]="sortBy" (selectionChange)="onFilterChange()">
 				<mat-option *ngFor="let option of sortOptions" [value]="option.value">
 					{{ option.viewValue }}
 				</mat-option>

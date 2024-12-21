@@ -45,11 +45,14 @@
 					[cardMenuItems]="cardMenuItems"
 				></app-video-card>
 			</div>
+			<div class="progress-spinner"  *ngIf="isVideosFetching" fxFlex="25%" fxFlex.lg="33.33%" fxFlex.lt-lg="50%" fxFlex.xs="100%">
+				<mat-spinner diameter="50"></mat-spinner>
+			</div>
 		</div>
 		<app-error-message
 			*ngIf="errorObject"
 			[errorObject]="errorObject"
-			(onRetryClick)="fetchVideos()"
+			(onRetryClick)="fetchVideos(false)"
 		></app-error-message>
 	</ng-template>
 </div>

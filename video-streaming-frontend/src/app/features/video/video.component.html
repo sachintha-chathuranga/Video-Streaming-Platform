@@ -1,4 +1,5 @@
-<div fxLayout="row" class="main-container">
+<!-- <div (scroll)="onScroll($event)" class="scroll-container"></div> -->
+<div (scroll)="onScroll($event)" fxLayout="row" class="main-container scroll-container">
 	<div fxFlex class="video-details-container">
 		<app-video-player
 			[isLoading]="isLoading"
@@ -87,7 +88,7 @@
 									{{ video?.dislikesCount !== 0 ? video?.dislikesCount : '' }}
 								</button>
 							</span>
-							<button (click)="downloadVideo()">
+							<button (click)="downloadVideo()" [disabled]="!isAuthenticated">
 								<mat-icon>vertical_align_bottom</mat-icon>
 								Download
 							</button>
@@ -125,7 +126,7 @@
 				{{ isExpanded ? 'less' : '...more' }}
 			</span>
 		</div>
-		<app-comment [videoId]="videoId" [isAuth]="isAuthenticated"></app-comment>
+		<app-comment (onUnauthAction)="openDialogBox($event.action,$event.type)" [videoId]="videoId" [isAuth]="isAuthenticated"></app-comment>
 	</div>
 	<div class="related-videos-container" fxFlex="402px">
 		<ng-container
@@ -147,6 +148,13 @@
 						cardSize="small"
 						[cardMenuItems]="videoCardMenuItems"
 					></app-video-card>
+				</div>
+				<div
+					class="fxItem progress-spinner"
+					*ngIf="isVideoDataFetching"
+					fxFlex="100%" 
+				>
+					<mat-spinner diameter="50"></mat-spinner>
 				</div>
 			</div>
 		</ng-template>

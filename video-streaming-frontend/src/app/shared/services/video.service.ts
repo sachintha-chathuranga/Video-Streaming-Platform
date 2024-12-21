@@ -83,14 +83,16 @@ export class VideoService {
 		searchQuery: string,
 		date: string,
 		duration: string,
-		sortBy: string
+		sortBy: string,
+		page:number,
+		size:number
 	): Observable<PaginatedResponse<VideoCardDto>> {
 		let params = new HttpParams()
 			.set('searchQuery', searchQuery)
 			.set('date', date)
 			.set('duration', duration)
-			// .set('page', page)
-			// .set('size', size)
+			.set('page', page)
+			.set('size', size)
 			.set('sortBy', sortBy);
 		// .set('sortDirection', sortDirection);
 		return this.httpClient
