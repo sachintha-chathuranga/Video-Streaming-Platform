@@ -36,7 +36,7 @@ public class User {
 	private String about;
 	private String sub;
 	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
-	private Boolean isRecordHistory;
+	private Boolean isRecordHistory = true;
 
 	// this will create new field in table name as channel_id
 	@OneToOne(cascade = CascadeType.ALL)
@@ -70,6 +70,9 @@ public class User {
 
 	@OneToMany(mappedBy = "viewer", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<View> viewVideos = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Notification> notifications = new ArrayList<>();
 
 	public User(Long id, String firstName, String lastName, String email, String pictureUrl, String about, String sub,
 			Boolean isRecordHistory) {

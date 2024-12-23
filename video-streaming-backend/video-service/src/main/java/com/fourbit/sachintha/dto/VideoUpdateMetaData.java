@@ -1,6 +1,5 @@
 package com.fourbit.sachintha.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
@@ -18,5 +17,5 @@ public class VideoUpdateMetaData {
 	private String description;
 	@Pattern(regexp = "PUBLIC|PRIVATE", message = "Video status must be PUBLIC or PRIVATE")
 	private String videoStatus;
-	private List<String> tags = new ArrayList<>();
+	private List<String> tags;
 }

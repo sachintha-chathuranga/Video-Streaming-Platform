@@ -22,6 +22,7 @@ import com.fourbit.sachintha.dto.VideoUpdateMetaData;
 import com.fourbit.sachintha.dto.ViewsResponse;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
+import com.fourbit.sachintha.model.Subscribe;
 import com.fourbit.sachintha.model.Tag;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
@@ -42,6 +43,7 @@ public class VideoService {
 	private final VideoRepository videoRepository;
 	private final ViewRepository viewRepository;
 	private final VideoHistoryRepository historyRepository;
+	private final NotificationService notificationService;
 	private final Logger logger = LoggerFactory.getLogger(VideoService.class);
 
 	public VideoDto uploadVideo(MultipartFile file) {
@@ -63,6 +65,7 @@ public class VideoService {
 		return VideoMapper.mapToVideoDto(video);
 	}
 
+	@Transactional
 	public VideoDto updateVideoMetaData(VideoUpdateMetaData videoDto) {
 		Video video = videoRepository.findById(videoDto.getId())
 				.orElseThrow(() -> new CustomException("Video not found!"));
@@ -89,7 +92,16 @@ public class VideoService {
 			}).toList();
 		}
 		if (videoDto.getVideoStatus() != null) {
+			User user = userService.getRequestedUser();
 			logger.info("update video status");
+			if (videoDto.getVideoStatus().equals("PUBLIC")) {
+				Channel channel = video.getChannel();
+				String channelImage = channel.getChannelImage();
+				List<Subscribe> subscribers = video.getChannel().getSubscribers();
+				for (Subscribe subscriber : subscribers) {
+					notificationService.sendNotification(subscriber.getSubscriber(), video);
+				}
+			}
 			video.setVideoStatus(VideoStatus.valueOf(videoDto.getVideoStatus()));
 		}
 		logger.info("Start to saving");
@@ -119,22 +131,23 @@ public class VideoService {
 
 	public Page<VideoCardDto> getVideos(String tagName, String page, String size, String sortField,
 			String sortDirection) {
-		logger.info("Invoke getVideoHistory function");
+		logger.info("Invoke getFeatureVideos function");
 		logger.info("Page: " + page);
 		logger.info("Size: " + size);
 		logger.info("Sort Field: " + sortField);
 		logger.info("Direction: " + sortDirection);
+		logger.info("Tag Name: " + tagName);
 
 		Pageable pageable;
 		Page<Video> videos;
-
 		Sort sort = Sort.by(sortField);
 		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
 		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
 		if (tagName == null || tagName.equalsIgnoreCase("All") || tagName.isEmpty()) {
 			videos = videoRepository.findByVideoStatus(VideoStatus.PUBLIC, pageable);
 		} else {
-			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, tagName, pageable);
+			String shortTag = tagName.substring(0, tagName.length() - 1);
+			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, shortTag, pageable);
 		}
 		Page<VideoCardDto> videoList = videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 		return videoList;

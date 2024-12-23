@@ -26,7 +26,10 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 	Page<Video> searchVideosByFilter(@Param("searchQuery") String searchQuery,
 			@Param("startDate") LocalDateTime startDate, @Param("duration") String duration, Pageable pageable);
 
-	@Query("SELECT v FROM Video v JOIN v.tags t WHERE  v.videoStatus = :status AND t.name = :tagName")
+	@Query("""
+			SELECT v FROM Video v JOIN v.tags t WHERE  v.videoStatus = :status AND
+			LOWER(t.name) LIKE LOWER(CONCAT('%', :tagName, '%'))
+			""")
 	Page<Video> findVideosByTagName(@Param("status") VideoStatus status, @Param("tagName") String tagName,
 			Pageable pageable);
 
