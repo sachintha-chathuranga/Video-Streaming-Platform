@@ -126,7 +126,14 @@
 				{{ isExpanded ? 'less' : '...more' }}
 			</span>
 		</div>
-		<app-comment (onUnauthAction)="openDialogBox($event.action,$event.type)" [videoId]="videoId" [isAuth]="isAuthenticated"></app-comment>
+		<div class="view-comments">
+			<button (click)="showComments = !showComments">{{(showComments ? 'Hide' : 'Show') + ' Comments'}}</button>
+		</div>
+		<app-comment
+			[ngClass]="{hide: !showComments}"
+			(onUnauthAction)="openDialogBox($event.action, $event.type)"
+			[isAuth]="isAuthenticated"
+		></app-comment>
 	</div>
 	<div class="related-videos-container" fxFlex="402px">
 		<ng-container
@@ -140,7 +147,7 @@
 			</div>
 		</ng-template>
 		<ng-template #contentTemplate>
-			<div fxLayout="column" fxLayoutGap="10px">
+			<div fxLayout="column" fxLayoutGap="10px" style="padding-bottom: 20px;">
 				<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
 					<app-video-card
 						[video]="video"
@@ -149,11 +156,7 @@
 						[cardMenuItems]="videoCardMenuItems"
 					></app-video-card>
 				</div>
-				<div
-					class="fxItem progress-spinner"
-					*ngIf="isVideoDataFetching"
-					fxFlex="100%" 
-				>
+				<div class="fxItem progress-spinner" *ngIf="isVideoDataFetching" fxFlex="100%">
 					<mat-spinner diameter="50"></mat-spinner>
 				</div>
 			</div>

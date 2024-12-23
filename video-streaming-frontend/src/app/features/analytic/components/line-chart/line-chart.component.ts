@@ -1,13 +1,13 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { takeUntil } from 'rxjs';
 import { BaseComponent } from '../../../../shared/components/base/base.component';
 import { ChannelService } from '../../../../shared/services/channel.service';
 import { AnalyticDto } from '../../models/analytic.dto';
-import { takeUntil } from 'rxjs';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
 	selector: 'app-line-chart',
@@ -24,7 +24,6 @@ export class LineChartComponent extends BaseComponent {
 	@Output()
 	onTotalViewChange: EventEmitter<number> = new EventEmitter<number>();
 	chartHeight: string = '350px';
-	dataPoints: any[] = [];
 	chart: any;
 	chartOptions: any = {
 		animationEnabled: true,
@@ -51,7 +50,7 @@ export class LineChartComponent extends BaseComponent {
 			{
 				type: 'line',
 				xValueFormatString: 'MMM DD, YYYY',
-				dataPoints: this.dataPoints,
+				dataPoints: [],
 			},
 		],
 	};
@@ -96,12 +95,14 @@ export class LineChartComponent extends BaseComponent {
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (data: AnalyticDto[]) => {
-					console.log(data);
 					let totalViews = 0;
+					let array: any[] = [];
 					data.forEach((analytic: AnalyticDto) => {
 						totalViews += analytic.count;
-						this.dataPoints.push({ x: new Date(analytic.date), y: analytic.count });
+						array.push({ x: new Date(analytic.date), y: analytic.count });
 					});
+					// this.dataPoints =array;
+					this.chartOptions.data[0].dataPoints = array;
 					this.onTotalViewChange.emit(totalViews);
 					this.chart.render();
 				},

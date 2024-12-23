@@ -85,6 +85,16 @@ h1.example-app-name {
 .create-btn:hover {
 	background-color: rgba(230, 230, 230, 0.945) !important;
 }
+.notification-btn {
+	margin-left: 10px;
+}
+::ng-deep .mat-mdc-menu-panel {
+	max-width: 420px !important;
+	overflow: hidden !important;
+}
+.profile-menu {
+	max-width: 300px !important;
+}
 .login-btn {
 	margin: 0 15px;
 	border-radius: 25px;

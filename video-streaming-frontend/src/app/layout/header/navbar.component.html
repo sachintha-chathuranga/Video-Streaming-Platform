@@ -8,9 +8,9 @@
 		>
 			<mat-icon>menu</mat-icon>
 		</button>
-		<div style="display: flex;">
+		<div style="display: flex">
 			<div class="img-container" (click)="navigate('/')">
-				<img src="assets/brand-image.png" alt="image">
+				<img src="assets/brand-image.png" alt="image" />
 			</div>
 			<h1 class="example-app-name" (click)="navigate('/')">{{ productName }}</h1>
 		</div>
@@ -58,24 +58,32 @@
 		>
 			<mat-icon>add</mat-icon>
 		</button>
-		<button mat-icon-button>
+		<button
+			[matMenuTriggerFor]="notificationMenu"
+			mat-icon-button
+			class="notification-btn"
+			*ngIf="isAuthenticated"
+		>
 			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
 		</button>
+		<mat-menu xPosition="before" #notificationMenu="matMenu" class="custom-menu noti-menu">
+			<app-notification [logginUser]="logginUser" *ngIf="isAuthenticated"></app-notification>
+		</mat-menu>
 		<div
 			class="profile-img-cover"
 			[matMenuTriggerFor]="menu"
 			*ngIf="isAuthenticated; else noAuth"
 		>
-			<img [src]="(logginUser?.pictureUrl) || '/assets/no-person.png'" />
+			<img [src]="logginUser?.pictureUrl || '/assets/no-person.png'" />
 		</div>
-		<mat-menu #menu="matMenu" class="custom-menu">
+		<mat-menu #menu="matMenu" class="custom-menu profile-menu">
 			<div class="menu-header">
 				<div class="profile-img-cover">
-					<img [src]="(logginUser?.pictureUrl) || '/assets/no-person.png'" />
+					<img [src]="logginUser?.pictureUrl || '/assets/no-person.png'" />
 				</div>
-				<div  *ngIf="logginUser" class="menu-user-info">
+				<div *ngIf="logginUser" class="menu-user-info">
 					<p class="text-overflow-1 name">
-						{{ logginUser.firstName + ' ' + logginUser.lastName}}
+						{{ logginUser.firstName + ' ' + logginUser.lastName }}
 					</p>
 					<p class="text-overflow-1 email">{{ logginUser.email }}</p>
 				</div>

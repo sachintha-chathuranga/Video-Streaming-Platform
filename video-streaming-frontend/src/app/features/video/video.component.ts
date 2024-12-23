@@ -81,6 +81,8 @@ export class VideoComponent extends BaseComponent implements OnInit {
 		},
 	];
 
+	showComments:boolean= false;
+
 	isAuthenticated: boolean = false;
 	page: number = 0;
 	pageSize: number = 10;
@@ -110,10 +112,11 @@ export class VideoComponent extends BaseComponent implements OnInit {
 				this.videoCardMenuItems[0].isDisable = !this.isAuthenticated;
 
 			});
+	
 		this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
 			this.videoId = params['v']; // Get the value of the 'v' query parameter
+			this.fetchVideo();
 		});
-		this.fetchVideo();
 		this.fetchVideoList(false);
 	}
 	handleMenuClick(name: string) {

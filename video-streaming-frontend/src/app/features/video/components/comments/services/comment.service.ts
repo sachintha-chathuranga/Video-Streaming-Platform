@@ -15,12 +15,13 @@ export class CommentService {
 	getAllComments(
 		videoId: string,
 		page: number,
+		size: number,
 		sortBy: string,
 		isAuth: boolean
 	): Observable<PaginatedResponse<CommentDto>> {
 		let params = new HttpParams()
 			.set('page', page)
-			.set('size', 10)
+			.set('size', size)
 			.set('sortBy', sortBy)
 			.set('sortDirection', 'desc')
 			.set('isAuth', isAuth);

@@ -1,0 +1,73 @@
+<div class="menu-header">
+	<p>Notifications</p>
+	<button [matMenuTriggerFor]="menu" (click)="onMenuItemClick($event)" mat-icon-button>
+		<mat-icon>settings</mat-icon>
+	</button>
+	<mat-menu xPosition="before" class="custom-menu" #menu>
+		<button mat-menu-item (click)="markAllAsRead()">
+			<mat-icon>edit</mat-icon>
+			<span>Mark all as read</span>
+		</button>
+		<button mat-menu-item (click)="deleteAllNotification()">
+			<mat-icon>delete</mat-icon>
+			<span>Delete all</span>
+		</button>
+	</mat-menu>
+</div>
+<div class="scrolling-container" (scroll)="onScroll($event)">
+	<div *ngFor="let notification of notifications">
+		<mat-card
+			(click)="openVideo(notification.videoId, notification.id)"
+			class="example-card"
+			[ngClass]="{ highlight: !notification.isRead }"
+		>
+			<mat-card-header>
+				<div
+					mat-card-avatar
+					class="example-header-image"
+					[ngStyle]="{
+						'background-image': isLoading
+							? 'none'
+							: 'url(' + (notification.channelImage || 'assets/no-person.png') + ')'
+					}"
+				></div>
+
+				<div class="details">
+					<mat-card-title>
+						<h3 class="text-overflow-2">
+							{{ notification.title }}
+						</h3>
+					</mat-card-title>
+
+					<mat-card-subtitle>
+						<span>
+							{{ notification.createdAt | lifetime }}
+						</span>
+					</mat-card-subtitle>
+				</div>
+				<div class="img">
+					<img mat-card-image [src]="notification.videoImage" />
+				</div>
+				<button (click)="onMenuItemClick($event)" class="more-vert-btn" mat-icon-button>
+					<mat-icon x [matMenuTriggerFor]="menu">more_vert</mat-icon>
+				</button>
+				<mat-menu xPosition="before" #menu="matMenu" class="custom-menu">
+					<button mat-menu-item (click)="markAsRead(notification.id)">
+						<mat-icon>edit</mat-icon>
+						<span>Mark as read</span>
+					</button>
+					<button mat-menu-item (click)="deleteNotification(notification.id)">
+						<mat-icon>delete</mat-icon>
+						<span>Remove</span>
+					</button>
+				</mat-menu>
+			</mat-card-header>
+		</mat-card>
+	</div>
+	<div class="progress-spinner" *ngIf="isDataFetching">
+		<mat-spinner diameter="30"></mat-spinner>
+	</div>
+	<div *ngIf="notifications.length == 0" class="empty-box">
+		<p>You don't have any notification</p>
+	</div>
+</div>

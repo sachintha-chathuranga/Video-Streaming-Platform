@@ -27,7 +27,6 @@ import { VideoService } from '../../shared/services/video.service';
 		FlexLayoutModule,
 		MatTabsModule,
 		MatChipsModule,
-		MatProgressSpinner,
 		ErrorMessageComponent,
 		VideoCardComponent,
 		SliderToolbarComponent,

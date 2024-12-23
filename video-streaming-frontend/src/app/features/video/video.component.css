@@ -55,7 +55,6 @@ mat-card-title a {
 	font-size: 16px;
 	font-weight: 500;
 	line-height: normal;
-	
 }
 
 mat-card-subtitle {
@@ -129,7 +128,7 @@ mat-card-subtitle {
 	transition: max-height 0.8s ease-out;
 	max-height: 77px;
 }
-.video-description p span{
+.video-description p span {
 	margin: 0 6px;
 }
 
@@ -147,6 +146,22 @@ mat-card-subtitle {
 	align-items: center;
 	justify-content: center;
 }
+.view-comments {
+	display: none;
+	justify-content: center;
+	align-items: center;
+}
+.view-comments button {
+	border: none;
+	width: 100%;
+	padding: 12px;
+	border-radius: 10px;
+}
+.view-comments button:hover {
+	background-color: #e9e9e9;
+	cursor: pointer;
+}
+
 @media screen and (max-width: 1180px) {
 	.video-details-container {
 		margin-left: 0;
@@ -160,6 +175,12 @@ mat-card-subtitle {
 @media screen and (max-width: 600px) {
 	.scroll-container {
 		padding: 0 10px;
+	}
+	.view-comments {
+		display: flex;
+	}
+	.hide {
+		display: none;
 	}
 }
 @media screen and (max-width: 1026px) {
@@ -186,27 +207,27 @@ mat-card-subtitle {
 	border-radius: 50%;
 	margin-right: 13px;
 }
-mat-card-header.loading{
-  display: flex;
-  margin-top: 5px;
+mat-card-header.loading {
+	display: flex;
+	margin-top: 5px;
 }
-.details.loading{
-  width: 33%;
+.details.loading {
+	width: 33%;
 }
 mat-card-title.skeleton {
 	height: 20px;
-  display: flex;
-  width: 100%;
-  max-width: 240px;
-  margin-top: 10px;
-  margin-bottom: 8px;
+	display: flex;
+	width: 100%;
+	max-width: 240px;
+	margin-top: 10px;
+	margin-bottom: 8px;
 }
 mat-card-subtitle.skeleton {
-  width: 100%;
-  max-width: 240px;
-  display: flex;
+	width: 100%;
+	max-width: 240px;
+	display: flex;
 	height: 20px;
 }
-button.skeleton{
-  margin-bottom: 0;
+button.skeleton {
+	margin-bottom: 0;
 }

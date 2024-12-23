@@ -37,7 +37,7 @@
 		[ngStyle]="{
 			'background-image': isLoading
 				? 'none'
-				: logginUser?.pictureUrl || 'url(\'/assets/no-person.png\')'
+				: 'url('+(logginUser?.pictureUrl || 'assets/no-person.png')+')'
 		}"
 	></div>
 	<app-comment-input
@@ -71,5 +71,11 @@
 			(onUpdate)="saveComment($event)"
 			(onUnauthAction)="onUnauthAction.emit($event)"
 		></app-comment-card>
+	</div>
+	<div class="view-comments progress-spinner" *ngIf="isCommentsFetching">
+		<mat-spinner diameter="50"></mat-spinner>
+	</div>
+	<div class="progress-spinner" >
+		<button *ngIf="!isLastCommentPageFetched" [disabled]="isCommentsFetching" (click)="getComments(selectedFilter,true)" mat-flat-button>See more</button>
 	</div>
 </ng-template>

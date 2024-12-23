@@ -22,6 +22,7 @@ import { DotAnimationComponent } from '../../shared/animations/dot-animation/dot
 import { BaseComponent } from '../../shared/components/base/base.component';
 import { UserDto } from '../../shared/models/user.dto';
 import { UserService } from '../../shared/services/user.service';
+import { NotificationComponent } from '../../features/notification/notification.component';
 
 @Component({
 	selector: 'navbar',
@@ -40,6 +41,7 @@ import { UserService } from '../../shared/services/user.service';
 		MatMenuModule,
 		MatDivider,
 		DotAnimationComponent,
+		NotificationComponent
 	],
 	templateUrl: './navbar.component.html',
 	styleUrl: './navbar.component.css',

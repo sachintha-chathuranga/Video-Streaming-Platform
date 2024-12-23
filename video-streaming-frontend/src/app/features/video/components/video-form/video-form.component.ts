@@ -122,6 +122,7 @@ export class VideoFormComponent extends BaseComponent{
 	}
 	ngOnInit(): void {
 		this.setVideoDetails();
+		console.log(this.videoDetails.get('tags')?.value);
 	}
 	onInputChange(): void {
 		if (
@@ -226,8 +227,9 @@ export class VideoFormComponent extends BaseComponent{
 				if (this.video.videoStatus != this.videoDetails.get('videoStatus')?.value) {
 					videoMetaData.videoStatus = this.videoDetails.get('videoStatus')?.value;
 				}
-				if (!this.config.isArraysEqual(this.video.tags, this.videoDetails.get('tags')?.value)) {
+				if (!this.config.isArraysEqual(this.videoDetails.get('tags')?.value, this.video.tags)) {
 					videoMetaData.tags = this.videoDetails.get('tags')?.value;
+					console.log("Tag added")
 				}
 
 				this.videoService

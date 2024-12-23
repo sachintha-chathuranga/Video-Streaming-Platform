@@ -2,11 +2,15 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatOption } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { takeUntil } from 'rxjs';
+import { BaseComponent } from '../../../../shared/components/base/base.component';
 import { PaginatedResponse } from '../../../../shared/models/pagination.dto';
 import { UserDto } from '../../../../shared/models/user.dto';
 import { UserService } from '../../../../shared/services/user.service';
@@ -14,8 +18,7 @@ import { CommentCardComponent } from './components/comment-card/comment-card.com
 import { CommentInputComponent } from './components/comment-input/comment-input.component';
 import { CommentDto } from './models/comment.dto';
 import { CommentService } from './services/comment.service';
-import { BaseComponent } from '../../../../shared/components/base/base.component';
-import { takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-comment',
@@ -26,6 +29,8 @@ import { takeUntil } from 'rxjs';
 		MatIconModule,
 		MatCardModule,
 		MatMenuModule,
+		MatProgressSpinner,
+		MatButton,
 		CommentCardComponent,
 		CommentInputComponent,
 		MatOption,
@@ -33,35 +38,45 @@ import { takeUntil } from 'rxjs';
 	templateUrl: './comment.component.html',
 	styleUrl: './comment.component.css',
 })
-export class CommentComponent  extends BaseComponent{
-	@Input()
+export class CommentComponent extends BaseComponent {
 	videoId: string = '';
 	@Input()
 	isAuth: boolean = false;
 
 	@Output()
-	onUnauthAction: EventEmitter<{action:string, type: string}> = new EventEmitter()
+	onUnauthAction: EventEmitter<{ action: string; type: string }> = new EventEmitter();
 
 	commentsDto: CommentDto[] = [];
 	totalComments!: number;
 	logginUser: UserDto | null = null;
 	page: number = 0;
+	pageSize: number = 5;
 	selectedFilter: string = 'createdDate';
 	isLoading: boolean = false;
+	isLastCommentPageFetched: boolean = false;
+	isCommentsFetching: boolean = false;
 
 	constructor(
 		private userService: UserService,
 		private commentService: CommentService,
-		private matSnackBar: MatSnackBar
-	) {super()}
+		private matSnackBar: MatSnackBar,
+		private activatedRoute: ActivatedRoute
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
+		this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+			this.videoId = params['v']; // Get the value of the 'v' query parameter
+			this.resetToDefault();
+			this.getComments(this.selectedFilter, false);
+		});
 		this.logginUser = this.userService.getUser();
-		this.getComments('createdDate');
 	}
+
 	sortCommentBy(sortBy: string) {
 		this.selectedFilter = sortBy;
-		this.getComments(sortBy);
+		this.getComments(sortBy, false);
 	}
 	postComment(comment: string) {
 		if (this.isAuth) {
@@ -83,9 +98,9 @@ export class CommentComponent  extends BaseComponent{
 							console.log(error.error);
 						},
 					});
-			}	
+			}
 		} else {
-			this.onUnauthAction.emit({action:'comment',type: 'video'})
+			this.onUnauthAction.emit({ action: 'comment', type: 'video' });
 		}
 	}
 	saveComment(comment: CommentDto) {
@@ -117,7 +132,11 @@ export class CommentComponent  extends BaseComponent{
 				},
 			});
 	}
-
+	resetToDefault() {
+		this.commentsDto = [];
+		this.page = 0;
+		this.isLastCommentPageFetched = false;
+	}
 	deleteComment(commentId: number) {
 		this.commentService
 			.deleteComment(commentId, this.videoId)
@@ -147,20 +166,27 @@ export class CommentComponent  extends BaseComponent{
 			});
 	}
 
-	getComments(sortBy: string) {
-		this.isLoading = true;
+	getComments(sortBy: string, isScrolling: boolean) {
+		if (this.isLastCommentPageFetched || this.isCommentsFetching) return;
+		this.isCommentsFetching = isScrolling;
+
+		this.isLoading = !isScrolling;
 		this.commentService
-			.getAllComments(this.videoId, this.page, sortBy, this.isAuth)
+			.getAllComments(this.videoId, this.page, this.pageSize, sortBy, this.isAuth)
 			.pipe(takeUntil(this.destroy$))
 			.subscribe({
 				next: (response: PaginatedResponse<CommentDto>) => {
-					this.commentsDto = response.content;
 					this.totalComments = response.totalElements;
 					this.isLoading = false;
+					this.page++;
+					this.commentsDto = [...this.commentsDto, ...response.content];
+					console.log(response);
+					this.isLastCommentPageFetched = response.last;
+					this.isCommentsFetching = false;
 				},
 				error: (response: HttpErrorResponse) => {
-					console.log(response.error);
 					this.isLoading = false;
+					this.isCommentsFetching = false;
 				},
 			});
 	}
