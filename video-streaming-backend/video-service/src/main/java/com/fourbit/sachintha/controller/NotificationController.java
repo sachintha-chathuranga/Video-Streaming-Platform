@@ -29,6 +29,11 @@ public class NotificationController {
 		return ResponseEntity.ok(notificationService.getNotifications(page, size));
 	}
 
+	@GetMapping("/count/{userId}")
+	public ResponseEntity<Long> getNotificationsCount(@PathVariable Long userId) {
+		return ResponseEntity.ok(notificationService.getNotificationCount(userId));
+	}
+
 	@PostMapping("/read/{id}")
 	public ResponseEntity<Boolean> markAsRead(@PathVariable Long id) {
 		return ResponseEntity.ok(notificationService.markAsRead(id));

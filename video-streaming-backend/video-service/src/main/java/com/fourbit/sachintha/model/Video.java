@@ -74,6 +74,9 @@ public class Video {
 
 	private Float duration;
 
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Notification> notifications;
+
 	public Video(Long id, String description, String title, Channel channel, String videoUrl, VideoStatus videoStatus,
 			String thumbnailUrl, Long viewsCount, LocalDateTime createdTime, Float duration) {
 		this.id = id;

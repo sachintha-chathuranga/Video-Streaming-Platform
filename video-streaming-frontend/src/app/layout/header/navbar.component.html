@@ -64,10 +64,10 @@
 			class="notification-btn"
 			*ngIf="isAuthenticated"
 		>
-			<mat-icon matBadge="15" aria-hidden="false">notifications</mat-icon>
+			<mat-icon [matBadge]="notificationCount==0 ? '' : notificationCount" aria-hidden="false">notifications</mat-icon>
 		</button>
 		<mat-menu xPosition="before" #notificationMenu="matMenu" class="custom-menu noti-menu">
-			<app-notification [logginUser]="logginUser" *ngIf="isAuthenticated"></app-notification>
+			<app-notification (onMarkAsRead)="setNotificationCount($event)" [logginUser]="logginUser" *ngIf="isAuthenticated"></app-notification>
 		</mat-menu>
 		<div
 			class="profile-img-cover"

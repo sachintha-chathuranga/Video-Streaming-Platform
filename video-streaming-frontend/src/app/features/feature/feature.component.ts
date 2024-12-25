@@ -57,11 +57,13 @@ export class FeatureComponent extends BaseComponent implements OnInit {
 		'Funny',
 		'Movies',
 		'TV Series',
-		'Music',
-		'Entertaitment',
-		'Funny',
-		'Movies',
-		'TV Series',
+		'Sports',
+		'Games',
+		'Documentary',
+		'Triller',
+		'Horror',
+		'Fantacy',
+		'Commedy'
 	];
 	page: number = 0;
 	pageSize: number = 10;

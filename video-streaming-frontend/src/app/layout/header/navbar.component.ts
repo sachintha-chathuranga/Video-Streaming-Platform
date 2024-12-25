@@ -17,12 +17,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationComponent } from '../../features/notification/notification.component';
 import { VideoUploadStepperComponent } from '../../features/upload/video-upload-stepper/video-upload-stepper.component';
 import { DotAnimationComponent } from '../../shared/animations/dot-animation/dot-animation.component';
 import { BaseComponent } from '../../shared/components/base/base.component';
 import { UserDto } from '../../shared/models/user.dto';
+import { NotificationService } from '../../shared/services/notification.service';
 import { UserService } from '../../shared/services/user.service';
-import { NotificationComponent } from '../../features/notification/notification.component';
 
 @Component({
 	selector: 'navbar',
@@ -41,7 +42,7 @@ import { NotificationComponent } from '../../features/notification/notification.
 		MatMenuModule,
 		MatDivider,
 		DotAnimationComponent,
-		NotificationComponent
+		NotificationComponent,
 	],
 	templateUrl: './navbar.component.html',
 	styleUrl: './navbar.component.css',
@@ -64,13 +65,16 @@ export class NavbarComponent extends BaseComponent implements OnInit {
 	isAuthenticated!: boolean;
 	readonly dialog = inject(MatDialog);
 	windowSize: string = 'meadium';
+	// Initialize with 0 or any other value
+	notificationCount: number = 0;
 
 	constructor(
 		private authService: AuthService,
 		private router: Router,
 		private userService: UserService,
 		private activatedRoute: ActivatedRoute,
-		private breakpointObserver: BreakpointObserver
+		private breakpointObserver: BreakpointObserver,
+		private notificationService: NotificationService
 	) {
 		super();
 	}
@@ -92,6 +96,11 @@ export class NavbarComponent extends BaseComponent implements OnInit {
 							.subscribe({
 								next: (user: UserDto) => {
 									this.logginUser = user;
+									if (this.logginUser) {
+										this.notificationService
+											.getNotificationCount(this.logginUser.id)
+											.subscribe((value) => (this.notificationCount = value));
+									}
 								},
 								error: (errorResponse: HttpErrorResponse) => {
 									console.log(errorResponse.error);
@@ -99,9 +108,15 @@ export class NavbarComponent extends BaseComponent implements OnInit {
 							});
 					} else {
 						this.logginUser = localUser;
+						if (this.logginUser) {
+							this.notificationService
+								.getNotificationCount(this.logginUser.id)
+								.subscribe((value) => (this.notificationCount = value));
+						}
 					}
 				}
 			});
+
 		this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
 			this.value = params['search_query'];
 		});
@@ -117,6 +132,15 @@ export class NavbarComponent extends BaseComponent implements OnInit {
 					}
 				}
 			});
+	}
+	setNotificationCount(type: string) {
+		console.log(type);
+		if (type == 'one') {
+			
+			this.notificationCount--;
+		} else {
+			this.notificationCount =0;
+		}
 	}
 	search() {
 		if (this.value) {
@@ -156,7 +180,9 @@ export class NavbarComponent extends BaseComponent implements OnInit {
 			.afterClosed()
 			.pipe(takeUntil(this.destroy$))
 			.subscribe((result) => {
-				this.router.navigate(['/profile/content'], { state: { data: result } });
+				if (result != 'close') {
+					this.router.navigate(['/profile/content'], { state: { data: result } });
+				}
 			});
 	}
 }

@@ -146,6 +146,7 @@ export class ChannelFormComponent extends BaseComponent {
 			if (this.channel?.email != this.channelDetails.get('email')?.value) {
 				updatedChannel.email = this.channelDetails.get('email')?.value;
 			}
+			console.log(updatedChannel)
 			this.isLoading = true;
 			this.channelService
 				.updateChannel(updatedChannel)

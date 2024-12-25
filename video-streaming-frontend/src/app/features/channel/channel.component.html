@@ -1,26 +1,28 @@
-<channel-header [channelId]="channelId" [isAuthenticated]="isAuthenticated"></channel-header>
-<mat-tab-group animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
-	<mat-tab label="Videos">
-		<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
-		<ng-template #loadingTemplate>
-			<div fxLayout="column" fxLayoutGap="10px">
-				<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
-					<app-video-card [cardSize]="windowSize" [isLoading]="isLoading"></app-video-card>
+<div  class="scroll-container">
+	<channel-header [channelId]="channelId" [isAuthenticated]="isAuthenticated"></channel-header>
+	<mat-tab-group animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
+		<mat-tab label="Videos">
+			<ng-container *ngIf="isLoading; then loadingTemplate; else contentTemplate"></ng-container>
+			<ng-template #loadingTemplate>
+				<div fxLayout="column" fxLayoutGap="10px">
+					<div class="fxItem" fxFlex="100%" *ngFor="let skelton of [1, 2, 3, 4, 5]">
+						<app-video-card [cardSize]="windowSize" [isLoading]="isLoading"></app-video-card>
+					</div>
 				</div>
-			</div>
-		</ng-template>
-		<ng-template #contentTemplate>
-			<div fxLayout="column" fxLayoutGap="10px">
-				<div class="fxItem" fxFlex="100%" *ngFor="let video of videos">
-					<app-video-card
-						[video]="video"
-						[cardSize]="windowSize"
-						[cardMenuItems]="cardMenuItems"
-					></app-video-card>
+			</ng-template>
+			<ng-template #contentTemplate>
+				<div fxLayout="column" fxLayoutGap="10px">
+					<div class="fxItem" fxFlex="100%" *ngFor="let video of videos">
+						<app-video-card
+							[video]="video"
+							[cardSize]="windowSize"
+							[cardMenuItems]="cardMenuItems"
+						></app-video-card>
+					</div>
 				</div>
-			</div>
-		</ng-template>
-	</mat-tab>
-	<mat-tab label="Playlist" disabled></mat-tab>
-	<mat-tab label="Community" disabled></mat-tab>
-</mat-tab-group>
+			</ng-template>
+		</mat-tab>
+		<mat-tab label="Playlist" disabled></mat-tab>
+		<mat-tab label="Community" disabled></mat-tab>
+	</mat-tab-group>
+</div>

@@ -29,6 +29,12 @@ export class NotificationService {
 			.get<PaginatedResponse<Notification>>(`${this.apiEndpoint}/notifications`, { params })
 			.pipe(catchError((error) => throwError(() => error)));
 	}
+	getNotificationCount(userId: number): Observable<number> {
+	
+		return this.httpClient
+			.get<number>(`${this.apiEndpoint}/notifications/count/${userId}`)
+			.pipe(catchError((error) => throwError(() => error)));
+	}
 
 	deleteNotification(notificationId: number) {
 		this.httpClient.delete(`${this.apiEndpoint}/notifications/${notificationId}`).subscribe();

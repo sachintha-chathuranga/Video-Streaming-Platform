@@ -77,4 +77,9 @@ public class NotificationService {
 		notificationRepository.saveAll(notifications);
 		return true;
 	}
+
+	public Long getNotificationCount(Long userId) {
+		List<Notification> notifications = notificationRepository.findByUserIdAndIsReadFalse(userId);
+		return Long.valueOf(notifications.size());
+	}
 }

@@ -41,7 +41,7 @@
 	</mat-stepper>
 </mat-dialog-content>
 <mat-dialog-actions>
-	<button *ngIf="currentStep == 0" mat-button mat-dialog-close>Cancel</button>
+	<button *ngIf="currentStep == 0" mat-button (click)="closeDialogBox()">Cancel</button>
 	<button
 		mat-button
 		*ngIf="currentStep == 0"

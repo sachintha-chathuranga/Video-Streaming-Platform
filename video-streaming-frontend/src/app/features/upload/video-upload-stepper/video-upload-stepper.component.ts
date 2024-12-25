@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -38,7 +38,13 @@ export class VideoUploadStepperComponent extends BaseComponent {
 	video!: VideoDto;
 	currentStep: number = 0;
 
-	constructor(private videoService: VideoService, private snackbar: MatSnackBar) { super()}
+	constructor(
+		private videoService: VideoService,
+		private snackbar: MatSnackBar,
+		private uploadDialog: MatDialogRef<VideoUploadStepperComponent>
+	) {
+		super();
+	}
 	ngOnInit() {
 		// this.video = {
 		// 	id: 1,
@@ -102,5 +108,8 @@ export class VideoUploadStepperComponent extends BaseComponent {
 					console.log(errorResponse.error);
 				},
 			});
+	}
+	closeDialogBox() {
+		this.uploadDialog.close('close');
 	}
 }

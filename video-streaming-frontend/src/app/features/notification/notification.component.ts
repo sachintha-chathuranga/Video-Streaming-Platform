@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { BaseComponent } from '../../shared/components/base/base.component';
 import { PaginatedResponse } from '../../shared/models/pagination.dto';
+import { UserDto } from '../../shared/models/user.dto';
 import { LifetimePipe } from '../../shared/pipes/lifetime.pipe';
 import { NotificationService } from '../../shared/services/notification.service';
-import { Notification } from './models/notification.dto';
-import { UserDto } from '../../shared/models/user.dto';
 import { UserService } from '../../shared/services/user.service';
-import { Router } from '@angular/router';
+import { Notification } from './models/notification.dto';
 
 @Component({
 	selector: 'app-notification',
@@ -34,6 +34,8 @@ import { Router } from '@angular/router';
 export class NotificationComponent extends BaseComponent {
 	@Input()
 	logginUser: UserDto | null = null;
+	@Output()
+	onMarkAsRead: EventEmitter<string> = new EventEmitter();
 	notifications: Notification[] = [];
 	isLoading = false;
 	page: number = 0;
@@ -41,7 +43,11 @@ export class NotificationComponent extends BaseComponent {
 	isLastPageFetched: boolean = false;
 	isDataFetching: boolean = false;
 
-	constructor(private router:Router, private notificationService: NotificationService, private userService: UserService) {
+	constructor(
+		private router: Router,
+		private notificationService: NotificationService,
+		private userService: UserService
+	) {
 		super();
 	}
 	ngOnInit() {
@@ -50,11 +56,17 @@ export class NotificationComponent extends BaseComponent {
 	deleteNotification(notificationId: number) {
 		this.notificationService.deleteNotification(notificationId);
 		this.notifications = this.notifications.filter(
-			(notification) => notification.id != notificationId
+			(notification) => {
+				if (notification.id==notificationId && !notification.isRead) {
+					this.onMarkAsRead.emit('one');
+				}
+				return notification.id != notificationId
+			}
 		);
 	}
 
 	deleteAllNotification() {
+			this.onMarkAsRead.emit('all');
 		if (this.logginUser) {
 			this.notificationService.deleteAllNotification(this.logginUser.id);
 		}
@@ -73,7 +85,7 @@ export class NotificationComponent extends BaseComponent {
 					console.log(errorResponse);
 				},
 			});
-		this.router.navigate(['/watch'], { queryParams: { v: videoId} });
+		this.router.navigate(['/watch'], { queryParams: { v: videoId } });
 	}
 	fetchNotifications(isScrolling: boolean) {
 		if (this.isLastPageFetched || this.isDataFetching) return;
@@ -98,11 +110,13 @@ export class NotificationComponent extends BaseComponent {
 		this.notifications.forEach((notification: Notification) => {
 			if (notificationId == notification.id && !notification.isRead) {
 				notification.isRead = true;
+				this.onMarkAsRead.emit('one');
 				this.notificationService.markAsRead(notificationId);
 			}
 		});
 	}
 	markAllAsRead() {
+		this.onMarkAsRead.emit('all');
 		this.notifications.forEach((notification: Notification) => {
 			if (!notification.isRead) {
 				notification.isRead = true;
