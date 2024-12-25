@@ -1,0 +1,12 @@
+version: 0.2
+phases:
+	pre_build:
+		commands:
+	  	-	echo Logging into Amazon ECR started on 'date'
+		  -	aws --version
+		  - echo Logging into Amazon ECR...
+		  - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 767397831022.dkr.ecr.ap-south-1.amazonaws.com
+		  - echo setting repository URI...
+		  - REPOSITORY_URI=767397831022.dkr.ecr.ap-south-1.amazonaws.com/sachintha/video-stream-platform
+		  - echo setting image tag...
+		  - IMAGE_TAG=build-${echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}'}
