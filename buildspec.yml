@@ -17,7 +17,7 @@ phases:
       - cd video-streaming-backend/video-service
       - mvn clean install
       - echo building the Docker image...
-      - docker build -t $REPOSITORY_URI:LATEST .
+      - docker build -t $REPOSITORY_URI:latest .
       - echo tagging the Docker image...
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
