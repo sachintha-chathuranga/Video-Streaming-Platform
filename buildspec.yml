@@ -9,7 +9,7 @@ phases:
       - echo setting repository URI...
       - REPOSITORY_URI=767397831022.dkr.ecr.ap-south-1.amazonaws.com/sachintha/video-stream-platform
       - echo setting image tag...
-			- IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
       - echo building and tagging started image on 'date'
