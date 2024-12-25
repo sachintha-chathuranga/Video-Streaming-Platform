@@ -1,0 +1,61 @@
+<header>
+	<div [ngClass]="{ skeleton: isLoading }" class="cover-image-container">
+		<img
+			*ngIf="!isLoading"
+			[src]="(channel && channel.bannerImage) || 'assets/no-baner.png'"
+			alt="cover image"
+			class="cover-image"
+		/>
+	</div>
+	<div class="details-container">
+		<div class="profile-image-container" [ngClass]="{ skeleton: isLoading }">
+			<img
+				*ngIf="!isLoading"
+				[src]="(channel && channel.channelImage) || 'assets/no-person.png'"
+				class="profile-image"
+			/>
+		</div>
+		<div class="header-details">
+			<h1 class="channel-name" [ngClass]="{ skeleton: isLoading }">
+				{{ channel && channel.name }}
+			</h1>
+			<p class="channel-info" [ngClass]="{ skeleton: isLoading }">
+				<span id="hashTag">
+					{{ channel ? '&#64;' + channel.name + ' • ' : '' }}
+				</span>
+				<span>
+					{{
+						channel
+							? channel.subscribersCount + ' subscribers • ' + channel.videoCount + ' videos'
+							: ''
+					}}
+				</span>
+			</p>
+			<p class="channel-description text-overflow-1" [ngClass]="{ skeleton: isLoading }">
+				{{ channel ? channel.description || 'Welcome to ' + channel.name + '....' : '' }}
+			</p>
+			<!-- <a href="http://">{{ channel ? 'instagram.com/numofcodevt' : '' }}</a> -->
+			<div class="btn-container">
+				<button
+					*ngIf="!channel?.isUserSubscribe"
+					class="card-btn subscribe-button"
+					[ngClass]="{ skeleton: isLoading }"
+					mat-flat-button
+					color="warn"
+					(click)="subscribeChannel()"
+				>
+					{{ isLoading ? '' : 'Subscribe' }}
+				</button>
+				<button
+					*ngIf="channel?.isUserSubscribe"
+					class="card-btn unsubscribe-button"
+					[ngClass]="{ skeleton: isLoading }"
+					mat-flat-button
+					(click)="unSubscribeChannel()"
+				>
+					{{ isLoading ? '' : 'Unsubscribe' }}
+				</button>
+			</div>
+		</div>
+	</div>
+</header>

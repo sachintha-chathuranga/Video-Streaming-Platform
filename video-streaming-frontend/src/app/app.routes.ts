@@ -43,7 +43,7 @@ export const routes: Routes = [
 				canActivate: [autoLoginPartialRoutesGuard],
 			},
 			{
-				path: 'channel',
+				path: 'channel/:id',
 				component: ChannelComponent,
 			},
 			{

@@ -1,3 +1,6 @@
 <canvasjs-chart
-  [options]="chartOptions"
+	*ngIf="chartOptions"
+	[options]="chartOptions"
+	[styles]="{ width: '100%', height: chartHeight}"
+	(chartInstance)="getChartInstance($event)"
 ></canvasjs-chart>

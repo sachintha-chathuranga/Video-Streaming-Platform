@@ -1,0 +1,44 @@
+<h2>Latest video performance</h2>
+<div class="img-container" [ngClass]="{ skeleton: isLoading }" >
+	<img *ngIf="!isLoading" [src]="video && video.thumbnailUrl" alt="thumbnail"/>
+	<p>{{ video && video.title }}</p>
+</div>
+<p class="special-text">{{ video ? (video.createdTime | remainingLifetime)+':' : '' }}</p>
+<div class="table-row">
+	<p>Views</p>
+	<p>{{ video && video.viewsCount  }}</p>
+</div>
+<div class="table-row">
+	<p>Likes</p>
+	<p>{{video && video.likesCount }}</p>
+</div>
+<!-- <div class="table-row">
+	<p>Impressions click-through rate</p>
+	<p>7.3%</p>
+</div> -->
+<div class="table-row">
+	<p>Impressions like-dislike rate</p>
+	<p
+		*ngIf="video &&
+			video.likesCount &&
+				video.dislikesCount &&
+				(video.likesCount != 0 || video.dislikesCount != 0);
+			else noValue
+		"
+	>
+		{{ (video.likesCount / (video.likesCount + video.dislikesCount)) * 100 }}%
+	</p>
+	<ng-template #noValue>
+		<p>0%</p>
+	</ng-template>
+</div>
+<!-- <div class="table-row">
+	<p>Average view duration</p>
+	<p>3:49</p>
+</div> -->
+<div class="table-row">
+	<p>Comments</p>
+	<p>{{ video && video.commentsCount}}</p>
+</div>
+<button mat-button [disabled]="isLoading">Go to video analytics</button>
+<button mat-button [disabled]="isLoading">See comments(3)</button>

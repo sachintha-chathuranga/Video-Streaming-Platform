@@ -9,9 +9,18 @@
 	justify-content: center;
 	align-items: center;
 }
+.img-container {
+	cursor: pointer;
+	margin-left: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+}
 h1.example-app-name {
 	margin-left: 8px;
-  cursor: pointer;
+	cursor: pointer;
+	display: inline-block;
 }
 .search-container {
 	display: flex;
@@ -69,12 +78,22 @@ h1.example-app-name {
 .search-toggle-btn {
 	display: none;
 }
-#create-btn{
-	background-color: rgba(240, 240, 240, 0.801);
-	color: black;
+.create-btn {
+	background-color: rgba(240, 240, 240, 0.801) !important;
+	color: black !important;
 }
-#create-btn:hover{
-	background-color: rgba(230, 230, 230, 0.945);
+.create-btn:hover {
+	background-color: rgba(230, 230, 230, 0.945) !important;
+}
+.notification-btn {
+	margin-left: 10px;
+}
+::ng-deep .mat-mdc-menu-panel {
+	max-width: 420px !important;
+	overflow: hidden !important;
+}
+.profile-menu {
+	max-width: 300px !important;
 }
 .login-btn {
 	margin: 0 15px;
@@ -86,6 +105,7 @@ h1.example-app-name {
 	border: 1px solid rgb(22, 104, 211);
 }
 .profile-img-cover {
+	min-width: 36px;
 	width: 36px;
 	height: 36px;
 	overflow: hidden;
@@ -93,9 +113,14 @@ h1.example-app-name {
 	border: none;
 	margin: 0 20px;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	object-fit: cover;
 }
 .profile-img-cover img {
 	width: 100%;
+	height: 100%;
 	object-fit: cover;
 }
 .menu-header {
@@ -107,20 +132,26 @@ h1.example-app-name {
 	margin-right: 10px;
 	min-width: 50px;
 	min-height: 50px;
-  cursor:auto;
+	cursor: auto;
 }
 .menu-header .menu-user-info {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 }
-.menu-header .menu-user-info .name{
-  font-size: 17px;
+.menu-header .menu-user-info .name {
+	font-size: 17px;
 }
-.menu-header .menu-user-info .email{
-  color: gray;
+.menu-header .menu-user-info .email {
+	color: gray;
 }
 @media screen and (max-width: 600px) {
+	.img-container {
+		margin-left: 0;
+	}
+	/* h1.example-app-name {
+		display: none;
+	} */
 	.search-toggle-btn {
 		display: block;
 	}

@@ -22,6 +22,7 @@ export class AuthorizationGuard implements CanActivate {
 		return this.authService.isAuthenticated().pipe(
 			take(1),
 			map(({ isAuthenticated }) => {
+				console.log("isAuthInAuthGuard: "+isAuthenticated)
 				// allow navigation if authenticated
 				if (isAuthenticated) {
 					return true;

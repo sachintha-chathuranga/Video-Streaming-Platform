@@ -1,22 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { FileSystemFileEntry } from 'ngx-file-drop';
-import { ConfigService } from '../../../config.service';
-import { VideoDto } from '../../../core/models/video.dto';
-import { ErrorMessageComponent } from '../../../shared/components/error-message/error-message.component';
-import { FileMetaDataComponent } from '../../../shared/components/file-meta-data/file-meta-data.component';
-import { FileSelectorComponent } from '../../../shared/components/file-selector/file-selector.component';
-import { VideoPlayerComponent } from '../../../shared/components/video-player/video-player.component';
+import { FileManagerComponent } from '../../../shared/components/file-manager/file-manager.component';
+import { VideoService } from '../../../shared/services/video.service';
 import { VideoFormComponent } from '../../video/components/video-form/video-form.component';
-import { VideoService } from '../../video/services/video.service';
-import { VideoUpdateDialogComponent } from '../../video/components/video-update-dialog/video-update-dialog.component';
+import { VideoDto } from '../../../shared/models/video.dto';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-video-upload-stepper',
@@ -24,46 +20,30 @@ import { VideoUpdateDialogComponent } from '../../video/components/video-update-
 	imports: [
 		CommonModule,
 		MatStepperModule,
-		// FormsModule,
-		// ReactiveFormsModule,
-		// MatFormFieldModule,
-		// MatInputModule,
 		MatButtonModule,
 		MatIcon,
 		MatDialogModule,
 		MatProgressBarModule,
-		MatDialogModule,
-		FileSelectorComponent,
-		ErrorMessageComponent,
-		VideoPlayerComponent,
-		FileMetaDataComponent,
 		VideoFormComponent,
+		FileManagerComponent,
 	],
 	templateUrl: './video-upload-stepper.component.html',
 	styleUrl: './video-upload-stepper.component.css',
 })
-export class VideoUploadStepperComponent {
+export class VideoUploadStepperComponent extends BaseComponent {
 	@ViewChild(VideoFormComponent) formComponent!: VideoFormComponent;
 	isLoading: boolean = false;
 	isAnyChange: boolean = false;
 	file!: File;
-	fileUrl: string = '';
-	allowedVideoExtensions: string[];
-	allowedImageExtensions: string[];
-	imageExtensions: string;
-	videoExtensions: string;
 	video!: VideoDto;
 	currentStep: number = 0;
-	
+
 	constructor(
 		private videoService: VideoService,
-		private config: ConfigService,
 		private snackbar: MatSnackBar,
+		private uploadDialog: MatDialogRef<VideoUploadStepperComponent>
 	) {
-		this.allowedVideoExtensions = config.SUPPORTED_VIDEO_FORMATS;
-		this.allowedImageExtensions = config.SUPPORTED_IMAGE_FORMATS;
-		this.imageExtensions = config.convertToExtentions(this.allowedImageExtensions);
-		this.videoExtensions = config.convertToExtentions(this.allowedVideoExtensions);
+		super();
 	}
 	ngOnInit() {
 		// this.video = {
@@ -74,6 +54,7 @@ export class VideoUploadStepperComponent {
 		// 	videoUrl: 'dsfdsf',
 		// 	videoStatus: 'PUBLIC',
 		// 	tags: ['DSFSD', 'DSFDS'],
+		// 	createdTime: new Date()
 		// };
 	}
 
@@ -87,63 +68,48 @@ export class VideoUploadStepperComponent {
 		this.isAnyChange = ischange;
 	}
 
-	removeFile() {
-		this.fileUrl = '';
-	}
 	setIsLoading(isload: boolean) {
 		this.isLoading = isload;
 	}
-	setVideoFile(fileEntry: FileSystemFileEntry) {
-		fileEntry.file((file: File) => {
-			const fileExtension = file.name.split('.').pop()?.toLowerCase();
-			if (fileExtension && this.allowedVideoExtensions.includes(fileExtension)) {
-				this.file = file;
-				this.fileUrl = URL.createObjectURL(file);
-			} else {
-				this.snackbar.open('Unsuported File format!', 'OK');
-			}
-		});
-	}
-	setThumbnailFile(fileEntry: FileSystemFileEntry) {
-		fileEntry.file((file: File) => {
-			const fileExtension = file.name.split('.').pop()?.toLowerCase();
-			if (fileExtension && this.allowedImageExtensions.includes(fileExtension)) {
-				this.file = file;
-				this.fileUrl = URL.createObjectURL(file);
-			} else {
-				this.snackbar.open('Unsuported File format!', 'OK');
-			}
-		});
+	setFile(file: File) {
+		this.file = file;
 	}
 	uploadThumbnail(stepper: MatStepper) {
 		this.isLoading = true;
-		this.videoService.uploadThumbnail(this.file, this.video.id).subscribe({
-			next: (data: string) => {
-				this.isLoading = false;
-				this.fileUrl = '';
-				this.video.thumbnailUrl = data;
-				stepper.next();
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				this.isLoading = false;
-				this.snackbar.open(errorResponse.error.detail, 'OK');
-			},
-		});
+		this.videoService
+			.uploadThumbnail(this.file, this.video.id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: string) => {
+					this.isLoading = false;
+					this.video.thumbnailUrl = data;
+					stepper.next();
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.isLoading = false;
+					this.snackbar.open(errorResponse.error.detail, 'OK');
+				},
+			});
 	}
 	uploadVideo(stepper: MatStepper) {
 		this.isLoading = true;
-		this.videoService.uploadVideo(this.file).subscribe({
-			next: (data: VideoDto) => {
-				this.isLoading = false;
-				this.fileUrl = '';
-				this.video = data;
-				stepper.next();
-			},
-			error: (errorResponse: HttpErrorResponse) => {
-				this.snackbar.open(errorResponse.error.detail, 'OK');
-				this.isLoading = false;
-				console.log(errorResponse.error);
-			},
-		});
+		this.videoService
+			.uploadVideo(this.file)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data: VideoDto) => {
+					this.isLoading = false;
+					this.video = data;
+					stepper.next();
+				},
+				error: (errorResponse: HttpErrorResponse) => {
+					this.snackbar.open(errorResponse.error.detail, 'OK');
+					this.isLoading = false;
+					console.log(errorResponse.error);
+				},
+			});
+	}
+	closeDialogBox() {
+		this.uploadDialog.close('close');
 	}
 }

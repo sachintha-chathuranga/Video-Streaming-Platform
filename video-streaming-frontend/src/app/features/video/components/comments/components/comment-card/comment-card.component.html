@@ -7,7 +7,7 @@
 		[ngStyle]="{
 			'background-image': isLoading
 				? 'none'
-				: comment.user.pictureUrl || 'url(\'/assets/no-person.png\')'
+				: 'url('+(comment.user.pictureUrl || 'assets/no-person.png')+')'
 		}"
 	></div>
 	<div
@@ -72,7 +72,7 @@
 				mat-menu-item
 				*ngFor="let item of cardMenuItems"
 				[disabled]="item.isDisable"
-				(click)="handleMenuClick(item.name)"
+				(click)="handleMenuClick(item.action)"
 				[ngClass]="{
 					hideReport: comment.user.id == logginUser?.id && item.name == 'Report',
 					hideOthers: comment.user.id !== logginUser?.id && item.name !== 'Report'
@@ -84,14 +84,3 @@
 		</mat-menu>
 	</div>
 </div>
-
-<ng-template #dialogTemplate>
-	<h3 mat-dialog-title>Delete comment</h3>
-	<mat-dialog-content>
-		<p>Delete your comment permanently?</p>
-	</mat-dialog-content>
-	<mat-dialog-actions align="end">
-		<button mat-button mat-dialog-close>Cancel</button>
-		<button mat-button mat-dialog-close (click)="deleteComment()">Delete</button>
-	</mat-dialog-actions>
-</ng-template>

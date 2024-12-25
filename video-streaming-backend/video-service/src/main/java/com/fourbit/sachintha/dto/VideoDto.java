@@ -29,5 +29,5 @@ public class VideoDto {
 	private LocalDateTime createdTime;
 	private Float duration;
 	private UserLikeStatus userLikeStatus;
-
+	private Boolean isUserViewed;
 }

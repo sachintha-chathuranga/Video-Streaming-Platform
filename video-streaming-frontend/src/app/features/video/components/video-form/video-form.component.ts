@@ -19,18 +19,20 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { VideoService } from '../../services/video.service';
+import { VideoService } from '../../../../shared/services/video.service';
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { ConfigService } from '../../../../config.service';
-import { VideoDto } from '../../../../core/models/video.dto';
 import { FileMetaDataComponent } from '../../../../shared/components/file-meta-data/file-meta-data.component';
 import { VideoPlayerComponent } from '../../../../shared/components/video-player/video-player.component';
 import { VideoUploadStepperComponent } from '../../../upload/video-upload-stepper/video-upload-stepper.component';
 import { VideoUpdateDto } from '../../models/videoUpdate.dto';
 import { VideoUpdateDialogComponent } from '../video-update-dialog/video-update-dialog.component';
+import { VideoDto } from '../../../../shared/models/video.dto';
+import { BaseComponent } from '../../../../shared/components/base/base.component';
+import { takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-video-form',
@@ -65,7 +67,7 @@ import { VideoUpdateDialogComponent } from '../video-update-dialog/video-update-
 	templateUrl: './video-form.component.html',
 	styleUrl: './video-form.component.css',
 })
-export class VideoFormComponent {
+export class VideoFormComponent extends BaseComponent{
 	@Input()
 	isNew: boolean = false;
 	@Input()
@@ -108,6 +110,7 @@ export class VideoFormComponent {
 		private uploadDialogRef: MatDialogRef<VideoUploadStepperComponent>,
 		private router: Router
 	) {
+		super()
 		this.allowedImageExtensions = config.SUPPORTED_IMAGE_FORMATS;
 		this.imageExtensions = config.convertToExtentions(this.allowedImageExtensions);
 		this.videoDetails = new FormGroup({
@@ -119,6 +122,7 @@ export class VideoFormComponent {
 	}
 	ngOnInit(): void {
 		this.setVideoDetails();
+		console.log(this.videoDetails.get('tags')?.value);
 	}
 	onInputChange(): void {
 		if (
@@ -186,66 +190,17 @@ export class VideoFormComponent {
 	uploadThumbnail() {
 		if (this.selectedFile) {
 			this.onLoadChange.emit(true);
-			this.videoService.uploadThumbnail(this.selectedFile, this.video?.id).subscribe({
-				next: (data: string) => {
-					this.video.thumbnailUrl = data;
-					this.snackBar.open('Thumbnail Upload Successfull', 'OK');
-					this.removeFile();
-					this.onLoadChange.emit(false);
-					if (this.isNew) {
-						this.uploadDialogRef.close(this.video);
-					}
-				},
-				error: (errorResponse: HttpErrorResponse) => {
-					this.snackBar.open(errorResponse.error.title, 'OK');
-					console.log(errorResponse.error);
-					this.onLoadChange.emit(false);
-				},
-			});
-		}
-	}
-	saveVideo() {
-		if (this.videoDetails.dirty) {
-			if (this.videoDetails.status == 'VALID') {
-				console.log('Save to db');
-				this.onLoadChange.emit(true);
-				const videoMetaData: VideoUpdateDto = {
-					id: this.video.id,
-				};
-				if (this.video.title != this.videoDetails.get('title')?.value) {
-					console.log('Add title to request');
-					console.log('Title lenght: ' + this.videoDetails.get('title')?.value.length);
-					videoMetaData.title = this.videoDetails.get('title')?.value;
-				}
-				if (this.video.description != this.videoDetails.get('description')?.value) {
-					console.log('Add description to request');
-					console.log(
-						'Description lenght: ' + this.videoDetails.get('description')?.value.length
-					);
-					videoMetaData.description = this.videoDetails.get('description')?.value;
-				}
-				if (this.video.videoStatus != this.videoDetails.get('videoStatus')?.value) {
-					console.log('Add videoStatus to request');
-					videoMetaData.videoStatus = this.videoDetails.get('videoStatus')?.value;
-				}
-				if (!this.config.isArraysEqual(this.video.tags, this.videoDetails.get('tags')?.value)) {
-					console.log('Add tags to request');
-					videoMetaData.tags = this.videoDetails.get('tags')?.value;
-				}
-
-				this.videoService.saveVideo(videoMetaData).subscribe({
-					next: (data: VideoDto) => {
-						this.video = data;
-						this.setVideoDetails();
-						this.videoChange.emit(this.video);
-						this.snackBar.open('Video Metadata Updated successfully', 'OK');
-						if (!this.selectedFile) {
-							this.onLoadChange.emit(false);
-							if (this.isNew) {
-								this.uploadDialogRef.close(data);
-							}
-						} else {
-							this.removeFile();
+			this.videoService
+				.uploadThumbnail(this.selectedFile, this.video?.id)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe({
+					next: (data: string) => {
+						this.video.thumbnailUrl = data;
+						this.snackBar.open('Thumbnail Upload Successfull', 'OK');
+						this.removeFile();
+						this.onLoadChange.emit(false);
+						if (this.isNew) {
+							this.uploadDialogRef.close(this.video);
 						}
 					},
 					error: (errorResponse: HttpErrorResponse) => {
@@ -254,6 +209,60 @@ export class VideoFormComponent {
 						this.onLoadChange.emit(false);
 					},
 				});
+		}
+	}
+	saveVideo() {
+		if (this.videoDetails.dirty) {
+			if (this.videoDetails.status == 'VALID') {
+				this.onLoadChange.emit(true);
+				const videoMetaData: VideoUpdateDto = {
+					id: this.video.id,
+				};
+				if (this.video.title != this.videoDetails.get('title')?.value) {
+					videoMetaData.title = this.videoDetails.get('title')?.value;
+				}
+				if (this.video.description != this.videoDetails.get('description')?.value) {
+					videoMetaData.description = this.videoDetails.get('description')?.value;
+				}
+				if (this.video.videoStatus != this.videoDetails.get('videoStatus')?.value) {
+					videoMetaData.videoStatus = this.videoDetails.get('videoStatus')?.value;
+				}
+				if (!this.config.isArraysEqual(this.videoDetails.get('tags')?.value, this.video.tags)) {
+					videoMetaData.tags = this.videoDetails.get('tags')?.value;
+					console.log("Tag added")
+				}
+
+				this.videoService
+					.saveVideo(videoMetaData)
+					.pipe(takeUntil(this.destroy$))
+					.subscribe({
+						next: (data: VideoDto) => {
+							this.video = data;
+							this.setVideoDetails();
+							this.videoChange.emit(this.video);
+							this.snackBar.open('Video Metadata Updated successfully', '', {
+								duration: 3000,
+								horizontalPosition: 'right',
+								verticalPosition: 'top',
+							});
+							if (!this.selectedFile) {
+								this.onLoadChange.emit(false);
+								if (this.isNew) {
+									this.router.navigate(['profile/content'], {
+										state: { data: this.video },
+									});
+									this.uploadDialogRef.close();
+								}
+							} else {
+								this.removeFile();
+							}
+						},
+						error: (errorResponse: HttpErrorResponse) => {
+							this.snackBar.open(errorResponse.error.title, 'OK');
+							console.log(errorResponse.error);
+							this.onLoadChange.emit(false);
+						},
+					});
 			} else {
 				this.markAllAsTouched();
 			}

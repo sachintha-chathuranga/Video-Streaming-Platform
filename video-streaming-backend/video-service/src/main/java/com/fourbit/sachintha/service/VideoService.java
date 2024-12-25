@@ -5,22 +5,32 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoUpdateMetaData;
+import com.fourbit.sachintha.dto.ViewsResponse;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
+import com.fourbit.sachintha.model.Subscribe;
 import com.fourbit.sachintha.model.Tag;
 import com.fourbit.sachintha.model.User;
 import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoStatus;
+import com.fourbit.sachintha.model.View;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
+import com.fourbit.sachintha.repository.ViewRepository;
 import com.fourbit.sachintha.util.mapper.VideoMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +41,9 @@ public class VideoService {
 	private final AwsS3Service awsS3Service;
 	private final UserService userService;
 	private final VideoRepository videoRepository;
+	private final ViewRepository viewRepository;
 	private final VideoHistoryRepository historyRepository;
+	private final NotificationService notificationService;
 	private final Logger logger = LoggerFactory.getLogger(VideoService.class);
 
 	public VideoDto uploadVideo(MultipartFile file) {
@@ -53,6 +65,7 @@ public class VideoService {
 		return VideoMapper.mapToVideoDto(video);
 	}
 
+	@Transactional
 	public VideoDto updateVideoMetaData(VideoUpdateMetaData videoDto) {
 		Video video = videoRepository.findById(videoDto.getId())
 				.orElseThrow(() -> new CustomException("Video not found!"));
@@ -79,7 +92,16 @@ public class VideoService {
 			}).toList();
 		}
 		if (videoDto.getVideoStatus() != null) {
+			User user = userService.getRequestedUser();
 			logger.info("update video status");
+			if (videoDto.getVideoStatus().equals("PUBLIC")) {
+				Channel channel = video.getChannel();
+				String channelImage = channel.getChannelImage();
+				List<Subscribe> subscribers = video.getChannel().getSubscribers();
+				for (Subscribe subscriber : subscribers) {
+					notificationService.sendNotification(subscriber.getSubscriber(), video);
+				}
+			}
 			video.setVideoStatus(VideoStatus.valueOf(videoDto.getVideoStatus()));
 		}
 		logger.info("Start to saving");
@@ -107,20 +129,41 @@ public class VideoService {
 		return thumbnailUrl;
 	}
 
-	public List<VideoCardDto> getVideos(String tagName) {
-		List<Video> videos;
+	public Page<VideoCardDto> getVideos(String tagName, String page, String size, String sortField,
+			String sortDirection) {
+		logger.info("Invoke getFeatureVideos function");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		logger.info("Tag Name: " + tagName);
+
+		Pageable pageable;
+		Page<Video> videos;
+		Sort sort = Sort.by(sortField);
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
 		if (tagName == null || tagName.equalsIgnoreCase("All") || tagName.isEmpty()) {
-			videos = videoRepository.findByVideoStatus(VideoStatus.PUBLIC);
+			videos = videoRepository.findByVideoStatus(VideoStatus.PUBLIC, pageable);
 		} else {
-			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, tagName);
+			String shortTag = tagName.substring(0, tagName.length() - 1);
+			videos = videoRepository.findVideosByTagName(VideoStatus.PUBLIC, shortTag, pageable);
 		}
-		List<VideoCardDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoCardDto(video)).toList();
+		Page<VideoCardDto> videoList = videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 		return videoList;
 	}
 
-	public List<VideoCardDto> searchVideos(String searchQuery, String date, String duration, String sortBy) {
+	public Page<VideoCardDto> searchVideos(String searchQuery, String date, String duration, String page, String size,
+			String sortField, String sortDirection) {
 		LocalDateTime startDate = null;
-
+		logger.info("Invoke searchVideos function");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		logger.info("date: " + date);
+		logger.info("SearchQuery: " + searchQuery);
+		logger.info("Duration: " + duration);
 		// Calculate start date based on the 'date' filter
 		switch (date) {
 		case "lh" -> startDate = LocalDateTime.now().minusHours(1);
@@ -129,8 +172,16 @@ public class VideoService {
 		case "tm" -> startDate = LocalDateTime.now().minusMonths(1);
 		case "ty" -> startDate = LocalDateTime.now().minusYears(1);
 		}
-		List<Video> videos = videoRepository.searchVideosByFilter(searchQuery, startDate, duration, sortBy);
-		List<VideoCardDto> videoList = videos.stream().map(video -> VideoMapper.mapToVideoCardDto(video)).toList();
+		Sort sort;
+		if (sortField.equals("createdTime")) {
+			sort = Sort.by(sortField);
+		} else {
+			sort = JpaSort.unsafe("size(" + sortField + ")");
+		}
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		Pageable pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+		Page<Video> videos = videoRepository.searchVideosByFilter(searchQuery, startDate, duration, pageable);
+		Page<VideoCardDto> videoList = videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 		return videoList;
 	}
 
@@ -209,6 +260,26 @@ public class VideoService {
 		VideoDto videoDto = VideoMapper.mapToVideoDto(video, user);
 		return LikeDislikeResponse.builder().likesCount(videoDto.getLikesCount())
 				.dislikesCount(videoDto.getDislikesCount()).userLikeStatus(videoDto.getUserLikeStatus()).build();
+	}
+
+	@Transactional
+	public ViewsResponse addViews(Long videoId) {
+		logger.info("Invoke add views function");
+		User viewer = userService.getRequestedUser();
+		boolean isAlreadyView = this.viewRepository.existsByViewerIdAndVideoId(viewer.getId(), videoId);
+		Video video = videoRepository.findById(videoId)
+				.orElseThrow(() -> new CustomException("Video not found!", HttpStatus.NOT_FOUND));
+		if (!isAlreadyView) {
+			logger.info("Add new Views to video");
+			View newView = new View();
+			newView.setVideo(video);
+			newView.setViewer(viewer);
+			newView.setViewTime(LocalDateTime.now());
+			video.getViews().add(newView);
+			isAlreadyView = true;
+			viewRepository.save(newView);
+		}
+		return VideoMapper.mapToViewResponse(video, isAlreadyView);
 	}
 
 }

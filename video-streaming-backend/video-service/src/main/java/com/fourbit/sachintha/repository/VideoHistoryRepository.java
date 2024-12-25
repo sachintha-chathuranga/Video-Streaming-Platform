@@ -32,6 +32,10 @@ public interface VideoHistoryRepository extends JpaRepository<VideoHistory, Long
 	@Query("DELETE FROM VideoHistory vh WHERE vh.video.id = :videoId")
 	void deleteByVideoId(@Param("videoId") Long videoId);
 
-	@Query("SELECT video FROM VideoHistory vh WHERE vh.user.id = :userId")
-	Page<Video> findByUserId(Long userId, Pageable pageable);
+	@Query("""
+			SELECT v FROM VideoHistory vh JOIN vh.video v  WHERE vh.user.id = :userId AND
+			(:searchQuery='' OR LOWER(v.title) LIKE LOWER(CONCAT('%', :searchQuery, '%')) OR
+			LOWER(v.description) LIKE LOWER(CONCAT('%', :searchQuery, '%')))
+			""")
+	Page<Video> findByUserId(Long userId, String searchQuery, Pageable pageable);
 }

@@ -1,38 +1,58 @@
 .list-container {
-  height: 100%;
+	height: 100%;
 }
 .setting-container {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  position: fixed;
-  gap: 15px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	position: fixed;
+	gap: 15px;
 }
 h1 {
-  padding: 20px 10px;
+	padding: 20px 10px;
 }
 
 ::ng-deep mat-form-field .mat-mdc-form-field-infix {
-  display: flex !important;
-  padding-bottom: 2px !important;
-  gap: 10px;
-  align-items: center;
+	display: flex !important;
+	padding-bottom: 2px !important;
+	gap: 10px;
+	align-items: center;
 }
 ::ng-deep .mdc-text-field--filled {
-  background-color: transparent !important;
-  font-size: 14px;
+	background-color: transparent !important;
+	font-size: 14px;
 }
 ::ng-deep .mdc-text-field {
-  padding: 0 !important;
+	padding: 0 !important;
+}
+.progress-spinner {
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 @media screen and (max-width: 1280px) {
-  .setting-container {
-    position: static;
-  }
+	.setting-container {
+		position: static;
+	}
 }
 @media screen and (max-width: 600px) {
-  .setting-container {
-    align-items: center;
-  }
+	.setting-container {
+		align-items: center;
+		padding: 0;
+		padding-bottom: 10px;
+	}
+	h1 {
+		font-size: 25px;
+		font-weight: 500;
+		padding: 6px;
+	}
+	.fxItem{
+		margin-bottom: 0 !important;
+	}
+	.scroll-container {
+		padding: 0 10px;
+	}
 }
+

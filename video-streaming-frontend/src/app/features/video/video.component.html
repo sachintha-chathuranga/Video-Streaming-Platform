@@ -1,8 +1,10 @@
-<div fxLayout="row" class="main-container">
+<!-- <div (scroll)="onScroll($event)" class="scroll-container"></div> -->
+<div (scroll)="onScroll($event)" fxLayout="row" class="main-container scroll-container">
 	<div fxFlex class="video-details-container">
 		<app-video-player
 			[isLoading]="isLoading"
 			[videoSource]="video?.videoUrl || ''"
+			[video]="video"
 			class="video-player"
 		></app-video-player>
 		<div class="meta-data">
@@ -11,24 +13,23 @@
 					{{ video?.title }}
 				</h1>
 			</div>
-			<div fxLayout="row wrap">
-				<div [fxFlex]="isLoading ? '100%' : '50%'">
+			<div fxLayout="row" fxLayout.xs="column">
+				<div fxFlex="100%">
 					<mat-card-header [ngClass]="{ loading: isLoading }">
 						<div
+							(click)="gotoChannel()"
 							mat-card-avatar
 							class="example-header-image"
 							[ngStyle]="{
 								'background-image': isLoading
 									? 'none'
-									: video?.channel?.channelImage
-									? video?.channel?.channelImage
-									: 'url(\'/assets/no-person.png\')'
+									: 'url(' + (video?.channel?.channelImage || 'assets/no-person.png') + ')'
 							}"
 							[ngClass]="{ skeleton: isLoading }"
 						></div>
 						<div class="details" [ngClass]="{ loading: isLoading }">
 							<mat-card-title [ngClass]="{ skeleton: isLoading }">
-								<a href="/">{{ video && video.channel?.name }}</a>
+								<a href="/" class="text-overflow-1">{{ video && video.channel?.name }}</a>
 							</mat-card-title>
 							<mat-card-subtitle [ngClass]="{ skeleton: isLoading }">
 								{{ video && video.channel?.subscribersCount + ' subscribers' }}
@@ -55,45 +56,53 @@
 						</button>
 					</mat-card-header>
 				</div>
-				<div *ngIf="!isLoading" fxFlex="50%" fxLayoutAlign="end">
-					<div class="actions">
-						<span class="like-dislike-btn-group">
-							<button class="like-btn" (click)="likeVideo()">
-								<div class="right-border">
+				<div *ngIf="!isLoading" fxFlex="100%" fxLayoutAlign.gt-xs="end">
+					<div
+						class="actions"
+						fxFlex.xs="100%"
+						fxLayout="row"
+						fxLayoutAlign.xs="space-between"
+					>
+						<div fxLayout="row" fxLayoutGap="10px">
+							<span class="like-dislike-btn-group">
+								<button class="like-btn" (click)="likeVideo()">
+									<div class="right-border">
+										<mat-icon
+											[fontIcon]="
+												video?.userLikeStatus?.isUserLike
+													? 'thumb_up_alt'
+													: 'thumb_up_off_alt'
+											"
+										></mat-icon>
+										{{ video?.likesCount !== 0 ? video?.likesCount : '' }}
+									</div>
+								</button>
+								<button class="dislike-btn" (click)="dislikeVideo()">
 									<mat-icon
 										[fontIcon]="
-											video?.userLikeStatus?.isUserLike
-												? 'thumb_up_alt'
-												: 'thumb_up_off_alt'
+											video?.userLikeStatus?.isUserDislike
+												? 'thumb_down_alt'
+												: 'thumb_down_off_alt'
 										"
 									></mat-icon>
-									{{ video?.likesCount !== 0 ? video?.likesCount : '' }}
-								</div>
+									{{ video?.dislikesCount !== 0 ? video?.dislikesCount : '' }}
+								</button>
+							</span>
+							<button (click)="downloadVideo()" [disabled]="!isAuthenticated">
+								<mat-icon>vertical_align_bottom</mat-icon>
+								Download
 							</button>
-							<button class="dislike-btn" (click)="dislikeVideo()">
-								<mat-icon
-									[fontIcon]="
-										video?.userLikeStatus?.isUserDislike
-											? 'thumb_down_alt'
-											: 'thumb_down_off_alt'
-									"
-								></mat-icon>
-								{{ video?.dislikesCount !== 0 ? video?.dislikesCount : '' }}
-							</button>
-						</span>
-						<button (click)="downloadVideo()">
-							<mat-icon>vertical_align_bottom</mat-icon>
-							Download
-						</button>
+						</div>
+
 						<button id="menu-btn">
 							<mat-icon [matMenuTriggerFor]="menu">more_horiz</mat-icon>
 						</button>
 						<mat-menu #menu="matMenu" class="custom-menu">
 							<button
 								mat-menu-item
-								*ngFor="let item of cardMenuItems"
+								*ngFor="let item of videoMenuItems"
 								[disabled]="item.isDisable"
-								(click)="handleMenuClick(item.name)"
+								(click)="handleMenuClick(item.action)"
 							>
 								<mat-icon>{{ item.icon }}</mat-icon>
 								<span>{{ item.name }}</span>
@@ -117,7 +126,14 @@
 				{{ isExpanded ? 'less' : '...more' }}
 			</span>
 		</div>
-		<app-comment [videoId]="videoId" [isAuth]="isAuthenticated"></app-comment>
+		<div class="view-comments">
+			<button (click)="showComments = !showComments">{{(showComments ? 'Hide' : 'Show') + ' Comments'}}</button>
+		</div>
+		<app-comment
+			[ngClass]="{hide: !showComments}"
+			(onUnauthAction)="openDialogBox($event.action, $event.type)"
+			[isAuth]="isAuthenticated"
+		></app-comment>
 	</div>
 	<div class="related-videos-container" fxFlex="402px">
 		<ng-container
@@ -131,13 +147,17 @@
 			</div>
 		</ng-template>
 		<ng-template #contentTemplate>
-			<div fxLayout="column" fxLayoutGap="10px">
+			<div fxLayout="column" fxLayoutGap="10px" style="padding-bottom: 20px;">
 				<div class="fxItem" fxFlex="100%" *ngFor="let video of videoList">
 					<app-video-card
 						[video]="video"
 						[isLoading]="isVideoListLoading"
 						cardSize="small"
+						[cardMenuItems]="videoCardMenuItems"
 					></app-video-card>
+				</div>
+				<div class="fxItem progress-spinner" *ngIf="isVideoDataFetching" fxFlex="100%">
+					<mat-spinner diameter="50"></mat-spinner>
 				</div>
 			</div>
 		</ng-template>

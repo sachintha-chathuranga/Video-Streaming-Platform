@@ -1,0 +1,11 @@
+.container {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+/* app-file-selector {
+	width: 96%;
+	height: 90%;
+} */
+

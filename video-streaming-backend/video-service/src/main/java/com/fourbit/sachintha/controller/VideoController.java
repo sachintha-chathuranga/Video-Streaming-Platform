@@ -1,7 +1,6 @@
 package com.fourbit.sachintha.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +17,7 @@ import com.fourbit.sachintha.dto.LikeDislikeResponse;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.dto.VideoDto;
 import com.fourbit.sachintha.dto.VideoUpdateMetaData;
+import com.fourbit.sachintha.dto.ViewsResponse;
 import com.fourbit.sachintha.service.VideoService;
 
 import jakarta.validation.Valid;
@@ -48,17 +48,23 @@ public class VideoController {
 		return ResponseEntity.ok(savedVideo);
 	}
 
-	@GetMapping("/get-all")
-	public ResponseEntity<List<VideoCardDto>> getVideos(@RequestParam(required = false) String tagName) {
-		List<VideoCardDto> videos = videoService.getVideos(tagName);
+	@GetMapping("/feature")
+	public ResponseEntity<Page<VideoCardDto>> getVideos(@RequestParam(required = false) String tagName,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "createdTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		Page<VideoCardDto> videos = videoService.getVideos(tagName, page, size, sortBy, sortDirection);
 		return ResponseEntity.ok(videos);
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<List<VideoCardDto>> searchVideos(@RequestParam(required = false) String searchQuery,
+	public ResponseEntity<Page<VideoCardDto>> searchVideos(@RequestParam(required = false) String searchQuery,
 			@RequestParam(required = false) String date, @RequestParam(required = false) String duration,
-			@RequestParam(required = false) String sortBy) {
-		List<VideoCardDto> videos = videoService.searchVideos(searchQuery, date, duration, sortBy);
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "createdTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		Page<VideoCardDto> videos = videoService.searchVideos(searchQuery, date, duration, page, size, sortBy,
+				sortDirection);
 		return ResponseEntity.ok(videos);
 	}
 
@@ -83,4 +89,8 @@ public class VideoController {
 		return ResponseEntity.ok(videoService.addDislikeToVideo(videoId));
 	}
 
+	@PutMapping("/{videoId}/views")
+	public ResponseEntity<ViewsResponse> updateVideoViews(@PathVariable Long videoId) {
+		return ResponseEntity.ok(videoService.addViews(videoId));
+	}
 }

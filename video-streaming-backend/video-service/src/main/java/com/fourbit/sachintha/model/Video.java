@@ -34,7 +34,7 @@ public class Video {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@Column(length = 2500) // Set the max length to 1000
+	@Column(length = 2500) // Set the max length to 2500
 	private String description;
 	@Column(length = 100)
 	private String title;
@@ -62,8 +62,8 @@ public class Video {
 	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
-	@Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
-	private Long viewsCount = Long.valueOf(0);
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<View> views = new ArrayList<>();
 
 	@ManyToMany(mappedBy = "saveVideos", cascade = CascadeType.DETACH) // this field not create in table
 	private List<User> saveUsers = new ArrayList<>();
@@ -74,6 +74,9 @@ public class Video {
 
 	private Float duration;
 
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Notification> notifications;
+
 	public Video(Long id, String description, String title, Channel channel, String videoUrl, VideoStatus videoStatus,
 			String thumbnailUrl, Long viewsCount, LocalDateTime createdTime, Float duration) {
 		this.id = id;
@@ -83,9 +86,12 @@ public class Video {
 		this.videoUrl = videoUrl;
 		this.videoStatus = videoStatus;
 		this.thumbnailUrl = thumbnailUrl;
-		this.viewsCount = viewsCount;
 		this.createdTime = createdTime;
 		this.duration = duration;
+	}
+
+	public Long getViewsCount() {
+		return Long.valueOf(this.views.size());
 	}
 
 	public void addTag(Tag tag) {

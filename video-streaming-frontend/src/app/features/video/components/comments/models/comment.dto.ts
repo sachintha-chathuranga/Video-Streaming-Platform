@@ -1,5 +1,6 @@
-import { UserDto } from "../../../../../core/models/user.dto";
-import { UserLikeStatus } from "../../../../../core/models/videoLikeStatus.dto";
+import { UserDto } from "../../../../../shared/models/user.dto";
+import { UserLikeStatus } from "../../../../../shared/models/videoLikeStatus.dto";
+
 
 
 export interface CommentDto {

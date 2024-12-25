@@ -32,8 +32,9 @@
 			*ngIf="cardSize == 'large'"
 			mat-card-avatar
 			class="example-header-image"
+			(click)="gotoChannel()"
 			[ngStyle]="{
-				'background-image': isLoading ? 'none' : video && video.channelImage || 'url(\'/assets/no-person.png\')'
+				'background-image': isLoading ? 'none' :  'url('+(video.channelImage || 'assets/no-person.png')+')'
 			}"
 			[ngClass]="{ skeleton: isLoading }"
 		></div>
@@ -70,7 +71,7 @@
 				mat-menu-item
 				*ngFor="let item of cardMenuItems"
 				[disabled]="item.isDisable"
-				(click)="handleMenuClick(item.name)"
+				(click)="handleMenuClick(item.action)"
 			>
 				<mat-icon>{{ item.icon }}</mat-icon>
 				<span>{{ item.name }}</span>

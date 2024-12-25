@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fourbit.sachintha.dto.ChannelDto;
 import com.fourbit.sachintha.dto.UserDto;
+import com.fourbit.sachintha.dto.UserUpdateDto;
 import com.fourbit.sachintha.dto.VideoCardDto;
 import com.fourbit.sachintha.exception.CustomException;
 import com.fourbit.sachintha.model.Channel;
@@ -26,6 +27,7 @@ import com.fourbit.sachintha.model.Video;
 import com.fourbit.sachintha.model.VideoHistory;
 import com.fourbit.sachintha.repository.ChannelRepository;
 import com.fourbit.sachintha.repository.UserRepository;
+import com.fourbit.sachintha.repository.UserSubscribeRepository;
 import com.fourbit.sachintha.repository.VideoHistoryRepository;
 import com.fourbit.sachintha.repository.VideoRepository;
 import com.fourbit.sachintha.util.SecurityUtil;
@@ -51,6 +53,8 @@ public class UserService {
 	private final VideoRepository videoRepository;
 	@Autowired
 	private final ChannelRepository channelRepository;
+	@Autowired
+	private final UserSubscribeRepository subscribeRepository;
 
 	private final SecurityUtil securityUtil;
 
@@ -88,15 +92,16 @@ public class UserService {
 		return UserMapper.mapToUserDto(existingUser);
 	}
 
-	public UserDto updateUser(UserDto userDto) {
+	public UserDto updateUser(UserUpdateDto userDto) {
+		logger.info("Invoke Update Usaer function");
 		User user = this.getRequestedUser();
-		if (userDto.getFirstName() != null) {
+		if (userDto.getFirstName() != null && !userDto.getFirstName().isBlank()) {
 			user.setFirstName(userDto.getFirstName());
 		}
-		if (userDto.getLastName() != null) {
+		if (userDto.getLastName() != null && !userDto.getLastName().isBlank()) {
 			user.setLastName(userDto.getLastName());
 		}
-		if (userDto.getAbout() != null) {
+		if (userDto.getAbout() != null && !userDto.getAbout().isBlank()) {
 			user.setAbout(userDto.getAbout());
 		}
 		User savedUser = userRepository.save(user);
@@ -105,6 +110,12 @@ public class UserService {
 
 	public String uploadProfilePicture(MultipartFile file) {
 		User user = this.getRequestedUser();
+		String existingImage = user.getPictureUrl();
+		if (existingImage != null && !existingImage.isBlank()) {
+			logger.info("Start to deleting image from S3..");
+			awsS3Service.deleteFile(existingImage);
+			logger.info("deleted successfully");
+		}
 		String photoUrl = awsS3Service.uploadFile(file, "profile_photoes");
 		user.setPictureUrl(photoUrl);
 		userRepository.save(user);
@@ -123,6 +134,11 @@ public class UserService {
 		return UserMapper.mapToUserDto(user);
 	}
 
+	public UserDto getUserBySub(String sub) {
+		User user = userRepository.findBySub(sub);
+		return UserMapper.mapToUserDto(user);
+	}
+
 	public String deleteUser(Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new CustomException("User not found!", HttpStatus.NOT_FOUND));
@@ -134,37 +150,42 @@ public class UserService {
 
 	@Transactional
 	public Boolean updateVideoHistory(Long videoId) {
+		logger.info("Invoke updateVideoHistory function");
 		User user = this.getRequestedUser();
-		VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), videoId);
-		LocalDateTime watchTime = LocalDateTime.now();
-		if (videoHistory == null) {
-			Video video = this.videoRepository.findById(videoId)
-					.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
+		Video video = this.videoRepository.findById(videoId)
+				.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
 
-			// Save to user video history database
-			videoHistory = new VideoHistory();
-			videoHistory.setUser(user);
-			videoHistory.setVideo(video);
-			videoHistory.setWatchTime(watchTime);
-			// increament video views count by one
-			video.setViewsCount(video.getViewsCount() + 1);
-		} else {
-			// update watch time
-			videoHistory.setWatchTime(watchTime);
+		if (user.getIsRecordHistory()) {
+			VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), videoId);
+			LocalDateTime watchTime = LocalDateTime.now();
+			if (videoHistory == null) {
+				logger.info("create new videoHistory");
+				// Save to user video history database
+				videoHistory = new VideoHistory();
+				videoHistory.setUser(user);
+				videoHistory.setVideo(video);
+				videoHistory.setWatchTime(watchTime);
+
+			} else {
+				logger.info("Update existing videoHistory");
+				// update watch time
+				videoHistory.setWatchTime(watchTime);
+			}
+			videoHistoryRepository.save(videoHistory);
 		}
-		videoHistoryRepository.save(videoHistory);
 		return true;
 	}
 
-	public String removeHistoryVideo(Long videoId) {
+	public Boolean removeHistoryVideo(Long videoId) {
 		User user = this.getRequestedUser();
 		videoHistoryRepository.deleteByUserAndVideo(user.getId(), videoId);
-		return "Video remove from history";
+		return true;
 	}
 
 //	Use @Transactional(readOnly = true) for methods that only fetch data.
 	@Transactional(readOnly = true)
-	public Page<VideoCardDto> getVideoHistory(String page, String size, String sortField, String sortDirection) {
+	public Page<VideoCardDto> getVideoHistory(String page, String size, String sortField, String sortDirection,
+			String searchQuery) {
 		logger.info("Invoke getVideoHistory function");
 		User user = this.getRequestedUser();
 		logger.info("Page: " + page);
@@ -174,26 +195,35 @@ public class UserService {
 
 		Pageable pageable;
 		Page<Video> videos;
-		if (sortField.equals("watchTime")) {
-			Sort sort = Sort.by(sortField);
-			sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-			pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
-		} else {
-			pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
-		}
-		videos = this.videoHistoryRepository.findByUserId(user.getId(), pageable);
+
+		Sort sort = Sort.by(sortField);
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+		videos = this.videoHistoryRepository.findByUserId(user.getId(), searchQuery, pageable);
 		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 	}
 
-	public String clearVideoHistory() {
+	public Boolean clearVideoHistory() {
 		User user = this.getRequestedUser();
 		videoHistoryRepository.deleteByUserId(user.getId());
-		return "Video remove from history";
+		return true;
+	}
+
+	public Boolean toggleHistoryRecording() {
+		User user = this.getRequestedUser();
+		if (user.getIsRecordHistory()) {
+			user.setIsRecordHistory(false);
+		} else {
+			user.setIsRecordHistory(true);
+		}
+		userRepository.save(user);
+		return user.getIsRecordHistory();
 	}
 
 //	Use @Transactional(readOnly = true) for methods that only fetch data.
 	@Transactional(readOnly = true)
 	public Page<ChannelDto> getUserSubscriptions(String page, String size, String sortField, String sortDirection) {
+
 		logger.info("Invoke get user subscriptions function");
 		User user = this.getRequestedUser();
 
@@ -203,15 +233,32 @@ public class UserService {
 		logger.info("Direction: " + sortDirection);
 		Pageable pageable;
 		Page<Channel> channels;
-		if (sortField.equals("name")) {
-			Sort sort = Sort.by(sortField);
-			sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-			pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
-		} else {
-			pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
-		}
-		channels = this.channelRepository.findChannelsBySubscribedUser(user.getId(), pageable);
-		return channels.map(video -> ChannelMapper.mapTochannelDto(video, user));
+
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
+
+		channels = this.subscribeRepository.findChannelsBySubscribedUser(user.getId(), pageable);
+		return channels.map(channel -> ChannelMapper.mapTochannelDto(channel, user));
+	}
+
+	@Transactional(readOnly = true)
+	public Page<VideoCardDto> getUserSubscriptionsVideos(String page, String size, String sortField,
+			String sortDirection) {
+		logger.info("Invoke get user subscriptions Videos function");
+		User user = this.getRequestedUser();
+
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		Pageable pageable;
+		Page<Video> videos;
+
+		Sort sort = Sort.by(sortField);
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+
+		videos = this.videoRepository.findLatestSubscriptionVideos(user.getId(), pageable);
+		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 	}
 
 	public boolean addVideoToPlaylist(Long videoId) {
@@ -226,11 +273,22 @@ public class UserService {
 		return true;
 	}
 
-	public List<VideoCardDto> getVideoPlaylist(String searchQuery) {
+	@Transactional(readOnly = true)
+	public Page<VideoCardDto> getVideoPlaylist(String page, String size, String sortField, String sortDirection,
+			String searchQuery) {
+		logger.info("Invoke get user playlist function");
 		User user = this.getRequestedUser();
-		List<Video> playList = userRepository.findSavedVideosBySearchQuery(user.getId(), searchQuery);
-		List<VideoCardDto> list = playList.stream().map(video -> VideoMapper.mapToVideoCardDto(video)).toList();
-		return list;
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		Pageable pageable;
+		Page<Video> videos;
+		Sort sort = Sort.by(sortField);
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+		videos = this.videoRepository.findSavedVideosByUserId(user.getId(), searchQuery, pageable);
+		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
 	}
 
 	public void deletePlaylist() {

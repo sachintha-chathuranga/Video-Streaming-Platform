@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FeatureComponent } from '../../../features/feature/feature.component';
 import { SideBarItem } from '../../sidebar/models/sidebarItem.dto';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
 	selector: 'app-home',
@@ -29,6 +30,7 @@ import { SidebarComponent } from '../../sidebar/sidebar.component';
 	],
 	templateUrl: './home.component.html',
 	styleUrl: './home.component.css',
+	// changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
 	items: SideBarItem[] = itemList;

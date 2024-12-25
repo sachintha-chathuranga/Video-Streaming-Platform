@@ -1,30 +1,32 @@
+<app-branding *ngIf="logginUser" type="Profile" 	[isLoading]="isLoading" (onPictureUpload)="uploadProfilePicture($event)" [pictureUrl]="logginUser.pictureUrl"></app-branding>
 <div class="user-form-container">
 	<form [formGroup]="userDetails" #form>
 		<div class="section">
 			<label>First Name</label>
 			<p>
 				Choose a channel name that represents you and your content. Changes made to your
-				name and picture are visible only on YouTube and not other Google services. You can
+				name and picture are visible only on {{productName}} and not other Google services. You can
 				change your name twice in 14 days.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
 				<input
 					matInput
-					placeholder="Enter Channel Name"
+					placeholder="Enter Your First Name"
 					[formControl]="firstName"
+					(ngModelChange)="onInputChange()"
 					(blur)="updateErrorMessage('firstName')"
 					required
 				/>
-				@if (firstName.invalid){
-				<mat-error>{{ errorMessage.firstName }}</mat-error>
-				}
+		
+				<mat-error *ngIf="firstName.invalid">{{ errorMessage.firstName }}</mat-error>
+				
 			</mat-form-field>
 		</div>
 		<div class="section">
 			<label>Last Name</label>
 			<p>
 				Choose a channel name that represents you and your content. Changes made to your
-				name and picture are visible only on YouTube and not other Google services. You can
+				name and picture are visible only on {{productName}} and not other Google services. You can
 				change your name twice in 14 days.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
@@ -32,28 +34,32 @@
 					matInput
 					placeholder="Enter Channel Name"
 					[formControl]="lastName"
+					(ngModelChange)="onInputChange()"
 					(blur)="updateErrorMessage('lastName')"
 					required
 				/>
-				@if (lastName.invalid){
-				<mat-error>{{ errorMessage.lastName }}</mat-error>
-				}
+			
+				<mat-error *ngIf="lastName.invalid || errorMessage.lastName">{{ errorMessage.lastName }}</mat-error>
+				
 			</mat-form-field>
 		</div>
 		<div class="section">
 			<label>About</label>
 			<p>
-				Tell viewers about your channel. Your description will appear in the About section
+				Tell viewers about you. Your description will appear in the About section
 				of your channel and search result, among other places.
 			</p>
 			<mat-form-field appearance="outline" hideRequiredMarker="true" floatLable="auto">
 				<textarea
 					matInput
+					#textArea
 					[formControl]="about"
 					rows="5"
 					placeholder="Enter Description"
+					(ngModelChange)="onInputChange()"
 					(input)="autoGrow($event)"
 				></textarea>
+				<mat-error *ngIf="errorMessage.about">{{ errorMessage.about }}</mat-error>
 			</mat-form-field>
 		</div>
 		<div class="section">
@@ -67,4 +73,8 @@
 			</div>
 		</div>
 	</form>
+</div>
+<div *ngIf="hasAnyChanges" class="action-container">
+	<button mat-button [disabled]="isLoading" (click)="resetAll()" >Reset</button>
+	<button mat-flat-button [disabled]="isLoading" (click)="publishChanges()" >Publish</button>
 </div>

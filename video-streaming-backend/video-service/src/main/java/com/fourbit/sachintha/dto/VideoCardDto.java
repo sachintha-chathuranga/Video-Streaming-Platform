@@ -12,6 +12,7 @@ public class VideoCardDto {
 	private String title;
 	private String description;
 	private String thumbnailUrl;
+	private Long channelId;
 	private String channelName;
 	private String channelImage;
 	private Long viewsCount = Long.valueOf(0);

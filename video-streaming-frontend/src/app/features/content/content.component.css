@@ -129,6 +129,7 @@ table {
 .mat-elevation-z8 {
 	box-shadow: none !important;
 	border: 2px solid #8080804f !important;
+	margin-bottom: 50px;
 }
 .mat-mdc-header-cell {
     border-bottom: 2px solid #8080804f ;
@@ -146,4 +147,10 @@ table {
 }
 mat-paginator {
 	border-top: 1px solid #8080804f ;
+}
+
+@media screen and (max-width: 600px) {
+	.scroll-container {
+		padding: 0 10px;
+	}
 }

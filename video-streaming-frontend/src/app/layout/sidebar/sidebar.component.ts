@@ -1,14 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import {
-	ChangeDetectorRef,
-	Component,
-	inject,
-	Input,
-	OnChanges,
-	OnDestroy,
-	OnInit,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -35,7 +27,7 @@ import { SideBarItem } from './models/sidebarItem.dto';
 	templateUrl: './sidebar.component.html',
 	styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent implements OnDestroy, OnInit, OnChanges {
+export class SidebarComponent implements OnDestroy, OnInit {
 	@Input()
 	items!: SideBarItem[];
 	@Input()
@@ -60,8 +52,6 @@ export class SidebarComponent implements OnDestroy, OnInit, OnChanges {
 		this.activeButton = link;
 		this.router.navigate([link]);
 	}
-
-	ngOnChanges() {}
 
 	ngOnDestroy(): void {
 		this.mobileQuery.removeEventListener('change', this._mobileQueryListener);

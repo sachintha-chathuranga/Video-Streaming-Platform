@@ -13,8 +13,8 @@
 			<div class="image-container">
 				<mat-icon class="mat-icon-large">upload</mat-icon>
 			</div>
-			<h4>Drag and drop {{ fileType }} files to upload</h4>
-			<p>Your {{ fileType }}s will be private until you publish them.</p>
+			<h4>Drag and drop {{ fileType=='Video' ? 'video' : 'image'}} file to upload</h4>
+			<p>Your {{ fileType=='Video' ? 'video' : 'picture' }} will be private until you publish them.</p>
 			<button
 				mat-raised-button
 				(click)="openFileSelector()"

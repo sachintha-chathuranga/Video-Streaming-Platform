@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,8 +32,11 @@ public class User {
 	private String lastName;
 	private String email;
 	private String pictureUrl;
+	@Column(length = 1000) // Set the max length to 1000
 	private String about;
 	private String sub;
+	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+	private Boolean isRecordHistory = true;
 
 	// this will create new field in table name as channel_id
 	@OneToOne(cascade = CascadeType.ALL)
@@ -42,15 +46,14 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>(); // this field doesn't create in User table
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "user_subscribe", joinColumns = @JoinColumn(name = "subscriberId"), inverseJoinColumns = @JoinColumn(name = "channelId"))
-	private List<Channel> subscriptions = new ArrayList<>();
+	@OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Subscribe> subscriptions = new ArrayList<>();
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "user_playlist", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "videoId"))
 	private List<Video> saveVideos = new ArrayList<>();
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<VideoHistory> videoHistories;
 
 	@ManyToMany(mappedBy = "likes", cascade = CascadeType.ALL)
@@ -65,7 +68,14 @@ public class User {
 	@ManyToMany(mappedBy = "dislikes", cascade = CascadeType.ALL)
 	private List<Comment> dislikeComments = new ArrayList<>();
 
-	public User(Long id, String firstName, String lastName, String email, String pictureUrl, String about, String sub) {
+	@OneToMany(mappedBy = "viewer", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<View> viewVideos = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Notification> notifications = new ArrayList<>();
+
+	public User(Long id, String firstName, String lastName, String email, String pictureUrl, String about, String sub,
+			Boolean isRecordHistory) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -73,6 +83,7 @@ public class User {
 		this.pictureUrl = pictureUrl;
 		this.about = about;
 		this.sub = sub;
+		this.isRecordHistory = isRecordHistory;
 	}
 
 	public String getFullName() {

@@ -1,1 +1,11 @@
-
+@media screen and (max-width: 600px) {
+	.scroll-container {
+		padding: 0 10px;
+	}
+}
+.progress-spinner {
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

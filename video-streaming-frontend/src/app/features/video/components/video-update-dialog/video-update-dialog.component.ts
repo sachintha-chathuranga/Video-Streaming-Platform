@@ -4,8 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { VideoDto } from '../../../../core/models/video.dto';
 import { VideoFormComponent } from '../video-form/video-form.component';
+import { VideoDto } from '../../../../shared/models/video.dto';
 
 @Component({
 	selector: 'app-video-update-dialog',

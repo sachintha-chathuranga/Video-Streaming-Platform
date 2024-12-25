@@ -1,19 +1,30 @@
 .title-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-left: 10px;
 }
-.title-section h2{
-   font-size: 18px;
+.title-section h2 {
+	font-size: 18px;
 }
-.title-section button{
-    font-size: 13px;
-    padding: 8px;
-    height: auto;
+.title-section button {
+	font-size: 13px;
+	padding: 8px;
+	height: auto;
 }
 #slider-toolbar {
-  display: block;
-  margin-bottom: 20px;
-  margin-top: 10px;
+	display: block;
+	margin-bottom: 20px;
+	margin-top: 10px;
+}
+.progress-spinner {
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+@media screen and (max-width: 600px) {
+	.scroll-container {
+		padding: 0;
+	}
 }

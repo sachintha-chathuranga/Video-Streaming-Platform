@@ -55,6 +55,7 @@ a {
   text-overflow: ellipsis;
   display: -webkit-box !important;
   -webkit-box-orient: vertical;
+  word-break: break-all;
 }
 .text-overflow-1{
   -webkit-line-clamp: 1;
@@ -85,7 +86,6 @@ a {
 
 .custom-menu {
   background-color: white !important;
-  max-width: 300px !important;
 }
 
 img{
@@ -93,12 +93,20 @@ img{
 	width: 100%;
 	object-fit: cover;
 }
-
+a.canvasjs-chart-credit{
+  display: none !important;
+}
+.scroll-container {
+	height: calc(100vh - 64px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 0 20px;
+}
 @media screen and (max-width: 600px) {
   .fxItem {
     padding: 10px 0;
   }
-  mat-sidenav-content {
-    padding: 0 10px !important;
-  }
+  .scroll-container {
+		height: calc(100vh - 56px);
+	}
 }

@@ -13,28 +13,7 @@
 			<ng-template matStepLabel>Upload Video</ng-template>
 			<div #stepOne *ngIf="currentStep == 0">
 				<div class="stepper-body">
-					<div class="container" *ngIf="fileUrl; else videoUploader">
-						<div class="layout">
-							<app-video-player
-								class="layout-left"
-								[videoSource]="fileUrl"
-								[borderRadius]="'4px'"
-							></app-video-player>
-							<div class="layout-right">
-								<app-file-meta-data [file]="file" fileType="Video"></app-file-meta-data>
-								<div class="bottom">
-									<button mat-button (click)="removeFile()">Unselect</button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<ng-template #videoUploader>
-						<app-file-selector
-							(onFileSelect)="setVideoFile($event)"
-							[allowedExtentions]="videoExtensions"
-							fileType="video"
-						></app-file-selector>
-					</ng-template>
+					<app-file-manager fileType="Video" (onFileChange)="setFile($event)"></app-file-manager>
 				</div>
 			</div>
 		</mat-step>
@@ -42,28 +21,7 @@
 			<ng-template matStepLabel>Upload thumbnail</ng-template>
 			<div *ngIf="currentStep == 1">
 				<div class="stepper-body">
-					<div class="container" *ngIf="fileUrl; else thumbnailSelector">
-						<div class="layout">
-							<div class="layout-left">
-								<div class="image">
-									<img [src]="fileUrl" alt="Selected Image" />
-								</div>
-							</div>
-							<div class="layout-right">
-								<app-file-meta-data [file]="file" fileType="Image"></app-file-meta-data>
-								<div class="bottom">
-									<button (click)="removeFile()">Unselect</button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<ng-template #thumbnailSelector>
-						<app-file-selector
-							(onFileSelect)="setThumbnailFile($event)"
-							[allowedExtentions]="imageExtensions"
-							fileType="thumbnail"
-						></app-file-selector>
-					</ng-template>
+					<app-file-manager fileType="Image" (onFileChange)="setFile($event)"></app-file-manager>
 				</div>
 			</div>
 		</mat-step>
@@ -83,12 +41,12 @@
 	</mat-stepper>
 </mat-dialog-content>
 <mat-dialog-actions>
-	<button *ngIf="currentStep == 0" mat-button mat-dialog-close>Cancel</button>
+	<button *ngIf="currentStep == 0" mat-button (click)="closeDialogBox()">Cancel</button>
 	<button
 		mat-button
 		*ngIf="currentStep == 0"
 		(click)="uploadVideo(stepper)"
-		[disabled]="!fileUrl || isLoading"
+		[disabled]="!file || isLoading"
 	>
 		Upload
 	</button>
@@ -96,12 +54,24 @@
 		mat-button
 		*ngIf="currentStep == 1"
 		(click)="uploadThumbnail(stepper)"
-		[disabled]="!fileUrl || isLoading"
+		[disabled]="!file || isLoading"
 	>
 		Upload
 	</button>
-	<button mat-raised-button *ngIf="currentStep == 2"  [disabled]="!isAnyChange || isLoading" (click)="reset()">Reset</button>
-	<button mat-raised-button *ngIf="currentStep == 2"  [disabled]="!isAnyChange || isLoading" (click)="saveChanges()">
+	<button
+		mat-raised-button
+		*ngIf="currentStep == 2"
+		[disabled]="!isAnyChange || isLoading"
+		(click)="reset()"
+	>
+		Reset
+	</button>
+	<button
+		mat-raised-button
+		*ngIf="currentStep == 2"
+		[disabled]="!isAnyChange || isLoading"
+		(click)="saveChanges()"
+	>
 		Save
 	</button>
 </mat-dialog-actions>

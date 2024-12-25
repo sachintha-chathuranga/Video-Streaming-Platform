@@ -1,0 +1,21 @@
+<h2 style="margin: 0">Realtime</h2>
+<div class="live-text">
+	<app-dot-animation></app-dot-animation>
+	<p class="special-text">Updating live</p>
+</div>
+<hr />
+<div class="total-stat">
+	<div>
+		<h1>{{ totalSubscribers }}</h1>
+		<p class="special-text">subscribers</p>
+	</div>
+	<div>
+		<h1>{{ totalViews }}</h1>
+		<p class="special-text">views</p>
+	</div>
+</div>
+<hr />
+<h1>0</h1>
+<p class="special-text">views:last 48 hours</p>
+<app-spline-chart></app-spline-chart>
+<button mat-button>See more</button>

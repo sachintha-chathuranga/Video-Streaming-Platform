@@ -1,0 +1,13 @@
+.scroll-container {
+	height: calc(100vh - 64px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 0 20px;
+}
+
+@media screen and (max-width: 600px) {
+	.scroll-container {
+		height: calc(100vh - 56px);
+		padding: 0;
+	}
+}
