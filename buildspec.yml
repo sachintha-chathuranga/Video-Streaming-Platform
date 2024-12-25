@@ -14,6 +14,7 @@ phases:
 		commands:
 			- echo building and tagging started image on 'date'
 			- echo running mvn clean install...
+			- cd video-streaming-backend/video-service
 			- mvn clean install
 			- echo building the Docker image...
 			- docker build -t $REPOSITORY_URI:LATEST .
