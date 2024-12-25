@@ -1,6 +1,6 @@
 version: 0.2
 phases:
-	pre_build:
+	build:
 		commands:
 	  	-	echo Logging into Amazon ECR started on 'date'
 		  -	aws --version
