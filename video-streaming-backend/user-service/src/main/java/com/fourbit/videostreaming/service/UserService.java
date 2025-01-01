@@ -1,22 +1,30 @@
 package com.fourbit.videostreaming.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fourbit.videostreaming.dto.CreateUserRequest;
+import com.fourbit.videostreaming.dto.SaveVideoRequest;
+import com.fourbit.videostreaming.dto.UpdateHistoryRequest;
 import com.fourbit.videostreaming.dto.UserDto;
 import com.fourbit.videostreaming.dto.UserUpdateRequest;
+import com.fourbit.videostreaming.dto.VideoCardDto;
 import com.fourbit.videostreaming.exception.CustomException;
 import com.fourbit.videostreaming.mapper.UserMapper;
 import com.fourbit.videostreaming.model.User;
+import com.fourbit.videostreaming.model.VideoHistory;
 import com.fourbit.videostreaming.repository.UserRepository;
+import com.fourbit.videostreaming.repository.VideoHistoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,8 +41,10 @@ public class UserService {
 	private final UserRepository userRepository;
 	@Autowired
 	private final WebClient.Builder webClientBuilder;
-//	@Autowired
-//	private final VideoHistoryRepository videoHistoryRepository;
+	@Autowired
+	private final VideoHistoryRepository videoHistoryRepository;
+	@Autowired
+	private final VideoService videoService;
 //	@Autowired
 //	private final VideoRepository videoRepository;
 //	@Autowired
@@ -44,10 +54,11 @@ public class UserService {
 
 	public UserDto createUser(CreateUserRequest request) {
 		logger.info("Invoke createUser funcion");
-		User existingUser = userRepository.findBySub(request.sub());
+		User existingUser = userRepository.findById(Long.valueOf(request.sub())).orElse(null);
 		if (existingUser == null) {
 			logger.info("Start to create New User");
 			User newUser = new User();
+			newUser.setId(Long.valueOf(request.sub()));
 			newUser.setFirstName(request.firstName());
 			newUser.setLastName(request.lastName());
 			newUser.setEmail(request.email());
@@ -68,9 +79,11 @@ public class UserService {
 		return UserMapper.mapToUserDto(existingUser);
 	}
 
-	public UserDto updateUser(String sub, UserUpdateRequest request) {
+	public UserDto updateUser(Long userId, UserUpdateRequest request) {
 		logger.info("Invoke Update Usaer function");
-		User user = this.userRepository.findBySub(sub);
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+
 		String existingImage = user.getPictureUrl();
 		if (request.firstName() != null && !request.firstName().isBlank()) {
 			user.setFirstName(request.firstName());
@@ -98,172 +111,112 @@ public class UserService {
 		return UserMapper.mapToUserDto(user);
 	}
 
-	public UserDto getUserBySub(String sub) {
-		User user = userRepository.findBySub(sub);
-		return UserMapper.mapToUserDto(user);
+	@Transactional
+	public Boolean updateVideoHistory(Long userId, UpdateHistoryRequest request) {
+		logger.info("Invoke updateVideoHistory function");
+		logger.info("User Id: " + userId);
+		User user = this.userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+		;
+
+		if (user.getIsRecordHistory()) {
+			VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), request.videoId());
+			LocalDateTime watchTime = LocalDateTime.now();
+			if (videoHistory == null) {
+				logger.info("create new videoHistory");
+				// Save to user video history database
+				videoHistory = new VideoHistory();
+				videoHistory.setUser(user);
+				videoHistory.setVideoId(request.videoId());
+				videoHistory.setWatchTime(watchTime);
+
+			} else {
+				logger.info("Update existing videoHistory");
+				// update watch time
+				videoHistory.setWatchTime(watchTime);
+			}
+			videoHistoryRepository.save(videoHistory);
+		}
+		return true;
 	}
 
-//	@Transactional
-//	public Boolean updateVideoHistory(Long videoId) {
-//		logger.info("Invoke updateVideoHistory function");
-//		User user = this.getRequestedUser();
-//		Video video = this.videoRepository.findById(videoId)
-//				.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
 //
-//		if (user.getIsRecordHistory()) {
-//			VideoHistory videoHistory = videoHistoryRepository.findByUserIdAndVideoId(user.getId(), videoId);
-//			LocalDateTime watchTime = LocalDateTime.now();
-//			if (videoHistory == null) {
-//				logger.info("create new videoHistory");
-//				// Save to user video history database
-//				videoHistory = new VideoHistory();
-//				videoHistory.setUser(user);
-//				videoHistory.setVideo(video);
-//				videoHistory.setWatchTime(watchTime);
+	public Boolean removeHistoryVideo(Long userId, Long videoId) {
+		videoHistoryRepository.deleteByUserAndVideo(userId, videoId);
+		return true;
+	}
+
+	@Transactional(readOnly = true)
+	public Page<VideoCardDto> getVideoHistory(Long userId, String page, String size, String searchQuery) {
+		logger.info("Invoke getVideoHistory function");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		List<Long> videoIds = this.videoHistoryRepository.findByUserId(userId);
+		logger.info("get all video Ids");
+		Page<VideoCardDto> videos = videoService.getVideosByIds(videoIds, page, size, searchQuery);
+		return videos;
+	}
+
+	public Boolean clearVideoHistory(Long userId) {
+		videoHistoryRepository.deleteByUserId(userId);
+		return true;
+	}
+
+	public Boolean toggleHistoryRecording(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+		if (user.getIsRecordHistory()) {
+			user.setIsRecordHistory(false);
+		} else {
+			user.setIsRecordHistory(true);
+		}
+		userRepository.save(user);
+		return user.getIsRecordHistory();
+	}
+
 //
-//			} else {
-//				logger.info("Update existing videoHistory");
-//				// update watch time
-//				videoHistory.setWatchTime(watchTime);
-//			}
-//			videoHistoryRepository.save(videoHistory);
-//		}
-//		return true;
-//	}
+
 //
-//	public Boolean removeHistoryVideo(Long videoId) {
-//		User user = this.getRequestedUser();
-//		videoHistoryRepository.deleteByUserAndVideo(user.getId(), videoId);
-//		return true;
-//	}
+	public boolean addVideoToPlaylist(Long userId, SaveVideoRequest request) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+		List<Long> playlist = user.getPlaylist();
+		if (!playlist.contains(request.videoId())) {
+			playlist.add(request.videoId());
+			userRepository.save(user);
+		}
+		return true;
+	}
+
+	public List<Long> getSavedVideosIds(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+		List<Long> playlist = user.getPlaylist();
+		return playlist;
+	}
+
 //
-////	Use @Transactional(readOnly = true) for methods that only fetch data.
-//	@Transactional(readOnly = true)
-//	public Page<VideoCardDto> getVideoHistory(String page, String size, String sortField, String sortDirection,
-//			String searchQuery) {
-//		logger.info("Invoke getVideoHistory function");
-//		User user = this.getRequestedUser();
-//		logger.info("Page: " + page);
-//		logger.info("Size: " + size);
-//		logger.info("Sort Field: " + sortField);
-//		logger.info("Direction: " + sortDirection);
+
 //
-//		Pageable pageable;
-//		Page<Video> videos;
+	public void deletePlaylist(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+		List<Long> playlist = user.getPlaylist();
+		if (!playlist.isEmpty()) {
+			playlist.clear();
+			userRepository.save(user);
+		}
+
+	}
+
 //
-//		Sort sort = Sort.by(sortField);
-//		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-//		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
-//		videos = this.videoHistoryRepository.findByUserId(user.getId(), searchQuery, pageable);
-//		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
-//	}
-//
-//	public Boolean clearVideoHistory() {
-//		User user = this.getRequestedUser();
-//		videoHistoryRepository.deleteByUserId(user.getId());
-//		return true;
-//	}
-//
-//	public Boolean toggleHistoryRecording() {
-//		User user = this.getRequestedUser();
-//		if (user.getIsRecordHistory()) {
-//			user.setIsRecordHistory(false);
-//		} else {
-//			user.setIsRecordHistory(true);
-//		}
-//		userRepository.save(user);
-//		return user.getIsRecordHistory();
-//	}
-//
-////	Use @Transactional(readOnly = true) for methods that only fetch data.
-//	@Transactional(readOnly = true)
-//	public Page<ChannelDto> getUserSubscriptions(String page, String size, String sortField, String sortDirection) {
-//
-//		logger.info("Invoke get user subscriptions function");
-//		User user = this.getRequestedUser();
-//
-//		logger.info("Page: " + page);
-//		logger.info("Size: " + size);
-//		logger.info("Sort Field: " + sortField);
-//		logger.info("Direction: " + sortDirection);
-//		Pageable pageable;
-//		Page<Channel> channels;
-//
-//		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
-//
-//		channels = this.subscribeRepository.findChannelsBySubscribedUser(user.getId(), pageable);
-//		return channels.map(channel -> ChannelMapper.mapTochannelDto(channel, user));
-//	}
-//
-//	@Transactional(readOnly = true)
-//	public Page<VideoCardDto> getUserSubscriptionsVideos(String page, String size, String sortField,
-//			String sortDirection) {
-//		logger.info("Invoke get user subscriptions Videos function");
-//		User user = this.getRequestedUser();
-//
-//		logger.info("Page: " + page);
-//		logger.info("Size: " + size);
-//		logger.info("Sort Field: " + sortField);
-//		logger.info("Direction: " + sortDirection);
-//		Pageable pageable;
-//		Page<Video> videos;
-//
-//		Sort sort = Sort.by(sortField);
-//		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-//		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
-//
-//		videos = this.videoRepository.findLatestSubscriptionVideos(user.getId(), pageable);
-//		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
-//	}
-//
-//	public boolean addVideoToPlaylist(Long videoId) {
-//		User user = this.getRequestedUser();
-//		Video video = this.videoRepository.findById(videoId)
-//				.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
-//		List<Video> playlist = user.getSaveVideos();
-//		if (!playlist.contains(video)) {
-//			playlist.add(video);
-//			userRepository.save(user);
-//		}
-//		return true;
-//	}
-//
-//	@Transactional(readOnly = true)
-//	public Page<VideoCardDto> getVideoPlaylist(String page, String size, String sortField, String sortDirection,
-//			String searchQuery) {
-//		logger.info("Invoke get user playlist function");
-//		User user = this.getRequestedUser();
-//		logger.info("Page: " + page);
-//		logger.info("Size: " + size);
-//		logger.info("Sort Field: " + sortField);
-//		logger.info("Direction: " + sortDirection);
-//		Pageable pageable;
-//		Page<Video> videos;
-//		Sort sort = Sort.by(sortField);
-//		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-//		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
-//		videos = this.videoRepository.findSavedVideosByUserId(user.getId(), searchQuery, pageable);
-//		return videos.map(video -> VideoMapper.mapToVideoCardDto(video));
-//	}
-//
-//	public void deletePlaylist() {
-//		User user = this.getRequestedUser();
-//		List<Video> playlist = user.getSaveVideos();
-//		if (!playlist.isEmpty()) {
-//			playlist.clear();
-//			userRepository.save(user);
-//		}
-//
-//	}
-//
-//	public void removeVideoFromPlaylist(Long videoId) {
-//		User user = this.getRequestedUser();
-//		Video video = this.videoRepository.findById(videoId)
-//				.orElseThrow(() -> new CustomException("Video not fount", HttpStatus.NOT_FOUND));
-//		List<Video> playlist = user.getSaveVideos();
-//		playlist.remove(video);
-//		userRepository.save(user);
-//	}
+	public void removeVideoFromPlaylist(Long userId, Long videoId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+		List<Long> playlist = user.getPlaylist();
+		playlist.remove(videoId);
+		userRepository.save(user);
+	}
 //
 //	
 }
