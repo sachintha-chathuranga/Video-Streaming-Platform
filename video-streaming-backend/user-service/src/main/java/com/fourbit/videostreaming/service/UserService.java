@@ -7,7 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ import com.fourbit.videostreaming.dto.SaveVideoRequest;
 import com.fourbit.videostreaming.dto.UpdateHistoryRequest;
 import com.fourbit.videostreaming.dto.UserDto;
 import com.fourbit.videostreaming.dto.UserUpdateRequest;
-import com.fourbit.videostreaming.dto.VideoCardDto;
 import com.fourbit.videostreaming.exception.CustomException;
 import com.fourbit.videostreaming.mapper.UserMapper;
 import com.fourbit.videostreaming.model.User;
@@ -43,8 +41,6 @@ public class UserService {
 	private final WebClient.Builder webClientBuilder;
 	@Autowired
 	private final VideoHistoryRepository videoHistoryRepository;
-	@Autowired
-	private final VideoService videoService;
 //	@Autowired
 //	private final VideoRepository videoRepository;
 //	@Autowired
@@ -142,19 +138,16 @@ public class UserService {
 
 //
 	public Boolean removeHistoryVideo(Long userId, Long videoId) {
+		logger.info("Invoke removeHistoryVideo");
 		videoHistoryRepository.deleteByUserAndVideo(userId, videoId);
 		return true;
 	}
 
 	@Transactional(readOnly = true)
-	public Page<VideoCardDto> getVideoHistory(Long userId, String page, String size, String searchQuery) {
-		logger.info("Invoke getVideoHistory function");
-		logger.info("Page: " + page);
-		logger.info("Size: " + size);
+	public List<Long> getVideoHistoryIds(Long userId) {
+		logger.info("Invoke getVideoHistoryIds function");
 		List<Long> videoIds = this.videoHistoryRepository.findByUserId(userId);
-		logger.info("get all video Ids");
-		Page<VideoCardDto> videos = videoService.getVideosByIds(videoIds, page, size, searchQuery);
-		return videos;
+		return videoIds;
 	}
 
 	public Boolean clearVideoHistory(Long userId) {

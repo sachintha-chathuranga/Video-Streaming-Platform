@@ -2,7 +2,6 @@ package com.fourbit.videostreaming.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -16,8 +15,7 @@ public class WebClientConfig {
 	public WebClient.Builder webClientBuilder() {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new JavaTimeModule()); // Register the module for Java Time
-		SimpleModule module = new SimpleModule();
-		module.addDeserializer(Page.class, new PageDeserializer()); // Register the custom deserializer
+		SimpleModule module = new SimpleModule();// Register the custom deserializer
 		objectMapper.registerModule(module);
 
 		return WebClient.builder().codecs(

@@ -2,7 +2,6 @@ package com.fourbit.videostreaming.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,6 @@ import com.fourbit.videostreaming.dto.SaveVideoRequest;
 import com.fourbit.videostreaming.dto.UpdateHistoryRequest;
 import com.fourbit.videostreaming.dto.UserDto;
 import com.fourbit.videostreaming.dto.UserUpdateRequest;
-import com.fourbit.videostreaming.dto.VideoCardDto;
 import com.fourbit.videostreaming.service.UserService;
 
 import jakarta.validation.Valid;
@@ -68,10 +66,8 @@ public class UserController {
 	}
 
 	@GetMapping("/history")
-	public ResponseEntity<Page<VideoCardDto>> getVideoHistory(@RequestParam("userId") Long userId,
-			@RequestParam(required = false, defaultValue = "") String searchQuery,
-			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size) {
-		return ResponseEntity.ok(userService.getVideoHistory(userId, page, size, searchQuery));
+	public ResponseEntity<List<Long>> getVideoHistoryIds(@RequestParam("userId") Long userId) {
+		return ResponseEntity.ok(userService.getVideoHistoryIds(userId));
 	}
 
 	@DeleteMapping("/history")
