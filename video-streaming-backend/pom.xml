@@ -6,21 +6,23 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.7</version>
+		<version>3.3.7</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>com.fourbit.videostreaming</groupId>
 	<artifactId>video-streaming-platform</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	
 	<packaging>pom</packaging>
 	<modules>
 		<module>api-gateway</module>
 		<module>user-service</module>
-		<module>discovery-servier</module>
+		<module>discovery-server</module>
 		<module>channel-service</module>
 		<module>aws-service</module>
 		<module>video-service</module>
+		<module>notification-service</module>
 	</modules>
 
 	<properties>
