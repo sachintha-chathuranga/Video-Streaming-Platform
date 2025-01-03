@@ -10,13 +10,7 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 mysql/
-api-gateway/
-aws-service/
-channel-service/
-discovery-server/
-notification-service/
-user-service/
-video-service/
+
 # Package Files #
 *.jar
 *.war
