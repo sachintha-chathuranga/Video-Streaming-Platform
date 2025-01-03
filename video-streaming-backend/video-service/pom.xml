@@ -7,6 +7,7 @@
 		<artifactId>video-streaming-platform</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>video-service</artifactId>
 	<name>video-service</name>
 

@@ -20,6 +20,12 @@ public class UserService {
 				}).block();
 	}
 
+	public List<Long> getAllHistoryVideoIds(Long userId) {
+		return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/history").queryParam("userId", userId).build())
+				.retrieve().bodyToMono(new ParameterizedTypeReference<List<Long>>() {
+				}).block();
+	}
+
 	public void removeVideoFromUserHistory(Long userId, Long videoId) {
 		this.webClient.delete()
 				.uri(uriBuilder -> uriBuilder.path("/history/" + videoId).queryParam("userId", userId).build())

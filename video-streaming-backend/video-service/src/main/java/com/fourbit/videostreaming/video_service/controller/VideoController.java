@@ -20,6 +20,7 @@ import com.fourbit.videostreaming.video_service.dto.CreateVideoResponse;
 import com.fourbit.videostreaming.video_service.dto.LikeDislikeResponse;
 import com.fourbit.videostreaming.video_service.dto.VideoCardDto;
 import com.fourbit.videostreaming.video_service.dto.VideoDto;
+import com.fourbit.videostreaming.video_service.dto.VideoStaticDto;
 import com.fourbit.videostreaming.video_service.dto.VideoUpdateMetaData;
 import com.fourbit.videostreaming.video_service.dto.ViewsResponse;
 import com.fourbit.videostreaming.video_service.service.VideoService;
@@ -47,6 +48,13 @@ public class VideoController {
 			@RequestParam(defaultValue = "desc") String sortDirection) {
 		Page<VideoCardDto> list = videoService.getUserSubscriptionsVideos(userId, page, size, sortBy, sortDirection);
 		return ResponseEntity.ok(list);
+	}
+
+	@GetMapping("/history")
+	public ResponseEntity<Page<VideoCardDto>> getVideoHistory(@RequestParam("userId") Long userId,
+			@RequestParam(required = false, defaultValue = "") String searchQuery,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size) {
+		return ResponseEntity.ok(videoService.getVideoHistory(userId, page, size, searchQuery));
 	}
 
 	@GetMapping("/playlist")
@@ -90,13 +98,6 @@ public class VideoController {
 		return ResponseEntity.ok(videoService.getVideoById(userId, isAuth, id));
 	}
 
-	@GetMapping
-	public ResponseEntity<Page<VideoCardDto>> getVideosByIds(@RequestParam("videoIds") List<Long> ids,
-			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
-			@RequestParam(required = false) String searchQuery) {
-		return ResponseEntity.ok(videoService.getVideosByIds(ids, page, size, searchQuery));
-	}
-
 	@DeleteMapping("/{id}/delete")
 	public ResponseEntity<String> deleteVideo(@RequestParam("userId") Long userId, @PathVariable Long id) {
 		return ResponseEntity.ok(videoService.deleteVideo(userId, id));
@@ -118,5 +119,31 @@ public class VideoController {
 	public ResponseEntity<ViewsResponse> updateVideoViews(@RequestParam("userId") Long userId,
 			@PathVariable Long videoId) {
 		return ResponseEntity.ok(videoService.addViews(userId, videoId));
+	}
+
+	@GetMapping("/channel/{channelId}")
+	public ResponseEntity<Page<VideoDto>> getVideosByChannelId(@PathVariable Long channelId,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "createdTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		return ResponseEntity.ok(videoService.getChannelVideos(channelId, page, size, sortBy, sortDirection));
+	}
+
+	@GetMapping("/channel/{channelId}/public-videos")
+	public ResponseEntity<Page<VideoCardDto>> getPublicVideosByChannelId(@PathVariable Long channelId,
+			@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size,
+			@RequestParam(defaultValue = "createdTime") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortDirection) {
+		return ResponseEntity.ok(videoService.getChannelPublicVideos(channelId, page, size, sortBy, sortDirection));
+	}
+
+	@GetMapping("/channel/{channelId}/latest-video")
+	public ResponseEntity<VideoStaticDto> getLatestVideo(@PathVariable Long channelId) {
+		return ResponseEntity.ok(videoService.getLatestVideo(channelId));
+	}
+
+	@DeleteMapping("/channel/{channelId}")
+	public ResponseEntity<Boolean> deleteChannelVideos(@PathVariable Long channelId, @RequestBody List<Long> videoIds) {
+		return ResponseEntity.ok(videoService.deleteVideosFromChannel(channelId, videoIds));
 	}
 }

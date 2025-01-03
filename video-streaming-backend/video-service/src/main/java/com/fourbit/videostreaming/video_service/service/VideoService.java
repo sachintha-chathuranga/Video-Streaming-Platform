@@ -1,6 +1,7 @@
 package com.fourbit.videostreaming.video_service.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import com.fourbit.videostreaming.video_service.dto.CreateVideoResponse;
 import com.fourbit.videostreaming.video_service.dto.LikeDislikeResponse;
 import com.fourbit.videostreaming.video_service.dto.VideoCardDto;
 import com.fourbit.videostreaming.video_service.dto.VideoDto;
+import com.fourbit.videostreaming.video_service.dto.VideoStaticDto;
 import com.fourbit.videostreaming.video_service.dto.VideoUpdateMetaData;
 import com.fourbit.videostreaming.video_service.dto.ViewsResponse;
 import com.fourbit.videostreaming.video_service.exception.CustomException;
@@ -33,26 +35,16 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VideoService {
 
 	private final VideoRepository videoRepository;
 	private final VideoMapper videoMapper;
 	private final ChannelService channelService;
 	private final UserService userService;
+	private final NotificationService notificationService;
 	private final AwsService awsService;
 	private final Logger logger = LoggerFactory.getLogger(VideoService.class);
-
-	public Page<VideoCardDto> getVideosByIds(List<Long> ids, String page, String size, String searchQuery) {
-		logger.info("Invoke getFeatureVideos function");
-		logger.info("Page: " + page);
-		logger.info("Size: " + size);
-
-		Pageable pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
-
-		Page<Video> videoList = videoRepository.findAllByIdIn(ids, pageable, searchQuery);
-
-		return videoList.map(video -> this.videoMapper.mapToVideoCardDto(video));
-	}
 
 	public CreateVideoResponse createVideo(Long userId, CreateVideoRequest request) {
 		logger.info("Invoke Create Video function");
@@ -87,6 +79,23 @@ public class VideoService {
 		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
 		List<Long> channelIds = channelService.getSubscriptionChannelIds(userId);
 		videos = this.videoRepository.findAllByChannelIdIn(channelIds, pageable);
+		return videos.map(video -> videoMapper.mapToVideoCardDto(video));
+	}
+
+	@Transactional(readOnly = true)
+	public Page<VideoCardDto> getVideoHistory(Long userId, String page, String size, String searchQuery) {
+		logger.info("Invoke getVideoHistory function");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		Pageable pageable;
+		Page<Video> videos;
+//		Sort sort = Sort.by(sortField);
+//		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
+		logger.info("get all video Ids");
+		List<Long> videoIds = userService.getAllHistoryVideoIds(userId);
+		logger.info("ids comming succsses");
+		videos = this.videoRepository.findAllByIdIn(videoIds, pageable, searchQuery);
 		return videos.map(video -> videoMapper.mapToVideoCardDto(video));
 	}
 
@@ -134,15 +143,12 @@ public class VideoService {
 		}
 		if (videoDto.getVideoStatus() != null) {
 //			User user = userService.getRequestedUser();
-			logger.info("update video status");
-//			if (videoDto.getVideoStatus().equals("PUBLIC")) {
-//				Channel channel = video.getChannel();
-//				String channelImage = channel.getChannelImage();
-//				List<Subscribe> subscribers = video.getChannel().getSubscribers();
-//				for (Subscribe subscriber : subscribers) {
-//					notificationService.sendNotification(subscriber.getSubscriber(), video);
-//				}
-//			}
+			logger.info("update video status...");
+			logger.info(videoDto.getVideoStatus());
+			if (videoDto.getVideoStatus().equalsIgnoreCase("PUBLIC")) {
+				List<Long> subscribersIds = channelService.getSubscribersIds(video.getChannelId());
+				notificationService.sendNotification(subscribersIds, videoMapper.mapToVideoCardDto(video));
+			}
 			video.setVideoStatus(VideoStatus.valueOf(videoDto.getVideoStatus()));
 		}
 		if (videoDto.getThumbnailUrl() != null) {
@@ -303,6 +309,85 @@ public class VideoService {
 			videoRepository.save(video);
 		}
 		return videoMapper.mapToViewResponse(video, isAlreadyView);
+	}
+
+	@Transactional
+	public Page<VideoDto> getChannelVideos(Long channelId, String page, String size, String sortField,
+			String sortDirection) {
+		logger.info("Invoke get All videos form channel");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		Pageable pageable;
+		Page<Video> videos;
+
+		Sort sort;
+		if (sortField.equals("createdTime")) {
+			sort = Sort.by(sortField);
+		} else {
+			sort = JpaSort.unsafe("size(" + sortField + ")");
+		}
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+		videos = videoRepository.findByChannelId(channelId, pageable);
+		return videos.map(video -> videoMapper.mapToVideoDto(video));
+	}
+
+	@Transactional(readOnly = true)
+	public Page<VideoCardDto> getChannelPublicVideos(Long channelId, String page, String size, String sortField,
+			String sortDirection) {
+		logger.info("Invoke get All public videos form channel");
+		logger.info("Page: " + page);
+		logger.info("Size: " + size);
+		logger.info("Sort Field: " + sortField);
+		logger.info("Direction: " + sortDirection);
+		Pageable pageable;
+		Page<Video> videos;
+
+		Sort sort;
+		if (sortField.equals("createdTime")) {
+			sort = Sort.by(sortField);
+		} else {
+			sort = JpaSort.unsafe("size(" + sortField + ")");
+		}
+		sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+		pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), sort);
+		videos = videoRepository.findPublicVideosByChannelId(channelId, pageable);
+		return videos.map(video -> videoMapper.mapToVideoCardDto(video));
+	}
+
+	@Transactional(readOnly = true)
+	public VideoStaticDto getLatestVideo(Long channelId) {
+		Video video = videoRepository.findLatestVideoByChannelId(channelId);
+		return VideoMapper.mapToVideoStaticDto(video);
+	}
+
+	public Boolean deleteVideosFromChannel(Long channelId, List<Long> videoIds) {
+
+		List<String> videoUrls = new ArrayList<String>();
+		List<String> thumbnailsUrls = new ArrayList<String>();
+
+		// Detach videos from users' playLists
+		videosToDelete.forEach(video -> {
+			video.getSaveUsers().forEach(user -> user.getSaveVideos().remove(video));
+			video.getSaveUsers().clear();// Clear references from video to users
+			videoUrls.add(video.getVideoUrl());
+			thumbnailsUrls.add(video.getThumbnailUrl());
+		});
+
+		awsS3Service.deleteFiles(videoUrls);
+
+		awsS3Service.deleteFiles(thumbnailsUrls);
+
+		// Remove videos from the channel
+		channel.getVideos().removeAll(videosToDelete);
+
+		channelRepository.save(channel);
+
+		// Save the channel to persist changes
+		channelRepository.save(channel);
+		return true;
 	}
 
 }

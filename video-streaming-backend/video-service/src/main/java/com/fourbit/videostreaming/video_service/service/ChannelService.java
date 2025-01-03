@@ -32,4 +32,11 @@ public class ChannelService {
 				.retrieve().bodyToMono(new ParameterizedTypeReference<List<Long>>() {
 				}).block();
 	}
+
+	public List<Long> getSubscribersIds(Long channelId) {
+		return this.webClient.get()
+				.uri(uriBuilder -> uriBuilder.path("/subscribers-ids").queryParam("channelId", channelId).build())
+				.retrieve().bodyToMono(new ParameterizedTypeReference<List<Long>>() {
+				}).block();
+	}
 }

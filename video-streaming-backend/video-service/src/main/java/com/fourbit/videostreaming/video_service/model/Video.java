@@ -59,23 +59,12 @@ public class Video {
 	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<View> views = new ArrayList<>();
 
+	private Long commentsCount = Long.valueOf(0);
+
 	@CreationTimestamp
 	@Column(updatable = false) // Ensure it's only set at creation
 	private LocalDateTime createdTime;
 	private Float duration;
-
-	public Video(Long id, String description, String title, Long channelId, String videoUrl, VideoStatus videoStatus,
-			String thumbnailUrl, Long viewsCount, LocalDateTime createdTime, Float duration) {
-		this.id = id;
-		this.description = description;
-		this.title = title;
-		this.channelId = channelId;
-		this.videoUrl = videoUrl;
-		this.videoStatus = videoStatus;
-		this.thumbnailUrl = thumbnailUrl;
-		this.createdTime = createdTime;
-		this.duration = duration;
-	}
 
 	public Long getViewsCount() {
 		return Long.valueOf(this.views.size());

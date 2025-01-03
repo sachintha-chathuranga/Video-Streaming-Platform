@@ -11,6 +11,7 @@ import com.fourbit.videostreaming.video_service.dto.LikeDislikeResponse;
 import com.fourbit.videostreaming.video_service.dto.UserLikeStatus;
 import com.fourbit.videostreaming.video_service.dto.VideoCardDto;
 import com.fourbit.videostreaming.video_service.dto.VideoDto;
+import com.fourbit.videostreaming.video_service.dto.VideoStaticDto;
 import com.fourbit.videostreaming.video_service.dto.ViewsResponse;
 import com.fourbit.videostreaming.video_service.model.Video;
 import com.fourbit.videostreaming.video_service.service.ChannelService;
@@ -101,20 +102,20 @@ public class VideoMapper {
 		return response;
 	}
 
-//	public static VideoStaticDto mapToVideoStaticDto(Video video) {
-//		if (video == null) {
-//			return null;
-//		}
-//		Long likesCount = Long.valueOf(video.getLikes().size());
-//		Long dislikesCount = Long.valueOf(video.getDislikes().size());
-//		Long commentsCount = Long.valueOf(video.getComments().size());
-//		Long viewsCount = video.getViewsCount();
-//		VideoStaticDto videoDto = new VideoStaticDto(video.getId(), video.getTitle(), video.getThumbnailUrl(),
-//				likesCount, dislikesCount, viewsCount, commentsCount, video.getCreatedTime());
-//
-//		return videoDto;
-//
-//	}
+	public static VideoStaticDto mapToVideoStaticDto(Video video) {
+		if (video == null) {
+			return null;
+		}
+		Long likesCount = Long.valueOf(video.getLikes().size());
+		Long dislikesCount = Long.valueOf(video.getDislikes().size());
+		Long commentsCount = video.getCommentsCount();
+		Long viewsCount = video.getViewsCount();
+		VideoStaticDto videoDto = new VideoStaticDto(video.getId(), video.getTitle(), video.getThumbnailUrl(),
+				likesCount, dislikesCount, viewsCount, commentsCount, video.getCreatedTime());
+
+		return videoDto;
+
+	}
 
 	public ViewsResponse mapToViewResponse(Video video, Boolean isViewed) {
 		Long viewsCount = video.getViewsCount();
