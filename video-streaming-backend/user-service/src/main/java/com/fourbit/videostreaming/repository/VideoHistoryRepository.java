@@ -36,4 +36,8 @@ public interface VideoHistoryRepository extends JpaRepository<VideoHistory, Long
 			ORDER BY vh.watchTime DESC
 			""")
 	List<Long> findByUserId(Long userId);
+
+	@Modifying
+	@Query("DELETE FROM VideoHistory vh WHERE  vh.videoId IN :videoIds")
+	void deleteAllByVideoIdIn(List<Long> videoIds);
 }

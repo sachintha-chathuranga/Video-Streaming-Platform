@@ -13,14 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fourbit.videostreaming.dto.CreateUserRequest;
+import com.fourbit.videostreaming.dto.DeleteSaveVideosRequest;
 import com.fourbit.videostreaming.dto.SaveVideoRequest;
 import com.fourbit.videostreaming.dto.UpdateHistoryRequest;
 import com.fourbit.videostreaming.dto.UserDto;
 import com.fourbit.videostreaming.dto.UserUpdateRequest;
 import com.fourbit.videostreaming.exception.CustomException;
 import com.fourbit.videostreaming.mapper.UserMapper;
+import com.fourbit.videostreaming.model.SaveVideo;
 import com.fourbit.videostreaming.model.User;
 import com.fourbit.videostreaming.model.VideoHistory;
+import com.fourbit.videostreaming.repository.SaveVideoRepository;
 import com.fourbit.videostreaming.repository.UserRepository;
 import com.fourbit.videostreaming.repository.VideoHistoryRepository;
 
@@ -41,6 +44,8 @@ public class UserService {
 	private final WebClient.Builder webClientBuilder;
 	@Autowired
 	private final VideoHistoryRepository videoHistoryRepository;
+	@Autowired
+	private final SaveVideoRepository saveVideoRepository;
 //	@Autowired
 //	private final VideoRepository videoRepository;
 //	@Autowired
@@ -171,20 +176,27 @@ public class UserService {
 
 //
 	public boolean addVideoToPlaylist(Long userId, SaveVideoRequest request) {
+		logger.info("Invoke addVideoToPlalist function");
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
-		List<Long> playlist = user.getPlaylist();
-		if (!playlist.contains(request.videoId())) {
-			playlist.add(request.videoId());
+		List<SaveVideo> playlist = user.getPlaylist();
+		boolean videoExists = playlist.stream().anyMatch(data -> data.getVideoId().equals(request.videoId()));
+		if (!videoExists) {
+			logger.info("Add new video to playlist");
+			SaveVideo item = new SaveVideo();
+			item.setUser(user);
+			item.setVideoId(request.videoId());
+			playlist.add(item);
 			userRepository.save(user);
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public List<Long> getSavedVideosIds(Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
-		List<Long> playlist = user.getPlaylist();
+		List<Long> playlist = user.getPlaylist().stream().map((data) -> data.getVideoId()).toList();
 		return playlist;
 	}
 
@@ -194,7 +206,7 @@ public class UserService {
 	public void deletePlaylist(Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
-		List<Long> playlist = user.getPlaylist();
+		List<SaveVideo> playlist = user.getPlaylist();
 		if (!playlist.isEmpty()) {
 			playlist.clear();
 			userRepository.save(user);
@@ -204,11 +216,19 @@ public class UserService {
 
 //
 	public void removeVideoFromPlaylist(Long userId, Long videoId) {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
-		List<Long> playlist = user.getPlaylist();
-		playlist.remove(videoId);
-		userRepository.save(user);
+		logger.info("Invoke deleteVideoFromPlalist function");
+		saveVideoRepository.deleteByUserIdAndVideoId(userId, videoId);
+	}
+
+	public void removeVideosFromPlaylist(DeleteSaveVideosRequest request) {
+		logger.info("Invoke deleteVideosFromPlalist function");
+		saveVideoRepository.deleteAllByVideoIdIn(request.videoIds());
+	}
+
+	public Boolean removeHistoryVideosByIds(DeleteSaveVideosRequest request) {
+		logger.info("Invoke deleteVideosFromHistory function");
+		videoHistoryRepository.deleteAllByVideoIdIn(request.videoIds());
+		return true;
 	}
 //
 //	

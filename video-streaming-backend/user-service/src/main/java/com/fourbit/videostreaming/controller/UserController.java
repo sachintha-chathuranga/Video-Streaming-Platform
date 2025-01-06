@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fourbit.videostreaming.dto.CreateUserRequest;
+import com.fourbit.videostreaming.dto.DeleteSaveVideosRequest;
 import com.fourbit.videostreaming.dto.SaveVideoRequest;
 import com.fourbit.videostreaming.dto.UpdateHistoryRequest;
 import com.fourbit.videostreaming.dto.UserDto;
@@ -65,6 +66,11 @@ public class UserController {
 		return ResponseEntity.ok(userService.removeHistoryVideo(userId, videoId));
 	}
 
+	@PutMapping("/history/videos")
+	public ResponseEntity<Boolean> removeVideosFromHistory(@RequestBody DeleteSaveVideosRequest request) {
+		return ResponseEntity.ok(userService.removeHistoryVideosByIds(request));
+	}
+
 	@GetMapping("/history")
 	public ResponseEntity<List<Long>> getVideoHistoryIds(@RequestParam("userId") Long userId) {
 		return ResponseEntity.ok(userService.getVideoHistoryIds(userId));
@@ -100,9 +106,16 @@ public class UserController {
 
 //
 	@DeleteMapping("/playlist/{videoId}")
-	public ResponseEntity<Boolean> deletePlaylist(@RequestParam("userId") Long userId,
+	public ResponseEntity<Boolean> deleteVideoFromPlaylist(@RequestParam("userId") Long userId,
 			@PathVariable(name = "videoId") Long videoId) {
 		userService.removeVideoFromPlaylist(userId, videoId);
+		return ResponseEntity.ok(true);
+	}
+
+//
+	@PutMapping("/playlist/videos")
+	public ResponseEntity<Boolean> deleteVideosFromPlaylist(@RequestBody DeleteSaveVideosRequest request) {
+		userService.removeVideosFromPlaylist(request);
 		return ResponseEntity.ok(true);
 	}
 //

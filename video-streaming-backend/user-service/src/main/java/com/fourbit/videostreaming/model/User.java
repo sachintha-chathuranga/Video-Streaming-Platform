@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -45,10 +42,9 @@ public class User {
 //	@OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
 //	private List<Subscribe> subscriptions = new ArrayList<>();
 //
-	@ElementCollection
-	@CollectionTable(name = "user_playlist", joinColumns = @JoinColumn(name = "user_id"))
-	@Column(name = "video_id")
-	private List<Long> playlist = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SaveVideo> playlist = new ArrayList<>();
 //
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<VideoHistory> videoHistories;

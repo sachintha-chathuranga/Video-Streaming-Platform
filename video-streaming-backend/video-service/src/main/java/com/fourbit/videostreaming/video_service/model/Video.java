@@ -56,7 +56,7 @@ public class Video {
 	@Column(name = "user_id")
 	private List<Long> dislikes = new ArrayList<>();
 
-	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
 	private List<View> views = new ArrayList<>();
 
 	private Long commentsCount = Long.valueOf(0);

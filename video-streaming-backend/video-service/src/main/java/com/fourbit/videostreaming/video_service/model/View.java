@@ -2,7 +2,11 @@ package com.fourbit.videostreaming.video_service.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,8 +29,9 @@ public class View {
 
 	private Long viewerId;
 
-	@ManyToOne
-	@JoinColumn(name = "videoId", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "video_id", nullable = true) // nullable=true to allow setting NULL
+	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private Video video;
 
 	private LocalDateTime viewTime;

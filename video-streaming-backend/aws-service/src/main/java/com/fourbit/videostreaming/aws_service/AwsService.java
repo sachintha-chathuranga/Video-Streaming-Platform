@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.fourbit.videostreaming.aws_service.dto.ChannelUpdateResponse;
 import com.fourbit.videostreaming.aws_service.dto.CreateVideoResponse;
 import com.fourbit.videostreaming.aws_service.dto.FileUploadResponse;
 import com.fourbit.videostreaming.aws_service.dto.UserUpdateResponse;
@@ -131,6 +132,18 @@ public class AwsService {
 				this.deleteFile(res.getThumbnailUrl());
 			}
 			response = res;
+		} else if (category.equals("channel_images")) {
+			Map<String, String> requestBody = Map.of("channelImage", fileUrl);
+			logger.info("send Update Channel Request");
+			ChannelUpdateResponse res = this.webClientBuilder.baseUrl("http://localhost:8081").build().put()
+					.uri(uriBuilder -> uriBuilder.path("/api/channels/" + userId + "/update").build())
+					.bodyValue(requestBody).retrieve().bodyToMono(ChannelUpdateResponse.class).block();
+			logger.info("channelImage: " + res.getChannelImage());
+			if (res.getChannelImage() != null && !res.getChannelImage().equals(fileUrl)) {
+				logger.info("Call deleteFile function");
+				this.deleteFile(res.getChannelImage());
+			}
+			response = res;
 		}
 		return response;
 	}
@@ -149,7 +162,8 @@ public class AwsService {
 		}
 	}
 
-	public void deleteFiles(List<String> fileUrls) {
+	public Boolean deleteFiles(List<String> fileUrls) {
+		logger.info("Invoke delete files function");
 		List<ObjectIdentifier> objects = fileUrls.stream()
 				.map(s3Url -> ObjectIdentifier.builder().key(this.getObjectKeyFromUrl(s3Url)).build())
 				.collect(Collectors.toList());
@@ -157,7 +171,8 @@ public class AwsService {
 		Delete delete = Delete.builder().objects(objects).build();
 
 		DeleteObjectsRequest request = DeleteObjectsRequest.builder().bucket(awsBucketName).delete(delete).build();
-
+		logger.info("files deleteing...");
 		awsS3Client.deleteObjects(request);
+		return true;
 	}
 }

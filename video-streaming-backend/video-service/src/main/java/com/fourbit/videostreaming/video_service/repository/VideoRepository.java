@@ -64,6 +64,9 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 	Page<Video> findAllByIdIn(@Param("ids") List<Long> ids, Pageable pageable,
 			@Param("searchQuery") String searchQuery);
 
+	@Query("SELECT v FROM Video v WHERE v.id IN :ids")
+	List<Video> findAllByIdIn(@Param("ids") List<Long> ids);
+
 	@Query("""
 			SELECT v FROM Video v WHERE v.channelId IN :channelIds AND
 			v.videoStatus = 'PUBLIC'

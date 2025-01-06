@@ -1,7 +1,5 @@
 package com.fourbit.videostreaming.video_service.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fourbit.videostreaming.video_service.dto.CreateVideoRequest;
 import com.fourbit.videostreaming.video_service.dto.CreateVideoResponse;
+import com.fourbit.videostreaming.video_service.dto.DeleteChannelVideosRequest;
 import com.fourbit.videostreaming.video_service.dto.LikeDislikeResponse;
 import com.fourbit.videostreaming.video_service.dto.VideoCardDto;
 import com.fourbit.videostreaming.video_service.dto.VideoDto;
@@ -143,7 +142,8 @@ public class VideoController {
 	}
 
 	@DeleteMapping("/channel/{channelId}")
-	public ResponseEntity<Boolean> deleteChannelVideos(@PathVariable Long channelId, @RequestBody List<Long> videoIds) {
-		return ResponseEntity.ok(videoService.deleteVideosFromChannel(channelId, videoIds));
+	public ResponseEntity<Boolean> deleteChannelVideos(@PathVariable Long channelId,
+			@RequestBody DeleteChannelVideosRequest request) {
+		return ResponseEntity.ok(videoService.deleteVideosFromChannel(channelId, request));
 	}
 }

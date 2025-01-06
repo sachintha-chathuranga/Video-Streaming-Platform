@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fourbit.videostreaming.video_service.dto.CreateVideoRequest;
 import com.fourbit.videostreaming.video_service.dto.CreateVideoResponse;
+import com.fourbit.videostreaming.video_service.dto.DeleteChannelVideosRequest;
 import com.fourbit.videostreaming.video_service.dto.LikeDislikeResponse;
 import com.fourbit.videostreaming.video_service.dto.VideoCardDto;
 import com.fourbit.videostreaming.video_service.dto.VideoDto;
@@ -363,31 +364,40 @@ public class VideoService {
 		return VideoMapper.mapToVideoStaticDto(video);
 	}
 
-	public Boolean deleteVideosFromChannel(Long channelId, List<Long> videoIds) {
+	public Boolean deleteVideosFromChannel(Long channelId, DeleteChannelVideosRequest request) {
+		logger.info("Invoke deleteVideosFromChannel function");
 
-		List<String> videoUrls = new ArrayList<String>();
-		List<String> thumbnailsUrls = new ArrayList<String>();
+		List<Video> videosToDelete = videoRepository.findAllByIdIn(request.videoIds());
 
-		// Detach videos from users' playLists
-		videosToDelete.forEach(video -> {
-			video.getSaveUsers().forEach(user -> user.getSaveVideos().remove(video));
-			video.getSaveUsers().clear();// Clear references from video to users
-			videoUrls.add(video.getVideoUrl());
-			thumbnailsUrls.add(video.getThumbnailUrl());
-		});
+		if (!videosToDelete.isEmpty()) {
+			List<String> videoUrls = new ArrayList<String>();
+			List<String> thumbnailsUrls = new ArrayList<String>();
 
-		awsS3Service.deleteFiles(videoUrls);
+			// remove video from users play_list
+			userService.removeVideoFromUserPlaylist(request.videoIds());
 
-		awsS3Service.deleteFiles(thumbnailsUrls);
+			// remove video from users history
+			userService.removeVideoFromUserHistory(request.videoIds());
 
-		// Remove videos from the channel
-		channel.getVideos().removeAll(videosToDelete);
+			videosToDelete.forEach(video -> {
+				if (video.getVideoUrl() != null) {
 
-		channelRepository.save(channel);
+					videoUrls.add(video.getVideoUrl());
+				}
+				if (video.getThumbnailUrl() != null) {
 
-		// Save the channel to persist changes
-		channelRepository.save(channel);
-		return true;
+					thumbnailsUrls.add(video.getThumbnailUrl());
+				}
+			});
+
+			awsService.deleteFiles(videoUrls);
+
+			awsService.deleteFiles(thumbnailsUrls);
+
+			videoRepository.deleteAllByIdInBatch(request.videoIds());
+			return true;
+		}
+		return false;
 	}
 
 }

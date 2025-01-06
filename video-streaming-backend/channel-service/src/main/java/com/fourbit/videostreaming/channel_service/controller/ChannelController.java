@@ -97,12 +97,6 @@ public class ChannelController {
 	}
 
 //
-//	@PostMapping("/upload-picture")
-//	public ResponseEntity<String> uploadChannelPicture(@RequestParam("file") MultipartFile file) {
-//		String url = channelService.uploadChannelPicture(file);
-//		return ResponseEntity.ok(url);
-//	}
-//
 //	@PostMapping("/upload-banner")
 //	public ResponseEntity<String> uploadChannelBanner(@RequestParam("file") MultipartFile file) {
 //		String url = channelService.uploadBannerImage(file);

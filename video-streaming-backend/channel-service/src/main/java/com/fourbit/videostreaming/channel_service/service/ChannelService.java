@@ -157,32 +157,23 @@ public class ChannelService {
 		if (channelDto.getEmail() != null && !channelDto.getEmail().isBlank()) {
 			channel.setEmail(channelDto.getEmail());
 		}
-		channelRepository.save(channel);
-
+		String existingImage = channel.getChannelImage();
+		String channelImage = channelDto.getChannelImage();
+		if (channelImage != null) {
+			channel.setChannelImage(channelImage);
+		}
+		logger.info("Start to saving");
+		channelRepository.saveAndFlush(channel);
+		if (channelImage != null && existingImage != null && !existingImage.isBlank()) {
+			logger.info("existing Image: " + existingImage);
+			channel.setChannelImage(existingImage);
+		}
 		return channelMapper.mapToChannelDto(channel);
 	}
 //
 
 //
 
-//
-//	public String uploadChannelPicture(MultipartFile file) {
-//		logger.info("Invoke Upload channel picture function");
-//		User requestedUser = userService.getRequestedUser();
-//		Channel channel = requestedUser.getChannel();
-//		String existingImage = channel.getChannelImage();
-//		if (existingImage != null && !existingImage.isBlank()) {
-//			logger.info("Start to deleting image from S3..");
-//			awsS3Service.deleteFile(existingImage);
-//			logger.info("deleted successfully");
-//		}
-//		String photoUrl = awsS3Service.uploadFile(file, "channel_images");
-//
-//		channel.setChannelImage(photoUrl);
-//		channelRepository.save(channel);
-//		return photoUrl;
-//	}
-//
 //	public String uploadBannerImage(MultipartFile file) {
 //		logger.info("Invoke Upload Banner image function");
 //		User requestedUser = userService.getRequestedUser();

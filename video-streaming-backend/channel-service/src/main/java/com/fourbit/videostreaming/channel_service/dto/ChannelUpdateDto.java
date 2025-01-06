@@ -1,5 +1,7 @@
 package com.fourbit.videostreaming.channel_service.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -11,4 +13,5 @@ public class ChannelUpdateDto {
 	@Size(min = 10, max = 40, message = "Email must be between 10 and 40 characters!")
 	@Email(message = "Invalid email format")
 	private String email;
+	private String channelImage;
 }

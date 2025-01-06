@@ -1,6 +1,7 @@
 package com.fourbit.videostreaming.video_service.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,18 @@ public class UserService {
 	public void removeVideoFromUserHistory(Long userId, Long videoId) {
 		this.webClient.delete()
 				.uri(uriBuilder -> uriBuilder.path("/history/" + videoId).queryParam("userId", userId).build())
+				.retrieve().bodyToMono(Boolean.class).block();
+	}
+
+	public void removeVideoFromUserPlaylist(List<Long> videoIds) {
+		Map<String, List<Long>> requestBody = Map.of("videoIds", videoIds);
+		this.webClient.put().uri(uriBuilder -> uriBuilder.path("/playlist/videos").build()).bodyValue(requestBody)
+				.retrieve().bodyToMono(Boolean.class).block();
+	}
+
+	public void removeVideoFromUserHistory(List<Long> videoIds) {
+		Map<String, List<Long>> requestBody = Map.of("videoIds", videoIds);
+		this.webClient.put().uri(uriBuilder -> uriBuilder.path("/history/videos").build()).bodyValue(requestBody)
 				.retrieve().bodyToMono(Boolean.class).block();
 	}
 }
